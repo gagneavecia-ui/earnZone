@@ -382,7 +382,7 @@
     <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
     <div class="features-grid">
       <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
-      <a href="activites.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
+      <a href="activites.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus NexFormation</h3><p class="feature-description">Gagne plus dans la revente de formation digital !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+15000 FCFA/mois</div></a>
     </div>
 
     <!-- FORMATIONS -->
@@ -421,11 +421,63 @@
     let withdrawIndex = 0;
 
     const retraitsSimules = [
-      { nom: "Samuel", montant: 65000, moyen: "Wave" }, { nom: "Awa", montant: 12500, moyen: "Orange Money" },
-      { nom: "Koffi", montant: 80700, moyen: "MTN Mobile" }, { nom: "Fatou", montant: 23000, moyen: "Wave" },
-      { nom: "Jean", montant: 62000, moyen: "Orange Money" }, { nom: "Mariam", montant: 15400, moyen: "Wave" },
-      { nom: "Sékou", montant: 92500, moyen: "MTN Mobile" }, { nom: "Moussa", montant: 33100, moyen: "Orange Money" }
-    ];
+  { nom: "Samuel", montant: 125000, moyen: "Wave" },
+  { nom: "Awa", montant: 87500, moyen: "Orange Money" },
+  { nom: "Koffi", montant: 234000, moyen: "MTN Mobile" },
+  { nom: "Fatou", montant: 156000, moyen: "Wave" },
+  { nom: "Jean", montant: 67200, moyen: "Airtel Money" },
+  { nom: "Mariam", montant: 189000, moyen: "Moov Money" },
+  { nom: "Sékou", montant: 94300, moyen: "My Nita" },
+  { nom: "Moussa", montant: 278000, moyen: "Amana" },
+  { nom: "Amadou", montant: 112000, moyen: "Wave" },
+  { nom: "Rokia", montant: 145000, moyen: "Orange Money" },
+  { nom: "Ibrahim", montant: 198000, moyen: "MTN Mobile" },
+  { nom: "Aissata", montant: 76500, moyen: "Airtel Money" },
+  { nom: "Oumar", montant: 234500, moyen: "Moov Money" },
+  { nom: "Djeneba", montant: 187000, moyen: "My Nita" },
+  { nom: "Bakary", montant: 156000, moyen: "Amana" },
+  { nom: "Kadiatou", montant: 298000, moyen: "Wave" },
+  { nom: "Mamadou", montant: 112500, moyen: "Orange Money" },
+  { nom: "Fanta", montant: 234000, moyen: "MTN Mobile" },
+  { nom: "Souleymane", montant: 87600, moyen: "Airtel Money" },
+  { nom: "Aminata", montant: 145500, moyen: "Moov Money" },
+  { nom: "Ousmane", montant: 198000, moyen: "My Nita" },
+  { nom: "Nadia", montant: 267000, moyen: "Amana" },
+  { nom: "Christian", montant: 123400, moyen: "Wave" },
+  { nom: "Esther", montant: 189000, moyen: "Orange Money" },
+  { nom: "Franck", montant: 211000, moyen: "MTN Mobile" },
+  { nom: "Gisèle", montant: 98200, moyen: "Airtel Money" },
+  { nom: "Hugues", montant: 176000, moyen: "Moov Money" },
+  { nom: "Inès", montant: 145000, moyen: "My Nita" },
+  { nom: "Jacques", montant: 223000, moyen: "Amana" },
+  { nom: "Karine", montant: 134500, moyen: "Wave" },
+  { nom: "Léon", montant: 198700, moyen: "Orange Money" },
+  { nom: "Martine", montant: 287000, moyen: "MTN Mobile" },
+  { nom: "Narcisse", montant: 76500, moyen: "Airtel Money" },
+  { nom: "Olivia", montant: 199000, moyen: "Moov Money" },
+  { nom: "Pascal", montant: 212000, moyen: "My Nita" },
+  { nom: "Quentin", montant: 145000, moyen: "Amana" },
+  { nom: "Rachel", montant: 234000, moyen: "Wave" },
+  { nom: "Steve", montant: 187500, moyen: "Orange Money" },
+  { nom: "Tania", montant: 267000, moyen: "MTN Mobile" },
+  { nom: "Ulrich", montant: 198000, moyen: "Airtel Money" },
+  { nom: "Valérie", montant: 112000, moyen: "Moov Money" },
+  { nom: "Wilfried", montant: 198500, moyen: "My Nita" },
+  { nom: "Xavier", montant: 276000, moyen: "Amana" },
+  { nom: "Yasmine", montant: 145000, moyen: "Wave" },
+  { nom: "Zacharie", montant: 234000, moyen: "Orange Money" },
+  { nom: "Aline", montant: 187000, moyen: "MTN Mobile" },
+  { nom: "Bruno", montant: 298000, moyen: "Airtel Money" },
+  { nom: "Céline", montant: 112500, moyen: "Moov Money" },
+  { nom: "Didier", montant: 176000, moyen: "My Nita" },
+  { nom: "Élodie", montant: 245000, moyen: "Amana" },
+  { nom: "Fabrice", montant: 189000, moyen: "Wave" },
+  { nom: "Gloria", montant: 223000, moyen: "Orange Money" },
+  { nom: "Henri", montant: 199000, moyen: "MTN Mobile" },
+  { nom: "Irene", montant: 167000, moyen: "Airtel Money" },
+  { nom: "Josué", montant: 278000, moyen: "Moov Money" },
+  { nom: "Lydia", montant: 134000, moyen: "My Nita" }
+];
 
     // Protection + chargement user
     (function() {

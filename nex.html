@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Bonus NexFormation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --bg-dark: #030305;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.85);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --success: #2EE89A;
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
+                  linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
+    @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 5%;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.07);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo-text span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .menu-btn:active { background: rgba(183, 110, 255, 0.2); }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    .hero-section { text-align: center; margin-bottom: 40px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(90deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08));
+      border: 1px solid rgba(183, 110, 255, 0.25);
+      border-radius: 50px;
+      padding: 7px 14px;
+      margin-bottom: 20px;
+    }
+    .hero-badge span { color: var(--primary-light); font-size: 12px; font-weight: 600; }
+    .hero-title { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .hero-title span { background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-description { font-size: 15px; color: var(--text-dim); line-height: 1.5; max-width: 400px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 3px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    .arguments-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .argument-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .argument-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.15), rgba(139, 63, 232, 0.08));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--primary);
+    }
+    .argument-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+    .argument-text p { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+
+    .formations-list {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 40px;
+    }
+    .formation-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .formation-item:last-child { border-bottom: none; }
+    .formation-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(183, 110, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .formation-name { flex: 1; font-weight: 500; }
+    .formation-badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: rgba(46, 232, 154, 0.15); color: var(--success); }
+
+    .testimonial {
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.08), rgba(139, 63, 232, 0.04));
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 32px;
+      border: 1px solid rgba(183, 110, 255, 0.1);
+    }
+    .testimonial i { font-size: 28px; color: var(--primary); margin-bottom: 12px; display: block; }
+    .testimonial p { font-size: 14px; font-style: italic; color: var(--text-dim); line-height: 1.5; }
+    .testimonial h4 { margin-top: 12px; font-size: 13px; color: var(--primary-light); }
+
+    .btn-nexformation {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-decoration: none;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(183, 110, 255, 0.3);
+    }
+    .btn-nexformation:active { transform: scale(0.97); }
+
+    .footer { text-align: center; padding: 20px 0; border-top: 1px solid rgba(183, 110, 255, 0.06); margin-top: 20px; }
+    .footer p { color: var(--text-dim); font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<header class="header">
+  <a href="index.html" class="logo-text">EARN<span>ZONE</span></a>
+  <div class="menu-btn" onclick="window.location.href='menu.html'"><i class="fas fa-bars"></i></div>
+</header>
+
+<main class="container">
+  <div class="hero-section">
+    <div class="hero-badge"><i class="fas fa-gem"></i><span>Bonus exclusif</span></div>
+    <h1 class="hero-title">Transformez votre <span>passion</span> en <span>revenus</span></h1>
+    <p class="hero-description">Vous avez un smartphone et envie de gagner de l’argent ? NexFormation vous donne les clés pour vendre des formations digitales et générer des revenus passifs.</p>
+  </div>
+
+  <div class="arguments-grid">
+    <div class="argument-card">
+      <div class="argument-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="argument-text">
+        <h3>Gagnez de l’argent sans stock</h3>
+        <p>Vendez des formations digitales prêtes à l’emploi. Aucun investissement initial requis.</p>
+      </div>
+    </div>
+    <div class="argument-card">
+      <div class="argument-icon"><i class="fas fa-mobile-alt"></i></div>
+      <div class="argument-text">
+        <h3>Travaillez depuis votre téléphone</h3>
+        <p>100% en ligne. Apprenez, vendez et encaissez où que vous soyez.</p>
+      </div>
+    </div>
+    <div class="argument-card">
+      <div class="argument-icon"><i class="fas fa-users"></i></div>
+      <div class="argument-text">
+        <h3>Rejoignez une communauté de revendeurs</h3>
+        <p>Des centaines de personnes gagnent déjà leur vie avec NexFormation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <i class="fas fa-book-open"></i> Formations disponibles
+  </div>
+  <div class="formations-list">
+    <div class="formation-item">
+      <div class="formation-icon"><i class="fas fa-mobile-alt"></i></div>
+      <div class="formation-name">📱 Gagne ton premier cash avec ton téléphone</div>
+      <div class="formation-badge">Démarrage facile</div>
+    </div>
+    <div class="formation-item">
+      <div class="formation-icon"><i class="fas fa-chart-simple"></i></div>
+      <div class="formation-name">🚀 Comment lancer un business rentable avec 0 FCFA</div>
+      <div class="formation-badge">Très demandé</div>
+    </div>
+    <div class="formation-item">
+      <div class="formation-icon"><i class="fas fa-bullhorn"></i></div>
+      <div class="formation-name">🔥 Marketing Digital — De 0 à Expert</div>
+      <div class="formation-badge">Best-seller</div>
+    </div>
+    <div class="formation-item">
+      <div class="formation-icon"><i class="fas fa-brain"></i></div>
+      <div class="formation-name">🧠 Développement Personnel & Mindset de Gagnant</div>
+      <div class="formation-badge">Top mondial</div>
+    </div>
+  </div>
+
+  <div class="testimonial">
+    <i class="fas fa-quote-left"></i>
+    <p>“J’ai commencé sans rien connaître au digital. En 2 mois, j’ai gagné plus de 200 000 FCFA en revendant les formations NexFormation.”</p>
+    <h4>— Awa D., revendeuse certifiée</h4>
+  </div>
+
+  <a href="https://gagneavecia-ui.github.io/NexFormation/" target="_blank" class="btn-nexformation">
+    <i class="fas fa-rocket"></i> NexFormation
+  </a>
+
+  <div style="text-align: center; color: var(--text-dim); font-size: 12px;">
+    <i class="fas fa-lock"></i> Inscription gratuite — Accès immédiat
+  </div>
+</main>
+
+<footer class="footer">
+  <p>&copy; 2026 EarnZone — Partenaire officiel NexFormation</p>
+</footer>
+
+<script>
+  // Vérification de l'utilisateur connecté (optionnel)
+  const userId = localStorage.getItem('earnzone_current_user');
+  if (!userId) {
+    // Laisse la page visible, mais tu peux décommenter la ligne suivante pour forcer la connexion
+    // window.location.href = 'login.html';
+  }
+</script>
+
+</body>
+</html>

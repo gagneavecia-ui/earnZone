@@ -61,12 +61,24 @@
       letter-spacing: 2px;
       color: var(--text-light);
       text-transform: uppercase;
+      text-decoration: none;
     }
     .logo-text span {
       font-weight: 800;
       background: linear-gradient(135deg, var(--primary-light), var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
 
     .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 60px; }
@@ -154,6 +166,7 @@
       gap: 8px;
     }
     .btn-valider:active { transform: scale(0.98); }
+    .btn-valider:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .message {
       margin-top: 16px;
@@ -175,8 +188,8 @@
 <div class="gradient-bg"></div>
 
 <header class="header">
-  <a href="index.html" class="logo"><div class="logo-text">EARN<span>ZONE</span></div></a>
-  <div class="menu-btn" onclick="window.location.href='index.html'" style="width:40px;height:40px;background:rgba(255,255,255,0.05);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="fas fa-bars"></i></div>
+  <a href="index.html" class="logo-text">EARN<span>ZONE</span></a>
+  <div class="menu-btn" onclick="window.location.href='index.html'"><i class="fas fa-bars"></i></div>
 </header>
 
 <main class="container">
@@ -204,69 +217,50 @@
 
 <footer class="footer"><p>&copy; 2026 EarnZone. Tous droits réservés.</p></footer>
 
-<script>
-  // ============================================
-  // VÉRIFICATION CONNEXION
-  // ============================================
-  const userId = localStorage.getItem('earnzone_current_user');
-  if (!userId) {
-    window.location.href = 'login.html';
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
   }
+</script>
 
-  let userData = {};
-  const savedData = localStorage.getItem(`earnzone_user_${userId}`);
-  if (savedData) {
-    userData = JSON.parse(savedData);
-  } else {
-    localStorage.removeItem('earnzone_current_user');
-    window.location.href = 'login.html';
-  }
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
-  // ============================================
-  // LISTE DES PACKS DE RECHARGEMENT
-  // ============================================
-  const packs = [
-    { id: "start", montant: 3000, label: "Start", gainReel: 3000 },
-    { id: "micro", montant: 5000, label: "Micro", gainReel: 5000 },
-    { id: "bronze", montant: 10000, label: "Bronze", gainReel: 10000 },
-    { id: "silver", montant: 15000, label: "Silver", gainReel: 15000 },
-    { id: "gold", montant: 25000, label: "Gold", gainReel: 25000 }
-  ];
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
 
-  // ============================================
-  // LISTE DES CODES COUPON (MODIFIABLE)
-  // Tu ajoutes tes codes ici !
-  // ============================================
-  let couponCodes = [
-    // Pack Start (3000 FCFA)
-    { code: "S001", montant: 3000, used: false },
-    { code: "START-002", montant: 3000, used: false },
-    { code: "START-003", montant: 3000, used: false },
-    // Pack Micro (5000 FCFA)
-    { code: "MICRO-001", montant: 5000, used: false },
-    { code: "MICRO-002", montant: 5000, used: false },
-    // Pack Bronze (10000 FCFA)
-    { code: "BRONZE-001", montant: 10000, used: false },
-    { code: "BRONZE-002", montant: 10000, used: false },
-    // Pack Silver (15000 FCFA)
-    { code: "SILVER-001", montant: 15000, used: false },
-    // Pack Gold (25000 FCFA)
-    { code: "GOLD-001", montant: 25000, used: false },
-    { code: "GOLD-002", montant: 25000, used: false }
-  ];
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
+  let currentUser = null;
+  let userData = { balance: 0 };
   let selectedPack = null;
 
-  // ============================================
-  // AFFICHAGE DU SOLDE
-  // ============================================
+  const packs = [
+    { id: "start", montant: 3000, label: "Start" },
+    { id: "micro", montant: 5000, label: "Micro" },
+    { id: "bronze", montant: 10000, label: "Bronze" },
+    { id: "silver", montant: 15000, label: "Silver" },
+    { id: "gold", montant: 25000, label: "Gold" }
+  ];
+
   function updateSolde() {
     document.getElementById('soldeValue').innerText = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
   }
 
-  // ============================================
-  // AFFICHAGE DES PACKS
-  // ============================================
   function renderPacks() {
     const grid = document.getElementById('packsGrid');
     grid.innerHTML = packs.map(pack => `
@@ -279,7 +273,6 @@
       </div>
     `).join('');
 
-    // Sélection au clic
     document.querySelectorAll('.pack-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
@@ -292,31 +285,29 @@
     });
   }
 
-  // ============================================
-  // SAUVEGARDE DES DONNÉES
-  // ============================================
-  function saveUserData() {
-    localStorage.setItem(`earnzone_user_${userId}`, JSON.stringify(userData));
-  }
-
-  // ============================================
-  // VALIDATION DU CODE COUPON
-  // ============================================
-  function validateCoupon(code, montantAttendu) {
-    const coupon = couponCodes.find(c => c.code === code && !c.used && c.montant === montantAttendu);
-    if (coupon) {
-      coupon.used = true;
+  async function validateCoupon(code, montantAttendu) {
+    // Vérifier dans Firestore si le code existe et n'est pas utilisé
+    const codesRef = collection(db, "recharge_codes");
+    const q = query(codesRef, where("code", "==", code), where("used", "==", false), where("montant", "==", montantAttendu));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const codeDoc = snapshot.docs[0];
+      // Marquer le code comme utilisé
+      await updateDoc(doc(db, "recharge_codes", codeDoc.id), {
+        used: true,
+        utilisePar: currentUser.uid,
+        dateUtilisation: new Date().toISOString()
+      });
       return true;
     }
     return false;
   }
 
-  // ============================================
-  // RECHARGEMENT
-  // ============================================
-  document.getElementById('validerBtn').addEventListener('click', () => {
+  async function processRechargement() {
     const code = document.getElementById('couponCode').value.trim().toUpperCase();
     const messageDiv = document.getElementById('message');
+    const btn = document.getElementById('validerBtn');
 
     if (!selectedPack) {
       messageDiv.className = 'message error';
@@ -332,14 +323,49 @@
       return;
     }
 
-    if (validateCoupon(code, selectedPack.montant)) {
-      // Ajout du montant au solde
-      userData.balance = (userData.balance || 0) + selectedPack.montant;
-      saveUserData();
-      updateSolde();
+    if (!await validateCoupon(code, selectedPack.montant)) {
+      messageDiv.className = 'message error';
+      messageDiv.innerText = '❌ Code coupon invalide, déjà utilisé ou ne correspond pas au montant sélectionné.';
+      setTimeout(() => messageDiv.className = 'message', 3000);
+      return;
+    }
 
-      // Marquer que l'utilisateur a fait son premier dépôt
-      localStorage.setItem('earnzone_has_deposited', 'true');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      
+      // Récupérer le document utilisateur
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) {
+        throw new Error("Utilisateur non trouvé");
+      }
+      
+      const currentBalance = userDoc.data().balance || 0;
+      const newBalance = currentBalance + selectedPack.montant;
+      
+      // Mettre à jour le solde de l'utilisateur
+      await updateDoc(userRef, {
+        balance: newBalance,
+        hasDeposited: true,
+        lastRecharge: new Date().toISOString(),
+        totalInvested: (userDoc.data().totalInvested || 0) + selectedPack.montant
+      });
+
+      // === ENREGISTRER LE DÉPÔT DANS LA COLLECTION "deposits" ===
+      await addDoc(collection(db, "deposits"), {
+        userId: currentUser.uid,
+        amount: selectedPack.montant,
+        method: "code_coupon",
+        code: code,
+        date: new Date().toISOString().split('T')[0],
+        timestamp: new Date().toISOString(),
+        pack: selectedPack.id
+      });
+
+      userData.balance = newBalance;
+      updateSolde();
 
       messageDiv.className = 'message success';
       messageDiv.innerText = `✅ Rechargement réussi ! ${selectedPack.montant.toLocaleString('fr-FR')} FCFA ajoutés à votre solde.`;
@@ -349,18 +375,39 @@
       document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
 
       setTimeout(() => messageDiv.className = 'message', 3000);
-    } else {
+    } catch (error) {
+      console.error("Erreur:", error);
       messageDiv.className = 'message error';
-      messageDiv.innerText = '❌ Code coupon invalide, déjà utilisé ou ne correspond pas au montant sélectionné.';
+      messageDiv.innerText = '❌ Une erreur est survenue. Veuillez réessayer.';
       setTimeout(() => messageDiv.className = 'message', 3000);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-check-circle"></i> Valider le rechargement';
+    }
+  }
+
+  async function loadUserData(uid) {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      userData = userDoc.data();
+      userData.balance = userData.balance || 0;
+      updateSolde();
+    }
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadUserData(user.uid);
+    } else {
+      window.location.href = 'login.html';
     }
   });
 
-  // ============================================
-  // INITIALISATION
-  // ============================================
+  document.getElementById('validerBtn').addEventListener('click', processRechargement);
+  
   renderPacks();
-  updateSolde();
 </script>
 
 </body>

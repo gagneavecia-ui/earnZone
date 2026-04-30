@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Avis membres</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --bg-dark: #030305;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.85);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --success: #2EE89A;
+      --warning: #FFD166;
+      --danger: #FF4D6D;
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      padding-bottom: 60px;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
+                  linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
+    @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 5%;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.07);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo-text span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+    .back-btn:active { color: var(--primary); }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px 40px; }
+
+    .hero-section { text-align: center; margin-bottom: 30px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(90deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08));
+      border: 1px solid rgba(183, 110, 255, 0.25);
+      border-radius: 50px;
+      padding: 7px 14px;
+      margin-bottom: 16px;
+    }
+    .hero-badge span { color: var(--primary-light); font-size: 12px; font-weight: 600; }
+    .hero-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .hero-title span { background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-description { font-size: 14px; color: var(--text-dim); }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border-radius: 50px;
+      padding: 12px 20px;
+      margin-bottom: 25px;
+      border: 1px solid var(--card-border);
+    }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 800; color: var(--primary-light); }
+    .stat-label { font-size: 11px; color: var(--text-dim); }
+
+    .add-review-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+    .add-review-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary-light);
+    }
+    .stars-input {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .star-select {
+      font-size: 28px;
+      color: #4a4a5a;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .star-select.selected { color: #FFD166; }
+    .review-textarea {
+      width: 100%;
+      padding: 14px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      color: var(--text-light);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 15px;
+    }
+    .review-textarea:focus { outline: none; border-color: var(--primary); }
+    .submit-review-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 16px;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .submit-review-btn:active { transform: scale(0.98); }
+    .submit-review-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .login-message {
+      text-align: center;
+      padding: 20px;
+      background: rgba(183, 110, 255, 0.08);
+      border-radius: 20px;
+      color: var(--text-dim);
+    }
+    .login-message a { color: var(--primary); text-decoration: none; }
+
+    .testimonials-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .testimonial-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 18px;
+      transition: var(--transition);
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .testimonial-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .testimonial-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: black;
+    }
+    .testimonial-info h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .testimonial-info p { font-size: 11px; color: var(--text-dim); }
+    .testimonial-rating { color: #FFD166; margin-bottom: 12px; font-size: 13px; letter-spacing: 2px; }
+    .testimonial-text { color: var(--text-dim); font-size: 13px; line-height: 1.5; font-style: italic; }
+    .testimonial-date { font-size: 10px; color: var(--text-dim); margin-top: 10px; text-align: right; }
+    .badge-new {
+      background: var(--success);
+      color: black;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+    }
+
+    .load-more-btn {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid rgba(183, 110, 255, 0.3);
+      border-radius: 50px;
+      color: var(--primary-light);
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: var(--transition);
+    }
+    .load-more-btn:active { background: rgba(183, 110, 255, 0.1); }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--primary);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      transform: translateY(200px);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+    .notification.show { transform: translateY(0); }
+    .notification-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; }
+    .notification-content h4 { font-size: 14px; margin-bottom: 4px; }
+    .notification-content p { font-size: 12px; color: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+  <div class="gradient-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="notification" id="notification">
+    <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="notification-content">
+      <h4 id="notificationTitle">Succès !</h4>
+      <p id="notificationMessage">Votre avis a été ajouté</p>
+    </div>
+  </div>
+
+  <header class="header">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i><span>Retour</span></a>
+    <div class="logo-text">EARN<span>ZONE</span></div>
+    <div style="width: 40px;"></div>
+  </header>
+
+  <main class="container">
+    <div class="hero-section">
+      <div class="hero-badge"><i class="fas fa-star"></i><span>Ils nous font confiance</span></div>
+      <h1 class="hero-title">Avis <span>membres</span></h1>
+      <p class="hero-description">Découvrez ce que nos membres pensent d'EarnZone</p>
+    </div>
+
+    <div class="stats-row" id="statsRow">
+      <div class="stat-item"><div class="stat-value" id="totalReviews">0</div><div class="stat-label">Avis</div></div>
+      <div class="stat-item"><div class="stat-value" id="avgRating">0</div><div class="stat-label">⭐ Moyenne</div></div>
+    </div>
+
+    <div id="addReviewSection"></div>
+
+    <div class="testimonials-grid" id="testimonialsGrid"></div>
+    <button class="load-more-btn" id="loadMoreBtn" style="display: none;">Voir plus d'avis <i class="fas fa-arrow-down"></i></button>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getAuth, onAuthStateChanged } from "firebase/auth";
+    import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, getDoc, doc } from "firebase/firestore";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+      authDomain: "earnzone-9e82e.firebaseapp.com",
+      projectId: "earnzone-9e82e",
+      storageBucket: "earnzone-9e82e.firebasestorage.app",
+      messagingSenderId: "1076831479440",
+      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let currentUserName = "Utilisateur";
+    let userReviews = [];      // Les avis des utilisateurs (Firebase)
+    let displayCount = 10;
+    let unsubscribeReviews = null;
+
+    // ============================================
+    // 30 TÉMOIGNAGES PRÉ-ENREGISTRÉS (dans le script, PAS dans Firebase)
+    // ============================================
+    const defaultTestimonials = [
+      { id: 1, name: "Koffi A.", rating: 5, text: "Grâce à EarnZone, j'ai gagné plus de 50 000 FCFA en 2 mois. Les formations sont top !", date: "2026-03-15", isUser: false },
+      { id: 2, name: "Awa D.", rating: 5, text: "Les investissements sont rentables et les retraits rapides. Je recommande vivement.", date: "2026-03-10", isUser: false },
+      { id: 3, name: "Samuel K.", rating: 4, text: "Plateforme sérieuse, les gains sont crédités chaque jour sans souci.", date: "2026-03-05", isUser: false },
+      { id: 4, name: "Fatou B.", rating: 5, text: "J'ai commencé avec 3000 FCFA et aujourd'hui je gagne chaque jour. Merci EarnZone!", date: "2026-02-28", isUser: false },
+      { id: 5, name: "Mamadou S.", rating: 5, text: "Le service client est réactif et les retraits sont rapides.", date: "2026-02-20", isUser: false },
+      { id: 6, name: "Rokia C.", rating: 4, text: "Très bonne plateforme, les formations m'ont beaucoup aidé.", date: "2026-02-15", isUser: false },
+      { id: 7, name: "Ibrahim T.", rating: 5, text: "Je recommande EarnZone à tous mes proches. C'est fiable et rentable.", date: "2026-02-10", isUser: false },
+      { id: 8, name: "Aissata M.", rating: 5, text: "Les gains quotidiens sont automatiques, c'est vraiment pratique.", date: "2026-02-05", isUser: false },
+      { id: 9, name: "Oumar N.", rating: 4, text: "Très satisfait des investissements. Je vais bientôt investir plus.", date: "2026-01-30", isUser: false },
+      { id: 10, name: "Djeneba K.", rating: 5, text: "EarnZone a changé ma vie financière. Merci infiniment!", date: "2026-01-25", isUser: false },
+      { id: 11, name: "Bakary D.", rating: 5, text: "Retraits rapides et support réactif. Je suis très content.", date: "2026-01-20", isUser: false },
+      { id: 12, name: "Kadiatou F.", rating: 4, text: "Belle plateforme, les gains sont corrects.", date: "2026-01-15", isUser: false },
+      { id: 13, name: "Moussa S.", rating: 5, text: "J'ai investi 25000 FCFA et j'ai déjà récupéré mon capital.", date: "2026-01-10", isUser: false },
+      { id: 14, name: "Aminata K.", rating: 5, text: "Les packs sont bien conçus. Je gagne chaque jour.", date: "2026-01-05", isUser: false },
+      { id: 15, name: "Ousmane B.", rating: 4, text: "Très bonne expérience. Je vais continuer avec EarnZone.", date: "2025-12-28", isUser: false },
+      { id: 16, name: "Nadia S.", rating: 5, text: "Plateforme sérieuse et fiable. Je la recommande.", date: "2025-12-20", isUser: false },
+      { id: 17, name: "Christian A.", rating: 5, text: "Les gains sont réellement crédités. Merci EarnZone!", date: "2025-12-15", isUser: false },
+      { id: 18, name: "Esther K.", rating: 4, text: "Très contente des formations. J'ai appris beaucoup.", date: "2025-12-10", isUser: false },
+      { id: 19, name: "Franck D.", rating: 5, text: "EarnZone est une plateforme fiable pour investir.", date: "2025-12-05", isUser: false },
+      { id: 20, name: "Gisèle M.", rating: 5, text: "Je gagne chaque jour. C'est incroyable!", date: "2025-11-28", isUser: false },
+      { id: 21, name: "Hugues K.", rating: 4, text: "Très satisfait, je vais investir plus.", date: "2025-11-20", isUser: false },
+      { id: 22, name: "Inès S.", rating: 5, text: "Les retraits sont rapides et le support est top.", date: "2025-11-15", isUser: false },
+      { id: 23, name: "Jacques B.", rating: 5, text: "Je recommande EarnZone à tous ceux qui veulent gagner.", date: "2025-11-10", isUser: false },
+      { id: 24, name: "Karine D.", rating: 4, text: "Très bonne plateforme. Je suis ravie.", date: "2025-11-05", isUser: false },
+      { id: 25, name: "Léon M.", rating: 5, text: "Les gains quotidiens sont automatiques. Génial!", date: "2025-10-28", isUser: false },
+      { id: 26, name: "Martine K.", rating: 5, text: "EarnZone est une plateforme sérieuse et rentable.", date: "2025-10-20", isUser: false },
+      { id: 27, name: "Narcisse S.", rating: 4, text: "Très content des investissements. Merci.", date: "2025-10-15", isUser: false },
+      { id: 28, name: "Olivia B.", rating: 5, text: "Je gagne chaque jour sans rien faire. C'est magique!", date: "2025-10-10", isUser: false },
+      { id: 29, name: "Pascal D.", rating: 5, text: "Je recommande vivement EarnZone.", date: "2025-10-05", isUser: false },
+      { id: 30, name: "Rachel K.", rating: 5, text: "Merci EarnZone pour ces gains quotidiens!", date: "2025-09-28", isUser: false }
+    ];
+
+    // Fonction pour fusionner les avis par défaut + avis Firebase
+    function getAllTestimonials() {
+      // Trier par date (plus récent d'abord)
+      const all = [...defaultTestimonials, ...userReviews];
+      all.sort((a, b) => new Date(b.date) - new Date(a.date));
+      return all;
+    }
+
+    function updateStats() {
+      const all = getAllTestimonials();
+      document.getElementById('totalReviews').innerText = all.length;
+      if (all.length > 0) {
+        const avg = all.reduce((sum, t) => sum + t.rating, 0) / all.length;
+        document.getElementById('avgRating').innerText = avg.toFixed(1);
+      } else {
+        document.getElementById('avgRating').innerText = "0";
+      }
+    }
+
+    function renderTestimonials() {
+      const all = getAllTestimonials();
+      const grid = document.getElementById('testimonialsGrid');
+      const toShow = all.slice(0, displayCount);
+      
+      if (toShow.length === 0) {
+        grid.innerHTML = '<div class="empty-state" style="text-align:center;padding:40px;"><i class="fas fa-comments" style="font-size:48px;opacity:0.3;margin-bottom:15px;"></i><p>Aucun avis pour le moment</p><p style="font-size:12px;">Soyez le premier à laisser un avis !</p></div>';
+      } else {
+        grid.innerHTML = toShow.map(t => {
+          const stars = '★'.repeat(t.rating) + '☆'.repeat(5 - t.rating);
+          const date = new Date(t.date).toLocaleDateString('fr-FR');
+          const isNew = t.isUser && new Date(t.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          return `
+            <div class="testimonial-card">
+              <div class="testimonial-header">
+                <div class="testimonial-avatar">${t.name.charAt(0)}</div>
+                <div class="testimonial-info">
+                  <h4>${t.name} ${isNew ? '<span class="badge-new">Nouveau</span>' : ''}</h4>
+                  <p>Membre EarnZone</p>
+                </div>
+              </div>
+              <div class="testimonial-rating">${stars}</div>
+              <p class="testimonial-text">"${t.text.replace(/"/g, '&quot;')}"</p>
+              <div class="testimonial-date">${date}</div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      if (displayCount < all.length) {
+        loadMoreBtn.style.display = 'block';
+      } else {
+        loadMoreBtn.style.display = 'none';
+      }
+    }
+
+    // Écouter les avis des utilisateurs depuis Firestore
+    function listenToUserReviews() {
+      if (unsubscribeReviews) unsubscribeReviews();
+      
+      const reviewsRef = collection(db, "user_reviews");
+      const q = query(reviewsRef, orderBy("createdAt", "desc"));
+      
+      unsubscribeReviews = onSnapshot(q, (snapshot) => {
+        userReviews = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          userReviews.push({
+            id: doc.id,
+            name: data.name,
+            rating: data.rating,
+            text: data.text,
+            date: data.date,
+            createdAt: data.createdAt,
+            isUser: true
+          });
+        });
+        
+       updateStats();
+        renderTestimonials();
+      }, (error) => {
+        console.error("Erreur Firestore:", error);
+      });
+    }
+
+    // Ajouter un avis utilisateur dans Firestore
+    async function addUserReview(name, rating, text) {
+      const newReview = {
+        name: name,
+        rating: rating,
+        text: text,
+        date: new Date().toISOString().split('T')[0],
+        createdAt: new Date().toISOString(),
+        userId: currentUser ? currentUser.uid : 'anonymous'
+      };
+      
+      try {
+        const reviewsRef = collection(db, "user_reviews");
+        await addDoc(reviewsRef, newReview);
+        showNotification('Merci pour votre avis !', 'Votre témoignage a été ajouté', 'success');
+      } catch (error) {
+        console.error("Erreur lors de l'ajout:", error);
+        showNotification('Erreur', "Impossible d'ajouter votre avis", 'error');
+      }
+    }
+
+    // Interface pour ajouter un avis
+    function renderAddReviewSection() {
+      const container = document.getElementById('addReviewSection');
+      
+      if (!currentUser) {
+        container.innerHTML = `
+          <div class="login-message">
+            <i class="fas fa-lock" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+            <p>Connectez-vous pour laisser votre avis</p>
+            <a href="login.html" style="color: var(--primary);">Se connecter</a>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = `
+        <div class="add-review-card">
+          <div class="add-review-title">
+            <i class="fas fa-pen-fancy"></i>
+            Laisser un avis
+          </div>
+          <div class="stars-input" id="starsInput">
+            ${[1,2,3,4,5].map(i => `<i class="fas fa-star star-select" data-star="${i}"></i>`).join('')}
+          </div>
+          <textarea class="review-textarea" id="reviewText" rows="3" placeholder="Partagez votre expérience avec EarnZone..."></textarea>
+          <button class="submit-review-btn" id="submitReviewBtn">
+            <i class="fas fa-paper-plane"></i> Publier mon avis
+          </button>
+        </div>
+      `;
+      
+      let selectedRating = 5;
+      const stars = document.querySelectorAll('.star-select');
+      stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+          selectedRating = index + 1;
+          stars.forEach((s, i) => {
+            if (i < selectedRating) s.classList.add('selected');
+            else s.classList.remove('selected');
+          });
+        });
+      });
+      stars.forEach(s => s.classList.add('selected'));
+      
+      document.getElementById('submitReviewBtn').addEventListener('click', async () => {
+        const text = document.getElementById('reviewText').value.trim();
+        if (!text) {
+          showNotification('Champ vide', 'Veuillez écrire votre avis', 'error');
+          return;
+        }
+        if (text.length < 10) {
+          showNotification('Avis trop court', 'Minimum 10 caractères', 'error');
+          return;
+        }
+        
+        const btn = document.getElementById('submitReviewBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publication...';
+        
+        await addUserReview(currentUserName, selectedRating, text);
+        document.getElementById('reviewText').value = '';
+        
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Publier mon avis';
+      });
+    }
+
+    async function loadUserData(uid) {
+      try {
+        const userRef = doc(db, "users", uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          currentUserName = userData.prenom || userData.nom || userData.fullName || 'Utilisateur';
+          if (currentUserName.includes(' ')) currentUserName = currentUserName.split(' ')[0];
+        }
+      } catch (error) {
+        console.error("Erreur chargement user:", error);
+      }
+      renderAddReviewSection();
+    }
+
+    function showNotification(title, message, type = 'success') {
+      document.getElementById('notificationTitle').innerText = title;
+      document.getElementById('notificationMessage').innerText = message;
+      const notif = document.getElementById('notification');
+      notif.classList.add('show');
+      setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+      displayCount += 10;
+      renderTestimonials();
+    });
+
+    // Auth state listener
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        await loadUserData(user.uid);
+      } else {
+        currentUserName = "Utilisateur";
+        renderAddReviewSection();
+      }
+    });
+
+    // Initialisation : écouter les avis Firebase
+    listenToUserReviews();
+  </script>
+</body>
+</html>

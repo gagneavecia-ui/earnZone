@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="icon.png">
   
   <style>
     /* ===== VARIABLES ===== */
@@ -76,7 +74,7 @@
       66% { transform: translate(-15px, 15px) scale(0.95); }
     }
 
-    /* ===== HEADER (LOGO ÉLÉGANT + GRAND ÉCART) ===== */
+    /* ===== HEADER ===== */
     .header {
       display: flex;
       justify-content: space-between;
@@ -97,7 +95,6 @@
       text-decoration: none;
     }
 
-    /* Logo : lettre E élégante */
     .logo-icon {
       font-size: 32px;
       font-weight: 700;
@@ -107,10 +104,8 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       letter-spacing: -1px;
-      font-style: normal;
     }
 
-    /* Texte EARNZONE élégant */
     .logo-text {
       font-size: 18px;
       font-weight: 600;
@@ -118,7 +113,6 @@
       letter-spacing: 2px;
       color: var(--text-light);
       text-transform: uppercase;
-      font-style: normal;
     }
 
     .logo-text span {
@@ -128,7 +122,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* ===== AVATAR + NOM (PLUS PETITS) ===== */
     .user-profile {
       display: flex;
       align-items: center;
@@ -161,7 +154,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       outline: 1.5px solid rgba(183, 110, 255, 0.4);
-      outline-offset: 0px;
     }
 
     .user-name {
@@ -198,13 +190,8 @@
       gap: 12px;
     }
 
-    /* GRAND ÉCART ENTRE LOGO ET AVATAR (via justify-content: space-between + marge auto implicite) */
-    /* Le header utilise déjà space-between, donc l'écart est maximal automatiquement */
-
-    /* ===== CONTAINER ===== */
     .container { max-width: 500px; margin: 0 auto; padding: 24px 16px; }
 
-    /* ===== HERO ===== */
     .hero-section { margin-bottom: 44px; animation: slideInUp 0.7s ease; }
     @keyframes slideInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(90deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08)); border: 1px solid rgba(183, 110, 255, 0.25); border-radius: 50px; padding: 7px 14px; margin-bottom: 22px; }
@@ -213,7 +200,6 @@
     .hero-title span { background: linear-gradient(135deg, var(--primary-light), var(--primary), #6C35D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero-description { font-size: 14.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 26px; }
 
-    /* ===== STATS ===== */
     .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 44px; }
     @keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     .stat-card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px 14px; text-align: center; transition: var(--transition); animation: cardIn 0.5s ease both; position: relative; }
@@ -222,14 +208,12 @@
     .stat-value { font-size: 21px; font-weight: 800; margin-bottom: 4px; }
     .stat-label { font-size: 11.5px; color: var(--text-dim); font-weight: 500; }
 
-    /* ===== SECTIONS ===== */
     .section-header { text-align: left; margin-bottom: 22px; }
     .section-subtitle { color: var(--primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
     .section-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.3px; }
     .section-title span { background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .section-description { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
 
-    /* ===== FEATURES & FORMATIONS ===== */
     .features-grid, .formations-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 44px; }
     .feature-card, .formation-card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 22px; transition: var(--transition); text-decoration: none; color: inherit; display: block; position: relative; animation: cardIn 0.5s ease both; }
     .feature-card { padding: 20px; }
@@ -253,7 +237,6 @@
     .formation-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08)); color: var(--primary-light); border: 1px solid rgba(183, 110, 255, 0.22); border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
     .formation-btn.free { background: linear-gradient(135deg, rgba(46, 232, 154, 0.12), rgba(0, 204, 68, 0.08)); border-color: rgba(46, 232, 154, 0.3); color: var(--success); }
 
-    /* ===== BANDEAU DÉPÔT ===== */
     .depot-banner { background: linear-gradient(135deg, rgba(255, 77, 109, 0.12), rgba(255, 77, 109, 0.05)); border: 1px solid rgba(255, 77, 109, 0.25); border-radius: 16px; padding: 14px 18px; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
     .depot-banner.hidden { display: none; }
     .depot-banner-content { display: flex; align-items: center; gap: 12px; }
@@ -263,12 +246,10 @@
     .depot-banner-btn { padding: 10px 18px; background: linear-gradient(135deg, var(--danger), #ff1a4f); border: none; border-radius: 12px; color: white; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
     .depot-banner-btn:active { transform: scale(0.97); }
 
-    /* ===== BOUTON INFO ===== */
     .info-button-container { text-align: center; margin-bottom: 44px; }
     .info-btn { background: transparent; border: 1px solid rgba(183, 110, 255, 0.3); border-radius: 50px; padding: 12px 24px; color: var(--primary-light); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
     .info-btn:active { background: rgba(183, 110, 255, 0.1); transform: scale(0.97); }
 
-    /* ===== AVIS ===== */
     .testimonials-section { margin-bottom: 44px; }
     .testimonials-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
     .testimonial-card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px; }
@@ -281,7 +262,6 @@
     .see-all-reviews-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: 16px; color: white; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
     .see-all-reviews-btn:active { transform: scale(0.98); }
 
-    /* ===== NOTIFICATION RETRAIT (BAS, TRANSPARENTE, DISCRÈTE) ===== */
     .withdraw-notification {
       position: fixed;
       bottom: 20px;
@@ -308,7 +288,6 @@
     .withdraw-amount { font-weight: 800; color: var(--success); }
     @media (max-width: 480px) { .withdraw-notification { padding: 6px 14px; } }
 
-    /* ===== FOOTER ===== */
     .footer { border-top: 1px solid rgba(183, 110, 255, 0.06); padding: 40px 0 24px; }
     .footer-about { text-align: center; }
     .footer-logo { font-size: 18px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Playfair Display', serif; }
@@ -325,7 +304,6 @@
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
-  <!-- NOTIFICATION RETRAIT -->
   <div class="withdraw-notification" id="withdrawNotification">
     <div class="withdraw-icon"><i class="fas fa-money-bill-wave"></i></div>
     <div class="withdraw-content">
@@ -357,7 +335,6 @@
       <p class="hero-description">Investis, gagne chaque jour et transforme ton avenir financier avec EarnZone.</p>
     </div>
 
-    <!-- BANDEAU DÉPÔT (caché si déjà déposé) -->
     <div class="depot-banner" id="depotBanner">
       <div class="depot-banner-content">
         <div class="depot-banner-icon"><i class="fas fa-coins"></i></div>
@@ -370,7 +347,6 @@
       <a href="informations.html" class="info-btn"><i class="fas fa-info-circle"></i> En savoir plus sur EarnZone</a>
     </div>
 
-       <!-- STATS -->
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-icon"><i class="fas fa-wallet"></i></div><div class="stat-value" id="statBalance">0 FCFA</div><div class="stat-label">Solde</div></div>
       <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-value" id="statInvestments">0</div><div class="stat-label">Investissements</div></div>
@@ -378,14 +354,12 @@
       <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div><div class="stat-value" id="statDays">0</div><div class="stat-label">Jours actifs</div></div>
     </div>
 
-    <!-- FONCTIONNALITÉS -->
     <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
     <div class="features-grid">
       <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
-      <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus NexFormation</h3><p class="feature-description">Gagne plus dans la revente de formation digital !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+15000 FCFA/mois</div></a>
+      <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
     </div>
 
-    <!-- FORMATIONS -->
     <div class="section-header"><div class="section-subtitle">Formations exclusives</div><h2 class="section-title">Développez vos <span>compétences</span></h2><p class="section-description">Apprenez à votre rythme avec nos cours pratiques.</p></div>
     <div class="formations-grid">
       <a href="formations.html" class="formation-card">
@@ -398,7 +372,6 @@
       </a>
     </div>
 
-    <!-- AVIS -->
     <div class="testimonials-section">
       <div class="section-header"><div class="section-subtitle">Ils nous font confiance</div><h2 class="section-title">Avis <span>membres</span></h2></div>
       <div class="testimonials-grid">
@@ -414,101 +387,66 @@
     </footer>
   </main>
 
-  <script>
-    let userData = { balance: 0, investments: [], gainsTotal: 0, daysActive: 0, name: "Utilisateur", prenom: "Utilisateur" };
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+    import { getFirestore, doc, getDoc, onSnapshot } from "firebase/firestore";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+      authDomain: "earnzone-9e82e.firebaseapp.com",
+      projectId: "earnzone-9e82e",
+      storageBucket: "earnzone-9e82e.firebasestorage.app",
+      messagingSenderId: "1076831479440",
+      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let userData = { balance: 0, investments: [], gainsTotal: 0, daysActive: 0, nom: "Utilisateur", prenom: "Utilisateur" };
     let notificationTimer = null;
     let intervalTimer = null;
     let withdrawIndex = 0;
+    let unsubscribeUser = null;
 
     const retraitsSimules = [
-  { nom: "Samuel", montant: 125000, moyen: "Wave" },
-  { nom: "Awa", montant: 87500, moyen: "Orange Money" },
-  { nom: "Koffi", montant: 234000, moyen: "MTN Mobile" },
-  { nom: "Fatou", montant: 156000, moyen: "Wave" },
-  { nom: "Jean", montant: 67200, moyen: "Airtel Money" },
-  { nom: "Mariam", montant: 189000, moyen: "Moov Money" },
-  { nom: "Sékou", montant: 94300, moyen: "My Nita" },
-  { nom: "Moussa", montant: 278000, moyen: "Amana" },
-  { nom: "Amadou", montant: 112000, moyen: "Wave" },
-  { nom: "Rokia", montant: 145000, moyen: "Orange Money" },
-  { nom: "Ibrahim", montant: 198000, moyen: "MTN Mobile" },
-  { nom: "Aissata", montant: 76500, moyen: "Airtel Money" },
-  { nom: "Oumar", montant: 234500, moyen: "Moov Money" },
-  { nom: "Djeneba", montant: 187000, moyen: "My Nita" },
-  { nom: "Bakary", montant: 156000, moyen: "Amana" },
-  { nom: "Kadiatou", montant: 298000, moyen: "Wave" },
-  { nom: "Mamadou", montant: 112500, moyen: "Orange Money" },
-  { nom: "Fanta", montant: 234000, moyen: "MTN Mobile" },
-  { nom: "Souleymane", montant: 87600, moyen: "Airtel Money" },
-  { nom: "Aminata", montant: 145500, moyen: "Moov Money" },
-  { nom: "Ousmane", montant: 198000, moyen: "My Nita" },
-  { nom: "Nadia", montant: 267000, moyen: "Amana" },
-  { nom: "Christian", montant: 123400, moyen: "Wave" },
-  { nom: "Esther", montant: 189000, moyen: "Orange Money" },
-  { nom: "Franck", montant: 211000, moyen: "MTN Mobile" },
-  { nom: "Gisèle", montant: 98200, moyen: "Airtel Money" },
-  { nom: "Hugues", montant: 176000, moyen: "Moov Money" },
-  { nom: "Inès", montant: 145000, moyen: "My Nita" },
-  { nom: "Jacques", montant: 223000, moyen: "Amana" },
-  { nom: "Karine", montant: 134500, moyen: "Wave" },
-  { nom: "Léon", montant: 198700, moyen: "Orange Money" },
-  { nom: "Martine", montant: 287000, moyen: "MTN Mobile" },
-  { nom: "Narcisse", montant: 76500, moyen: "Airtel Money" },
-  { nom: "Olivia", montant: 199000, moyen: "Moov Money" },
-  { nom: "Pascal", montant: 212000, moyen: "My Nita" },
-  { nom: "Quentin", montant: 145000, moyen: "Amana" },
-  { nom: "Rachel", montant: 234000, moyen: "Wave" },
-  { nom: "Steve", montant: 187500, moyen: "Orange Money" },
-  { nom: "Tania", montant: 267000, moyen: "MTN Mobile" },
-  { nom: "Ulrich", montant: 198000, moyen: "Airtel Money" },
-  { nom: "Valérie", montant: 112000, moyen: "Moov Money" },
-  { nom: "Wilfried", montant: 198500, moyen: "My Nita" },
-  { nom: "Xavier", montant: 276000, moyen: "Amana" },
-  { nom: "Yasmine", montant: 145000, moyen: "Wave" },
-  { nom: "Zacharie", montant: 234000, moyen: "Orange Money" },
-  { nom: "Aline", montant: 187000, moyen: "MTN Mobile" },
-  { nom: "Bruno", montant: 298000, moyen: "Airtel Money" },
-  { nom: "Céline", montant: 112500, moyen: "Moov Money" },
-  { nom: "Didier", montant: 176000, moyen: "My Nita" },
-  { nom: "Élodie", montant: 245000, moyen: "Amana" },
-  { nom: "Fabrice", montant: 189000, moyen: "Wave" },
-  { nom: "Gloria", montant: 223000, moyen: "Orange Money" },
-  { nom: "Henri", montant: 199000, moyen: "MTN Mobile" },
-  { nom: "Irene", montant: 167000, moyen: "Airtel Money" },
-  { nom: "Josué", montant: 278000, moyen: "Moov Money" },
-  { nom: "Lydia", montant: 134000, moyen: "My Nita" }
-];
-
-    // Protection + chargement user
-    (function() {
-      const userId = localStorage.getItem('earnzone_current_user');
-      if (!userId) { window.location.href = 'login.html'; return; }
-      const savedData = localStorage.getItem(`earnzone_user_${userId}`);
-      if (savedData) userData = JSON.parse(savedData);
-      else { localStorage.removeItem('earnzone_current_user'); window.location.href = 'login.html'; }
-    })();
+      { nom: "Samuel", montant: 65000, moyen: "Wave" }, { nom: "Awa", montant: 12500, moyen: "Orange Money" },
+      { nom: "Koffi", montant: 80700, moyen: "MTN Mobile" }, { nom: "Fatou", montant: 23000, moyen: "Wave" },
+      { nom: "Jean", montant: 62000, moyen: "Orange Money" }, { nom: "Mariam", montant: 15400, moyen: "Wave" },
+      { nom: "Sékou", montant: 92500, moyen: "MTN Mobile" }, { nom: "Moussa", montant: 33100, moyen: "Orange Money" }
+    ];
 
     function updateUI() {
       document.getElementById('statBalance').innerText = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
       const activeInvestments = (userData.investments || []).filter(inv => inv.status === 'active').length;
       document.getElementById('statInvestments').innerText = activeInvestments;
       document.getElementById('statGains').innerText = (userData.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
+      
       if (userData.registrationDate) {
         const days = Math.floor((new Date() - new Date(userData.registrationDate)) / (86400000));
         document.getElementById('statDays').innerText = days;
       }
       
-      // AFFICHAGE DU PRÉNOM UNIQUEMENT (pas nom complet)
-      let nom = userData.nom || userData.name || 'Utilisateur';
+      let nom = userData.nom || userData.prenom || 'Utilisateur';
       if (nom.includes(' ')) nom = nom.split(' ')[0];
       document.getElementById('userName').innerText = nom;
       
-      // Première lettre du prénom pour l'avatar
-      const avatarLettre = (userData.nom || userData.name || 'U').charAt(0).toUpperCase();
+      const avatarLettre = (userData.prenom || userData.nom || 'U').charAt(0).toUpperCase();
       document.getElementById('userAvatar').innerText = avatarLettre;
       
-      // Gestion bandeau dépôt
-      const hasDeposited = localStorage.getItem('earnzone_has_deposited') === 'true';
+      const hasDeposited = (userData.balance > 0) || (userData.hasDeposited === true);
       const depotBanner = document.getElementById('depotBanner');
       if (depotBanner) {
         if (hasDeposited) depotBanner.classList.add('hidden');
@@ -529,32 +467,39 @@
 
     function startNotificationTimer() {
       if (intervalTimer) clearInterval(intervalTimer);
-      const hasDeposited = localStorage.getItem('earnzone_has_deposited') === 'true';
+      const hasDeposited = (userData.balance > 0) || (userData.hasDeposited === true);
       const intervalMs = hasDeposited ? 90000 : 10000;
       intervalTimer = setInterval(showWithdrawNotification, intervalMs);
     }
 
-    function syncUserData() {
-      const userId = localStorage.getItem('earnzone_current_user');
-      if (userId) {
-        const savedData = localStorage.getItem(`earnzone_user_${userId}`);
-        if (savedData) {
-          const freshData = JSON.parse(savedData);
-          if (JSON.stringify(userData) !== JSON.stringify(freshData)) {
-            userData = freshData;
-            updateUI();
-            startNotificationTimer();
-          }
+    function loadUserData(uid) {
+      if (unsubscribeUser) unsubscribeUser();
+      
+      const userDocRef = doc(db, "users", uid);
+      unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          userData = docSnap.data();
+          updateUI();
+          startNotificationTimer();
+        } else {
+          console.error("Utilisateur non trouvé");
+          window.location.href = 'login.html';
         }
-      }
+      }, (error) => {
+        console.error("Erreur Firestore:", error);
+      });
     }
 
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadUserData(user.uid);
+        setTimeout(() => showWithdrawNotification(), 2000);
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
-      updateUI();
-      startNotificationTimer();
-      setTimeout(() => showWithdrawNotification(), 2000);
-      setInterval(syncUserData, 3000);
-      
       const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }), { threshold: 0.08 });
       document.querySelectorAll('.stat-card, .feature-card, .formation-card, .testimonial-card').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(20px)'; observer.observe(el); });
     });

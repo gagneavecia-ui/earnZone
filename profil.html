@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Mon profil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --bg-dark: #030305;
+      --bg-medium: #08080F;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.85);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --success: #2EE89A;
+      --warning: #FFD166;
+      --danger: #FF4D6D;
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      padding-bottom: 60px;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
+                  linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
+    @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 5%;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.07);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo-text span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+    .back-btn:active { color: var(--primary); }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .menu-btn:active { background: rgba(183, 110, 255, 0.2); }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px 40px; }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 700;
+      margin: 0 auto 16px;
+      color: black;
+      box-shadow: 0 10px 30px rgba(183, 110, 255, 0.3);
+    }
+    .profile-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .profile-email {
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      flex: 1;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 15px;
+      text-align: center;
+    }
+    .stat-card i {
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--primary-light);
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-label {
+      color: var(--text-dim);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .info-label i {
+      width: 24px;
+      color: var(--primary);
+    }
+    .info-value {
+      font-weight: 600;
+      text-align: right;
+    }
+    .edit-btn {
+      background: rgba(183, 110, 255, 0.1);
+      border: 1px solid rgba(183, 110, 255, 0.2);
+      color: var(--primary-light);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-left: 10px;
+    }
+    .edit-btn:active {
+      background: rgba(183, 110, 255, 0.2);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-dim);
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 14px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: var(--text-light);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      transition: var(--transition);
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(183, 110, 255, 0.05);
+    }
+
+    .edit-form {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: none;
+    }
+    .edit-form.show {
+      display: block;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-save:active { transform: scale(0.98); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-logout {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      border-radius: 50px;
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-logout:active {
+      background: rgba(255, 77, 109, 0.2);
+      transform: scale(0.98);
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--primary);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      transform: translateY(200px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .notification.show { transform: translateY(0); }
+    .notification-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; }
+    .notification-content h4 { font-size: 14px; margin-bottom: 4px; }
+    .notification-content p { font-size: 12px; color: var(--text-dim); }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .overlay.show { opacity: 1; visibility: visible; }
+    .confirm-dialog {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(10, 10, 10, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--primary);
+      border-radius: 24px;
+      padding: 25px;
+      width: 90%;
+      max-width: 350px;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .confirm-dialog.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+    .confirm-dialog-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; color: var(--primary); }
+    .confirm-dialog-title { font-size: 18px; font-weight: 700; }
+    .confirm-dialog-content { margin-bottom: 20px; color: var(--text-dim); line-height: 1.6; }
+    .confirm-dialog-buttons { display: flex; gap: 12px; }
+    .confirm-dialog-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
+    .confirm-dialog-btn.cancel { background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .confirm-dialog-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="gradient-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="notification" id="notification">
+    <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="notification-content">
+      <h4 id="notificationTitle">Succès !</h4>
+      <p id="notificationMessage">Action effectuée</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="confirmOverlay"></div>
+  <div class="confirm-dialog" id="confirmDialog">
+    <div class="confirm-dialog-header"><i class="fas fa-sign-out-alt"></i><span class="confirm-dialog-title">Déconnexion</span></div>
+    <div class="confirm-dialog-content">Voulez-vous vraiment vous déconnecter ?</div>
+    <div class="confirm-dialog-buttons">
+      <button class="confirm-dialog-btn cancel" id="confirmCancelBtn">Annuler</button>
+      <button class="confirm-dialog-btn confirm" id="confirmOkBtn">Se déconnecter</button>
+    </div>
+  </div>
+
+  <header class="header">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
+    <div class="logo-text">EARN<span>ZONE</span></div>
+    <div class="menu-btn" onclick="window.location.href='menu.html'"><i class="fas fa-bars"></i></div>
+  </header>
+
+  <main class="container">
+    <div class="profile-header" id="profileHeader">
+      <div class="profile-avatar" id="profileAvatar">U</div>
+      <div class="profile-name" id="profileName">Utilisateur</div>
+      <div class="profile-email" id="profileEmail">email@exemple.com</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><i class="fas fa-wallet"></i><div class="stat-value" id="statBalance">0 FCFA</div><div class="stat-label">Solde</div></div>
+      <div class="stat-card"><i class="fas fa-chart-line"></i><div class="stat-value" id="statInvestments">0</div><div class="stat-label">Investissements</div></div>
+      <div class="stat-card"><i class="fas fa-calendar-alt"></i><div class="stat-value" id="statDays">0</div><div class="stat-label">Jours actifs</div></div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-user-circle"></i> Informations personnelles</div>
+    <div class="info-card">
+      <div class="info-row">
+        <div class="info-label"><i class="fas fa-user"></i> Nom complet</div>
+        <div class="info-value"><span id="displayFullName">-</span> <button class="edit-btn" onclick="window.showEditForm('name')"><i class="fas fa-pen"></i> Modifier</button></div>
+      </div>
+      <div id="editNameForm" class="edit-form">
+        <div class="form-group"><label>Prénom</label><input type="text" id="editPrenom" placeholder="Votre prénom"></div>
+        <div class="form-group"><label>Nom</label><input type="text" id="editNom" placeholder="Votre nom"></div>
+        <button class="btn-save" onclick="window.saveName()"><i class="fas fa-save"></i> Enregistrer</button>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
+        <div class="info-value"><span id="displayEmail">-</span> <button class="edit-btn" onclick="window.showEditForm('email')"><i class="fas fa-pen"></i> Modifier</button></div>
+      </div>
+      <div id="editEmailForm" class="edit-form">
+        <div class="form-group"><label>Nouvel email</label><input type="email" id="editEmail" placeholder="exemple@email.com"></div>
+        <button class="btn-save" onclick="window.saveEmail()"><i class="fas fa-save"></i> Enregistrer</button>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label"><i class="fas fa-phone"></i> Téléphone</div>
+        <div class="info-value"><span id="displayPhone">-</span> <button class="edit-btn" onclick="window.showEditForm('phone')"><i class="fas fa-pen"></i> Modifier</button></div>
+      </div>
+      <div id="editPhoneForm" class="edit-form">
+        <div class="form-group"><label>Numéro de téléphone</label><input type="tel" id="editPhone" placeholder="Ex: 90 12 34 56"></div>
+        <button class="btn-save" onclick="window.savePhone()"><i class="fas fa-save"></i> Enregistrer</button>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label"><i class="fas fa-lock"></i> Mot de passe</div>
+        <div class="info-value">•••••••• <button class="edit-btn" onclick="window.showEditForm('password')"><i class="fas fa-pen"></i> Modifier</button></div>
+      </div>
+      <div id="editPasswordForm" class="edit-form">
+        <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="editPassword" placeholder="Minimum 6 caractères"></div>
+        <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="editPasswordConfirm" placeholder="Répétez le mot de passe"></div>
+        <button class="btn-save" onclick="window.savePassword()"><i class="fas fa-save"></i> Enregistrer</button>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label"><i class="fas fa-calendar-alt"></i> Membre depuis</div>
+        <div class="info-value"><span id="displayDate">-</span></div>
+      </div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-chart-line"></i> Statistiques</div>
+    <div class="info-card">
+      <div class="info-row"><div class="info-label"><i class="fas fa-trophy"></i> Gains totaux</div><div class="info-value" id="totalEarned">0 FCFA</div></div>
+      <div class="info-row"><div class="info-label"><i class="fas fa-money-bill-wave"></i> Retraits effectués</div><div class="info-value" id="totalWithdrawn">0 FCFA</div></div>
+      <div class="info-row"><div class="info-label"><i class="fas fa-box"></i> Packs achetés</div><div class="info-value" id="totalPacks">0</div></div>
+    </div>
+
+    <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getAuth, onAuthStateChanged, signOut, updatePassword, sendEmailVerification, verifyBeforeUpdateEmail } from "firebase/auth";
+    import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+      authDomain: "earnzone-9e82e.firebaseapp.com",
+      projectId: "earnzone-9e82e",
+      storageBucket: "earnzone-9e82e.firebasestorage.app",
+      messagingSenderId: "1076831479440",
+      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let userData = null;
+
+    async function loadUserData(uid) {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        userData.balance = userData.balance || 0;
+        userData.investments = userData.investments || [];
+        updateUI();
+      } else {
+        await signOut(auth);
+        window.location.href = 'login.html';
+      }
+    }
+
+    async function updateUI() {
+      if (!userData) return;
+      
+      const prenom = userData.prenom || '';
+      const nom = userData.nom || '';
+      const fullName = prenom && nom ? `${prenom} ${nom}` : (userData.fullName || 'Utilisateur');
+      document.getElementById('profileName').innerText = fullName;
+      document.getElementById('displayFullName').innerHTML = `${prenom || '-'} ${nom || '-'}`;
+      document.getElementById('profileEmail').innerText = currentUser?.email || userData.email || 'email@non.renseigné';
+      document.getElementById('displayEmail').innerText = currentUser?.email || userData.email || '-';
+      document.getElementById('displayPhone').innerText = userData.phone || '-';
+      document.getElementById('profileAvatar').innerText = (prenom || nom || 'U').charAt(0).toUpperCase();
+      
+      document.getElementById('statBalance').innerHTML = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
+      const investmentsCount = (userData.investments || []).filter(i => i.status === 'active').length;
+      document.getElementById('statInvestments').innerText = investmentsCount;
+      
+      if (userData.registrationDate) {
+        const days = Math.floor((new Date() - new Date(userData.registrationDate)) / 86400000);
+        document.getElementById('statDays').innerText = days;
+      }
+      
+      let totalEarned = 0;
+      if (userData.investments) {
+        totalEarned = userData.investments.reduce((sum, inv) => sum + (inv.totalEarned || 0), 0);
+      }
+      document.getElementById('totalEarned').innerHTML = (totalEarned || 0).toLocaleString('fr-FR') + ' FCFA';
+      
+      let totalWithdrawn = 0;
+      try {
+        const withdrawalsRef = collection(db, "withdrawals");
+        const q = query(withdrawalsRef, where("userId", "==", currentUser.uid), where("status", "==", "completed"));
+        const snapshot = await getDocs(q);
+        snapshot.forEach((doc) => {
+          totalWithdrawn += doc.data().amount || 0;
+        });
+      } catch (error) {
+        console.error("Erreur chargement retraits:", error);
+      }
+      document.getElementById('totalWithdrawn').innerHTML = totalWithdrawn.toLocaleString('fr-FR') + ' FCFA';
+      
+      document.getElementById('totalPacks').innerText = (userData.investments || []).length;
+      
+      if (userData.registrationDate) {
+        const date = new Date(userData.registrationDate).toLocaleDateString('fr-FR');
+        document.getElementById('displayDate').innerHTML = date;
+      }
+      
+      document.getElementById('editPrenom').value = userData.prenom || '';
+      document.getElementById('editNom').value = userData.nom || '';
+      document.getElementById('editEmail').value = currentUser?.email || userData.email || '';
+      document.getElementById('editPhone').value = userData.phone || '';
+    }
+
+    function hideAllForms() {
+      document.querySelectorAll('.edit-form').forEach(form => form.classList.remove('show'));
+    }
+
+    window.showEditForm = function(type) {
+      hideAllForms();
+      const formId = type === 'name' ? 'editNameForm' : type === 'email' ? 'editEmailForm' : type === 'phone' ? 'editPhoneForm' : 'editPasswordForm';
+      document.getElementById(formId).classList.add('show');
+    }
+
+    function showNotification(title, message, type = 'success') {
+      document.getElementById('notificationTitle').innerText = title;
+      document.getElementById('notificationMessage').innerText = message;
+      const notif = document.getElementById('notification');
+      notif.classList.add('show');
+      setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    window.saveName = async function() {
+      const newPrenom = document.getElementById('editPrenom').value.trim();
+      const newNom = document.getElementById('editNom').value.trim();
+      if (!newPrenom && !newNom) {
+        showNotification('Erreur', 'Veuillez remplir au moins un champ', 'error');
+        return;
+      }
+      
+      const btn = document.querySelector('#editNameForm .btn-save');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+      
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        const updates = {};
+        if (newPrenom) updates.prenom = newPrenom;
+        if (newNom) updates.nom = newNom;
+        updates.fullName = `${newPrenom || userData.prenom || ''} ${newNom || userData.nom || ''}`.trim();
+        await updateDoc(userRef, updates);
+        
+        userData.prenom = newPrenom || userData.prenom;
+        userData.nom = newNom || userData.nom;
+        userData.fullName = updates.fullName;
+        
+        await updateUI();
+        hideAllForms();
+        showNotification('Succès', 'Nom mis à jour');
+      } catch (error) {
+        console.error("Erreur:", error);
+        showNotification('Erreur', "Impossible de mettre à jour", 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      }
+    }
+
+    window.saveEmail = async function() {
+      const newEmail = document.getElementById('editEmail').value.trim();
+      if (!newEmail) {
+        showNotification('Erreur', 'Veuillez entrer un email', 'error');
+        return;
+      }
+      if (!newEmail.includes('@') || !newEmail.includes('.')) {
+        showNotification('Erreur', 'Email invalide', 'error');
+        return;
+      }
+      
+      const btn = document.querySelector('#editEmailForm .btn-save');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+      
+      try {
+        await verifyBeforeUpdateEmail(currentUser, newEmail);
+        
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, { email: newEmail });
+        
+        showNotification('Succès', 'Email mis à jour. Vérifiez votre boîte mail pour confirmer', 'success');
+        hideAllForms();
+      } catch (error) {
+        console.error("Erreur:", error);
+        if (error.code === 'auth/email-already-in-use') {
+          showNotification('Erreur', 'Cet email est déjà utilisé', 'error');
+        } else {
+          showNotification('Erreur', error.message, 'error');
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      }
+    }
+
+    window.savePhone = async function() {
+      const newPhone = document.getElementById('editPhone').value.trim();
+      if (!newPhone) {
+        showNotification('Erreur', 'Veuillez entrer un numéro', 'error');
+        return;
+      }
+      
+      const btn = document.querySelector('#editPhoneForm .btn-save');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+      
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, { phone: newPhone });
+        
+        userData.phone = newPhone;
+        await updateUI();
+        hideAllForms();
+        showNotification('Succès', 'Téléphone mis à jour');
+      } catch (error) {
+        console.error("Erreur:", error);
+        showNotification('Erreur', "Impossible de mettre à jour", 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      }
+    }
+
+    window.savePassword = async function() {
+      const newPassword = document.getElementById('editPassword').value;
+      const confirmPassword = document.getElementById('editPasswordConfirm').value;
+      
+      if (!newPassword) {
+        showNotification('Erreur', 'Veuillez entrer un mot de passe', 'error');
+        return;
+      }
+      if (newPassword.length < 6) {
+        showNotification('Erreur', 'Mot de passe trop court (minimum 6 caractères)', 'error');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showNotification('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+        return;
+      }
+      
+      const btn = document.querySelector('#editPasswordForm .btn-save');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+      
+      try {
+        await updatePassword(currentUser, newPassword);
+        showNotification('Succès', 'Mot de passe mis à jour');
+        hideAllForms();
+        document.getElementById('editPassword').value = '';
+        document.getElementById('editPasswordConfirm').value = '';
+      } catch (error) {
+        console.error("Erreur:", error);
+        showNotification('Erreur', "Impossible de mettre à jour le mot de passe", 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      }
+    }
+
+    function showConfirmDialog(callback) {
+      const overlay = document.getElementById('confirmOverlay');
+      const dialog = document.getElementById('confirmDialog');
+      overlay.classList.add('show');
+      dialog.classList.add('show');
+      
+      const cancelHandler = () => {
+        overlay.classList.remove('show');
+        dialog.classList.remove('show');
+        cancelBtn.removeEventListener('click', cancelHandler);
+        okBtn.removeEventListener('click', okHandler);
+      };
+      
+      const okHandler = () => {
+        cancelHandler();
+        if (callback) callback();
+      };
+      
+      const cancelBtn = document.getElementById('confirmCancelBtn');
+      const okBtn = document.getElementById('confirmOkBtn');
+      cancelBtn.addEventListener('click', cancelHandler);
+      okBtn.addEventListener('click', okHandler);
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      showConfirmDialog(async () => {
+        try {
+          await signOut(auth);
+          window.location.href = 'login.html';
+        } catch (error) {
+          console.error("Erreur déconnexion:", error);
+        }
+      });
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        await loadUserData(user.uid);
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+</body>
+</html>
+      

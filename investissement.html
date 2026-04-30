@@ -56,7 +56,6 @@
       border-radius: 50%;
       filter: blur(80px);
       z-index: -1;
-      pointer-events: none;
       animation: orbFloat 8s ease-in-out infinite;
     }
     .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
@@ -392,6 +391,9 @@
       box-shadow: 0 5px 20px rgba(183, 110, 255, 0.3);
       z-index: 99;
     }
+
+    @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .card { animation: slideIn 0.3s ease-out; }
   </style>
 </head>
 <body>
@@ -475,7 +477,7 @@
     import { getAuth, onAuthStateChanged } from "firebase/auth";
     import { getFirestore, doc, getDoc, updateDoc, arrayUnion, runTransaction } from "firebase/firestore";
 
- const firebaseConfig = {
+    const firebaseConfig = {
       apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
       authDomain: "earnzone-9e82e.firebaseapp.com",
       projectId: "earnzone-9e82e",
@@ -600,6 +602,9 @@
       }
     }
 
+    // ============================================
+    // ACHAT DE PACK AVEC DATE D'EXPIRATION
+    // ============================================
     async function buyPack(packKey) {
       const pack = packs[packKey];
       const balance = userData.balance || 0;
@@ -620,7 +625,12 @@
           if (currentBalance < pack.price) throw new Error("Solde insuffisant");
           
           const now = new Date();
+          // Calcul de la date de fin du pack
           const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
+          // Calcul de la date d'expiration (J+49 pour pack de 50 jours, J+39 pour 40 jours, etc.)
+          const expiryDate = new Date(now);
+          expiryDate.setDate(expiryDate.getDate() + (pack.totalDays - 1));
+          
           const investment = {
             id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
             pack: packKey,
@@ -640,13 +650,20 @@
           const newBalance = currentBalance - pack.price;
           const existingInvestments = userDoc.data().investments || [];
           
+          // Mise à jour du document utilisateur
           transaction.update(userRef, {
             balance: newBalance,
-            investments: [...existingInvestments, investment]
+            investments: [...existingInvestments, investment],
+            status: 'active',  // Statut actif
+            subscriptionEnd: expiryDate.toISOString().split('T')[0], // Date d'expiration
+            totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
+            lastInvestment: now.toISOString()
           });
           
           userData.balance = newBalance;
           userData.investments = [...existingInvestments, investment];
+          userData.status = 'active';
+          userData.subscriptionEnd = expiryDate.toISOString().split('T')[0];
           investmentsData.active.push(investment);
         });
         

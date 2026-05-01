@@ -1,6 +1,6 @@
 {
-  "name": "earnZone",
-  "short_name": "earnZone",
+  "name": "EarnZone",
+  "short_name": "EarnZone",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,7 @@
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "500x500",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]

@@ -8,12 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="icon.png">
-  
   
   <style>
-    /* ===== VARIABLES ===== */
+    /* ===== VARIABLES (conservé identique) ===== */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -47,6 +44,38 @@
       line-height: 1.5;
       overflow-x: hidden;
     }
+
+    /* ===== LOADER ===== */
+    .firebase-loader {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 12px;
+      color: var(--primary-light);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(183,110,255,0.2);
+      transition: opacity 0.3s;
+    }
+    .firebase-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loader-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(183,110,255,0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ===== BACKGROUND ===== */
     .gradient-bg {
@@ -307,6 +336,12 @@
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
+  <!-- Loader Firebase (visible pendant le chargement asynchrone) -->
+  <div class="firebase-loader" id="firebaseLoader">
+    <div class="loader-spinner"></div>
+    <span>Connexion en cours...</span>
+  </div>
+
   <div class="withdraw-notification" id="withdrawNotification">
     <div class="withdraw-icon"><i class="fas fa-money-bill-wave"></i></div>
     <div class="withdraw-content">
@@ -320,10 +355,11 @@
       <div class="logo-text">EARN<span>ZONE</span></div>
     </a>
     <div class="header-actions">
-      <a href="profil.html" class="user-profile" id="userProfile">
+      <!-- Le profil sera mis à jour après chargement Firebase ou depuis cache -->
+      <div class="user-profile" id="userProfile">
         <div class="user-avatar" id="userAvatar">U</div>
-        <span class="user-name" id="userName">Utilisateur</span>
-      </a>
+        <span class="user-name" id="userName">Chargement...</span>
+      </div>
       <div class="menu-btn" onclick="window.location.href='menu.html'">
         <i class="fas fa-bars"></i>
       </div>
@@ -351,25 +387,25 @@
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-wallet"></i></div><div class="stat-value" id="statBalance">0 FCFA</div><div class="stat-label">Solde</div></div>
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-value" id="statInvestments">0</div><div class="stat-label">Investissements</div></div>
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-trophy"></i></div><div class="stat-value" id="statGains">0 FCFA</div><div class="stat-label">Gains totaux</div></div>
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div><div class="stat-value" id="statDays">0</div><div class="stat-label">Jours actifs</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-wallet"></i></div><div class="stat-value" id="statBalance">-- FCFA</div><div class="stat-label">Solde</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-value" id="statInvestments">--</div><div class="stat-label">Investissements</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-trophy"></i></div><div class="stat-value" id="statGains">-- FCFA</div><div class="stat-label">Gains totaux</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div><div class="stat-value" id="statDays">--</div><div class="stat-label">Jours actifs</div></div>
     </div>
 
     <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
     <div class="features-grid">
       <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
-      <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus NexFormation</h3><p class="feature-description">Gagne jusqu'a 15000f dans la revente !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+15 000 FCFA/mois</div></a>
+      <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
     </div>
 
     <div class="section-header"><div class="section-subtitle">Formations exclusives</div><h2 class="section-title">Développez vos <span>compétences</span></h2><p class="section-description">Apprenez à votre rythme avec nos cours pratiques.</p></div>
     <div class="formations-grid">
-      <a href="formation1.html" class="formation-card">
+      <a href="formations.html" class="formation-card">
         <div class="formation-image-wrap"><img src="https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Business" class="formation-image" loading="lazy"></div>
         <div class="formation-content"><span class="formation-category">🚀 Business</span><h3 class="formation-title">Business Launch : 0 → 1</h3><p class="formation-description">Lancez votre business rentable sans investissement initial.</p><div class="formation-meta"><span><i class="far fa-clock"></i> 5h15</span><span><i class="fas fa-star"></i> 4.9 (85 avis)</span></div><div class="formation-price free">🎁 GRATUIT</div><span class="formation-btn free"><i class="fas fa-play"></i> Commencer gratuitement</span></div>
       </a>
-      <a href="formation2.html" class="formation-card">
+      <a href="formations.html" class="formation-card">
         <div class="formation-image-wrap"><img src="https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Marketing" class="formation-image" loading="lazy"></div>
         <div class="formation-content"><span class="formation-category">📣 Marketing</span><h3 class="formation-title">Marketing Storm</h3><p class="formation-description">Maîtrisez les réseaux sociaux et le marketing digital.</p><div class="formation-meta"><span><i class="far fa-clock"></i> 6h00</span><span><i class="fas fa-star"></i> 4.7 (68 avis)</span></div><div class="formation-price free">🎁 GRATUIT</div><span class="formation-btn free"><i class="fas fa-play"></i> Commencer gratuitement</span></div>
       </a>
@@ -401,10 +437,7 @@
   </script>
 
   <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-    import { getFirestore, doc, getDoc, onSnapshot } from "firebase/firestore";
-
+    // ===== CONFIGURATION FIREBASE =====
     const firebaseConfig = {
       apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
       authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -414,15 +447,12 @@
       appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
+    // ===== VARIABLES GLOBALES =====
+    let auth, db, unsubscribeUser = null;
     let userData = { balance: 0, investments: [], gainsTotal: 0, daysActive: 0, nom: "Utilisateur", prenom: "Utilisateur" };
     let notificationTimer = null;
-    let intervalTimer = null;
     let withdrawIndex = 0;
-    let unsubscribeUser = null;
+    let isFirebaseReady = false;
 
     const retraitsSimules = [
       { nom: "Samuel", montant: 65000, moyen: "Wave" }, { nom: "Awa", montant: 12500, moyen: "Orange Money" },
@@ -431,7 +461,26 @@
       { nom: "Sékou", montant: 92500, moyen: "MTN Mobile" }, { nom: "Moussa", montant: 33100, moyen: "Orange Money" }
     ];
 
-    function updateUI() {
+    // ===== FONCTIONS UI (affichage immédiat depuis cache) =====
+    function updateUIFromCache() {
+      const cached = localStorage.getItem('earnzone_user_cache');
+      if (cached) {
+        try {
+          const cache = JSON.parse(cached);
+          const cacheAge = Date.now() - (cache.timestamp || 0);
+          // Cache valide pendant 1 heure
+          if (cacheAge < 3600000 && cache.userData) {
+            userData = cache.userData;
+            applyUIToDOM();
+            console.log('✅ UI affichée depuis le cache');
+            return true;
+          }
+        } catch(e) {}
+      }
+      return false;
+    }
+
+    function applyUIToDOM() {
       document.getElementById('statBalance').innerText = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
       const activeInvestments = (userData.investments || []).filter(inv => inv.status === 'active').length;
       document.getElementById('statInvestments').innerText = activeInvestments;
@@ -457,6 +506,15 @@
       }
     }
 
+    function updateUICache() {
+      applyUIToDOM();
+      // Sauvegarder en cache
+      localStorage.setItem('earnzone_user_cache', JSON.stringify({
+        userData: userData,
+        timestamp: Date.now()
+      }));
+    }
+
     function showWithdrawNotification() {
       const retrait = retraitsSimules[withdrawIndex % retraitsSimules.length];
       withdrawIndex++;
@@ -469,10 +527,10 @@
     }
 
     function startNotificationTimer() {
-      if (intervalTimer) clearInterval(intervalTimer);
+      if (notificationTimer) clearInterval(notificationTimer);
       const hasDeposited = (userData.balance > 0) || (userData.hasDeposited === true);
       const intervalMs = hasDeposited ? 90000 : 10000;
-      intervalTimer = setInterval(showWithdrawNotification, intervalMs);
+      notificationTimer = setInterval(showWithdrawNotification, intervalMs);
     }
 
     function loadUserData(uid) {
@@ -482,30 +540,87 @@
       unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists()) {
           userData = docSnap.data();
-          updateUI();
+          updateUICache();
           startNotificationTimer();
         } else {
           console.error("Utilisateur non trouvé");
-          window.location.href = 'login.html';
         }
       }, (error) => {
         console.error("Erreur Firestore:", error);
       });
     }
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loadUserData(user.uid);
-        setTimeout(() => showWithdrawNotification(), 2000);
-      } else {
-        window.location.href = 'login.html';
+    // ===== CHARGEMENT ASYNCHRONE DE FIREBASE =====
+    async function loadFirebaseAndAuth() {
+      const loader = document.getElementById('firebaseLoader');
+      loader.classList.remove('hidden');
+      
+      try {
+        // Importer Firebase dynamiquement
+        const { initializeApp } = await import("firebase/app");
+        const { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } = await import("firebase/auth");
+        const { getFirestore, doc, onSnapshot } = await import("firebase/firestore");
+        
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        
+        // CRITIQUE: Configurer la persistance locale pour session longue durée
+        await setPersistence(auth, browserLocalPersistence);
+        console.log('✅ Persistence locale configurée - session longue durée');
+        
+      } catch (error) {
+        console.error('Erreur chargement Firebase:', error);
+      } finally {
+        setTimeout(() => {
+          loader.classList.add('hidden');
+        }, 500);
       }
-    });
+    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }), { threshold: 0.08 });
-      document.querySelectorAll('.stat-card, .feature-card, .formation-card, .testimonial-card').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(20px)'; observer.observe(el); });
-    });
+    // ===== ANIMATIONS D'ENTRÉE =====
+    function setupAnimations() {
+      document.querySelectorAll('.stat-card, .feature-card, .formation-card, .testimonial-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      });
+      
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.08 });
+      
+      document.querySelectorAll('.stat-card, .feature-card, .formation-card, .testimonial-card').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // ===== INITIALISATION =====
+    (function init() {
+      // 1. AFFICHAGE IMMÉDIAT depuis le cache
+      updateUIFromCache();
+      
+      // 2. Configurer animations
+      setupAnimations();
+      
+      // 3. Charger Firebase en arrière-plan (ne bloque pas l'UI)
+      loadFirebaseAndAuth();
+      
+      // 4. Rafraîchir le cache périodiquement
+      setInterval(() => {
+        if (userData && userData.balance !== undefined) {
+          localStorage.setItem('earnzone_user_cache', JSON.stringify({
+            userData: userData,
+            timestamp: Date.now()
+          }));
+        }
+      }, 30000);
+    })();
   </script>
 </body>
 </html>

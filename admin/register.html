@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>EarnZone Admin - Connexion</title>
+  <title>EarnZone Admin - Inscription</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -92,7 +92,7 @@
       justify-content: center;
     }
 
-    .login-card {
+    .register-card {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
       border: 1px solid var(--card-border);
@@ -100,11 +100,11 @@
       padding: 32px 24px;
     }
 
-    .login-header {
+    .register-header {
       text-align: center;
       margin-bottom: 32px;
     }
-    .login-header h1 {
+    .register-header h1 {
       font-size: 28px;
       font-weight: 800;
       margin-bottom: 8px;
@@ -112,7 +112,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .login-header p {
+    .register-header p {
       color: var(--text-dim);
       font-size: 13px;
     }
@@ -157,7 +157,7 @@
       box-shadow: 0 0 0 3px rgba(183, 110, 255, 0.2);
     }
 
-    .btn-login {
+    .btn-register {
       width: 100%;
       padding: 16px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -174,11 +174,11 @@
       gap: 10px;
       margin-top: 10px;
     }
-    .btn-login:active {
+    .btn-register:active {
       transform: scale(0.98);
       opacity: 0.9;
     }
-    .btn-login:disabled {
+    .btn-register:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
@@ -216,19 +216,25 @@
       color: var(--success);
       display: block;
     }
+    .message.warning {
+      background: rgba(255, 209, 102, 0.15);
+      border: 1px solid var(--warning);
+      color: var(--warning);
+      display: block;
+    }
 
-    .register-redirect {
+    .login-redirect {
       text-align: center;
       margin-top: 24px;
       color: var(--text-dim);
       font-size: 13px;
     }
-    .register-redirect a {
+    .login-redirect a {
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
-    .register-redirect a:active {
+    .login-redirect a:active {
       text-decoration: underline;
     }
 
@@ -241,6 +247,22 @@
     .footer p {
       color: var(--text-dim);
       font-size: 11px;
+    }
+
+    .warning-note {
+      background: rgba(255, 209, 102, 0.1);
+      border: 1px solid rgba(255, 209, 102, 0.2);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .warning-note i {
+      font-size: 14px;
     }
   </style>
 </head>
@@ -255,16 +277,21 @@
 </header>
 
 <main class="container">
-  <div class="login-card">
-    <div class="login-header">
-      <h1>Connexion Admin</h1>
-      <p>Accès à l'espace d'administration</p>
+  <div class="register-card">
+    <div class="register-header">
+      <h1>Inscription Admin</h1>
+      <p>Accès réservé aux administrateurs</p>
       <div class="admin-badge"><i class="fas fa-shield-alt"></i> Accès restreint</div>
+    </div>
+
+    <div class="warning-note">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Seul l'email <strong>gagneavecia@gmail.com</strong> peut créer un compte administrateur.</span>
     </div>
 
     <div id="message" class="message error" style="display: none;"></div>
 
-    <form id="loginForm">
+    <form id="registerForm">
       <div class="form-group">
         <label><i class="fas fa-envelope"></i> Email</label>
         <input type="email" id="email" placeholder="admin@earnzone.com" required>
@@ -272,16 +299,26 @@
 
       <div class="form-group">
         <label><i class="fas fa-lock"></i> Mot de passe</label>
-        <input type="password" id="password" placeholder="Votre mot de passe" required>
+        <input type="password" id="password" placeholder="Minimum 6 caractères" required>
       </div>
 
-      <button type="submit" class="btn-login" id="loginBtn">
-        <i class="fas fa-sign-in-alt"></i> Se connecter
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Confirmer le mot de passe</label>
+        <input type="password" id="confirmPassword" placeholder="Répétez le mot de passe" required>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-user-shield"></i> Code d'invitation</label>
+        <input type="text" id="inviteCode" placeholder="Code admin requis">
+      </div>
+
+      <button type="submit" class="btn-register" id="registerBtn">
+        <i class="fas fa-user-shield"></i> Créer compte admin
       </button>
     </form>
 
-    <div class="register-redirect">
-      Pas de compte admin ? <a href="register.html">Inscrivez-vous</a>
+    <div class="login-redirect">
+      Déjà un compte admin ? <a href="login.html">Connectez-vous</a>
     </div>
   </div>
 </main>
@@ -290,6 +327,7 @@
   <p>&copy; 2026 EarnZone Administration</p>
 </footer>
 
+<!-- Firebase - CHARGÉ EN DERNIER -->
 <script type="module">
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -301,8 +339,8 @@
   };
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -310,7 +348,9 @@
   
   setPersistence(auth, browserLocalPersistence);
 
+  // EMAIL ADMIN UNIQUE AUTORISÉ
   const ADMIN_EMAIL = "gagneavecia@gmail.com";
+  const ADMIN_INVITE_CODE = "EARNZONE_ADMIN_2026"; // Code d'invitation
 
   function showMessage(text, type = 'error') {
     const msgDiv = document.getElementById('message');
@@ -319,85 +359,127 @@
     msgDiv.style.display = 'block';
     setTimeout(() => {
       msgDiv.style.display = 'none';
-    }, 4000);
+    }, 5000);
   }
 
-  // Vérifier si l'utilisateur est admin
-  async function isAdmin(user) {
-    try {
-      const q = query(collection(db, "users"), where("uid", "==", user.uid), where("role", "==", "admin"));
-      const snapshot = await getDocs(q);
-      return !snapshot.empty;
-    } catch (e) {
-      return false;
-    }
+  // Vérifier si un compte admin existe déjà
+  async function checkAdminExists() {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("role", "==", "admin"));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
   }
 
-  // Redirection si déjà connecté en tant qu'admin
+  // Rediriger si déjà connecté en tant qu'admin
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      if (await isAdmin(user)) {
-        window.location.href = 'index.html';
+      try {
+        const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
+        if (!userDoc.empty) {
+          const userData = userDoc.docs[0].data();
+          if (userData.role === 'admin') {
+            window.location.href = 'index.html';
+          }
+        }
+      } catch(e) {
+        console.error(e);
       }
     }
   });
 
-  const loginForm = document.getElementById('loginForm');
-  const loginBtn = document.getElementById('loginBtn');
+  const registerForm = document.getElementById('registerForm');
+  const registerBtn = document.getElementById('registerBtn');
 
-  loginForm.addEventListener('submit', async (e) => {
+  registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const inviteCode = document.getElementById('inviteCode').value.trim();
 
-    if (!email || !password) {
-      showMessage('Veuillez remplir tous les champs.', 'error');
+    // Vérifications
+    if (!email || !password || !confirmPassword) {
+      showMessage('Tous les champs sont obligatoires.', 'error');
       return;
     }
 
+    // Vérification email admin
     if (email !== ADMIN_EMAIL) {
-      showMessage('Accès non autorisé. Email administrateur requis.', 'error');
+      showMessage(`Accès non autorisé. Seul ${ADMIN_EMAIL} peut créer un compte admin.`, 'error');
       return;
     }
 
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<span class="loader"></span> Connexion en cours...';
+    // Vérification code d'invitation
+    if (inviteCode !== ADMIN_INVITE_CODE) {
+      showMessage('Code d\'invitation incorrect.', 'error');
+      return;
+    }
+
+    // Vérifier si un compte admin existe déjà
+    const adminExists = await checkAdminExists();
+    if (adminExists) {
+      showMessage('Un compte administrateur existe déjà. Connectez-vous.', 'warning');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 2000);
+      return;
+    }
+
+    if (password.length < 6) {
+      showMessage('Le mot de passe doit contenir au moins 6 caractères.', 'error');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showMessage('Les mots de passe ne correspondent pas.', 'error');
+      return;
+    }
+
+    // Désactiver bouton
+    registerBtn.disabled = true;
+    registerBtn.innerHTML = '<span class="loader"></span> Création en cours...';
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // Création du compte Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // Création du document admin dans Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: email,
+        role: 'admin',
+        status: 'active',
+        registrationDate: new Date().toISOString(),
+        isInvited: true
+      });
+
+      showMessage('Compte administrateur créé avec succès ! Redirection...', 'success');
       
-      if (await isAdmin(user)) {
-        showMessage('Connexion réussie ! Redirection...', 'success');
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 1500);
-      } else {
-        await auth.signOut();
-        showMessage('Accès non autorisé. Ce compte n\'est pas administrateur.', 'error');
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
-      }
-      
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+
     } catch (error) {
       console.error("Erreur Firebase:", error);
       
       switch (error.code) {
-        case 'auth/invalid-credential':
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-          showMessage('Email ou mot de passe incorrect.', 'error');
+        case 'auth/email-already-in-use':
+          showMessage('Cet email est déjà utilisé. Connectez-vous.', 'error');
           break;
         case 'auth/invalid-email':
           showMessage('Email invalide.', 'error');
           break;
+        case 'auth/weak-password':
+          showMessage('Mot de passe trop faible (minimum 6 caractères).', 'error');
+          break;
         default:
-          showMessage('Erreur lors de la connexion. Réessayez.', 'error');
+          showMessage('Erreur lors de l\'inscription. Réessayez.', 'error');
       }
       
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
+      registerBtn.disabled = false;
+      registerBtn.innerHTML = '<i class="fas fa-user-shield"></i> Créer compte admin';
     }
   });
 </script>

@@ -619,7 +619,7 @@
       // Connecté mais pas admin → redirection vers page publique
       alert('Accès non autorisé. Vous allez être redirigé.');
       await signOut(auth);
-      window.location.href = '../login.html';
+      window.location.href = '/';
       return;
     }
     

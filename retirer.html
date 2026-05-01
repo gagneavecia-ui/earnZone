@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Retirer mes gains</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --bg-dark: #030305;
+      --bg-medium: #08080F;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.85);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --success: #2EE89A;
+      --warning: #FFD166;
+      --danger: #FF4D6D;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
+                  linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -20px) scale(1.05); }
+      66% { transform: translate(-15px, 15px) scale(0.95); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 5%;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.07);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo-text span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+      padding: 6px 12px;
+      border-radius: 30px;
+      background: rgba(183, 110, 255, 0.05);
+    }
+    .back-btn:active { 
+      color: var(--primary);
+      background: rgba(183, 110, 255, 0.12);
+      transform: scale(0.97);
+    }
+
+    .balance-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(183, 110, 255, 0.1);
+      border: 1px solid rgba(183, 110, 255, 0.2);
+      border-radius: 30px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-light);
+    }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px 100px; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .balance-card {
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.06));
+      border-radius: 28px;
+      padding: 30px 20px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(183, 110, 255, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    }
+    .balance-icon { font-size: 40px; color: var(--primary); margin-bottom: 15px; }
+    .balance-label { font-size: 14px; color: var(--text-dim); margin-bottom: 5px; }
+    .balance-amount { font-size: 42px; font-weight: 800; color: var(--primary-light); margin-bottom: 10px; }
+    .balance-minimum { font-size: 13px; color: var(--text-dim); }
+    .balance-minimum span { color: var(--warning); font-weight: 600; }
+
+    .block-card {
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .block-icon { width: 50px; height: 50px; background: rgba(255, 77, 109, 0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--danger); }
+    .block-content { flex: 1; }
+    .block-title { font-size: 16px; font-weight: 700; color: var(--danger); margin-bottom: 5px; }
+    .block-text { font-size: 13px; color: var(--text-dim); }
+    .progress-bar-small { height: 6px; background: rgba(255, 77, 109, 0.1); border-radius: 3px; overflow: hidden; margin: 8px 0; }
+    .progress-fill-small { height: 100%; background: linear-gradient(90deg, var(--danger), #ff0000); width: 0%; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--primary-light);
+    }
+
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .method-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .method-card:active { transform: scale(0.97); border-color: var(--primary); }
+    .method-card.selected { border-color: var(--primary); background: rgba(183, 110, 255, 0.08); box-shadow: 0 0 0 2px rgba(183, 110, 255, 0.2); }
+    .method-icon { font-size: 28px; margin-bottom: 8px; }
+    .method-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .method-fee { font-size: 10px; color: var(--text-dim); }
+    .orange .method-icon { color: #ff6600; }
+    .moov .method-icon { color: #00aaff; }
+    .airtel .method-icon { color: #ff0000; }
+    .wave .method-icon { color: #0066ff; }
+    .my-nita .method-icon { color: #ff44cc; }
+    .amana .method-icon { color: #44ffaa; }
+
+    .phone-section, .amount-section, .summary-section, .investments-preview, .history-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .phone-input-wrapper { position: relative; margin-top: 8px; }
+    .phone-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+    .phone-input {
+      width: 100%;
+      padding: 16px 16px 16px 48px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      color: var(--text-light);
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      transition: var(--transition);
+    }
+    .phone-input:focus { outline: none; border-color: var(--primary); background: rgba(183, 110, 255, 0.05); }
+    .phone-info { margin-top: 8px; font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+
+    .amount-label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-dim); }
+    .amount-input-wrapper { position: relative; margin-bottom: 15px; }
+    .amount-input {
+      width: 100%;
+      padding: 18px 50px 18px 20px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      color: var(--text-light);
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .amount-input:focus { outline: none; border-color: var(--primary); }
+    .currency-symbol { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--primary-light); font-weight: 600; }
+    .quick-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .quick-amount {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: var(--text-light);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .quick-amount:active { background: rgba(183, 110, 255, 0.15); border-color: var(--primary); }
+    .quick-amount.active { background: rgba(183, 110, 255, 0.2); border-color: var(--primary); color: var(--primary-light); }
+
+    .summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .summary-item:last-child { border-bottom: none; }
+    .summary-label { color: var(--text-dim); font-size: 14px; }
+    .summary-value { font-weight: 600; }
+    .fee-amount { color: var(--danger); }
+    .net-amount { color: var(--success); }
+
+    .investment-item-mini {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 14px;
+      margin-bottom: 8px;
+    }
+    .investment-days { font-size: 16px; font-weight: 700; color: var(--warning); }
+
+    .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .history-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: var(--primary-light); }
+    .clear-btn {
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.2);
+      color: var(--danger);
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .clear-btn:active { background: rgba(255, 77, 109, 0.2); transform: scale(0.97); }
+    .history-list { display: flex; flex-direction: column; gap: 10px; }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+    }
+    .history-info { flex: 1; }
+    .history-date { font-size: 11px; color: var(--text-dim); margin-bottom: 3px; }
+    .history-method { font-size: 13px; font-weight: 600; color: var(--primary-light); }
+    .history-phone { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    .history-amount { font-weight: 700; }
+    .history-amount.requested { color: var(--warning); }
+    .history-status { font-size: 10px; padding: 3px 8px; border-radius: 20px; font-weight: 600; margin-left: 10px; }
+    .status-pending { background: rgba(255, 204, 0, 0.1); color: var(--warning); border: 1px solid rgba(255, 204, 0, 0.2); }
+    .status-completed { background: rgba(46, 232, 154, 0.1); color: var(--success); border: 1px solid rgba(46, 232, 154, 0.2); }
+    .empty-state { text-align: center; padding: 30px; color: var(--text-dim); }
+
+    .withdraw-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 20px rgba(183, 110, 255, 0.3);
+    }
+    .withdraw-btn:active { transform: scale(0.98); }
+    .withdraw-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .back-home {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 16px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(183, 110, 255, 0.3);
+      z-index: 99;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--primary);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      transform: translateY(200px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .notification.show { transform: translateY(0); }
+    .notification-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .modal-overlay.show { opacity: 1; visibility: visible; }
+    .modal {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(10, 10, 10, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--primary);
+      border-radius: 28px;
+      padding: 25px;
+      width: 90%;
+      max-width: 350px;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .modal.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+    .modal-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+    .modal-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--warning), #ff9900); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: black; }
+    .modal-title { font-size: 18px; font-weight: 700; }
+    .modal-content { margin-bottom: 20px; color: var(--text-dim); line-height: 1.6; }
+    .modal-details { background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 15px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
+    .modal-details p { margin: 8px 0; font-size: 13px; }
+    .modal-buttons { display: flex; gap: 12px; }
+    .modal-btn { flex: 1; padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
+    .modal-btn.cancel { background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .modal-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+    .modal-btn:active { transform: scale(0.97); }
+
+    /* Skeleton */
+    .skeleton-text { height: 20px; background: linear-gradient(90deg, rgba(183,110,255,0.1) 25%, rgba(183,110,255,0.2) 50%, rgba(183,110,255,0.1) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; margin: 8px 0; }
+    .skeleton-card { background: rgba(15,15,26,0.5); border-radius: 28px; padding: 30px 20px; margin-bottom: 25px; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="notification" id="notification">
+  <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+  <div class="notification-content">
+    <h4 id="notificationTitle">Retrait</h4>
+    <p id="notificationMessage">Gérez vos retraits</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal" id="confirmModal">
+  <div class="modal-header">
+    <div class="modal-icon"><i class="fas fa-question"></i></div>
+    <div class="modal-title">Confirmer le retrait</div>
+  </div>
+  <div class="modal-content" id="modalMessage">Voulez-vous vraiment effectuer ce retrait ?</div>
+  <div class="modal-details" id="modalDetails"></div>
+  <div class="modal-buttons">
+    <button class="modal-btn cancel" id="modalCancel">Annuler</button>
+    <button class="modal-btn confirm" id="modalConfirm">Confirmer</button>
+  </div>
+</div>
+
+<header class="header">
+  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
+  <div class="logo-text">EARN<span>ZONE</span></div>
+  <div class="balance-display"><i class="fas fa-coins"></i><span id="currentBalance">0 FCFA</span></div>
+</header>
+
+<div class="container">
+  <!-- Skeleton UI -->
+  <div id="skeletonUI">
+    <div class="skeleton-card"><div class="skeleton-text" style="height: 60px;"></div></div>
+    <div class="skeleton-text" style="height: 100px;"></div>
+    <div class="skeleton-text" style="height: 80px;"></div>
+    <div class="skeleton-text" style="height: 150px;"></div>
+  </div>
+
+  <!-- Contenu réel -->
+  <div id="realContent" style="display: none;">
+    <div class="balance-card">
+      <div class="balance-icon"><i class="fas fa-wallet"></i></div>
+      <div class="balance-label">Solde disponible</div>
+      <div class="balance-amount" id="availableBalance">0 FCFA</div>
+      <div class="balance-minimum">Minimum de retrait: <span>5 000 FCFA</span></div>
+    </div>
+
+    <div id="blockSection"></div>
+    <div id="activeInvestmentsList"></div>
+
+    <div class="section-title"><i class="fas fa-mobile-alt"></i> Méthode de retrait</div>
+    <div class="methods-grid" id="methodsGrid">
+      <div class="method-card orange selected" data-method="orange"><div class="method-icon orange"><i class="fas fa-mobile-alt"></i></div><div class="method-name">Orange Money</div><div class="method-fee">Frais: 100 FCFA</div></div>
+      <div class="method-card moov" data-method="moov"><div class="method-icon moov"><i class="fas fa-mobile-alt"></i></div><div class="method-name">Moov Money</div><div class="method-fee">Frais: 100 FCFA</div></div>
+      <div class="method-card airtel" data-method="airtel"><div class="method-icon airtel"><i class="fas fa-sim-card"></i></div><div class="method-name">Airtel Money</div><div class="method-fee">Frais: 100 FCFA</div></div>
+      <div class="method-card wave" data-method="wave"><div class="method-icon wave"><i class="fas fa-wave-square"></i></div><div class="method-name">Wave</div><div class="method-fee">Frais: 50 FCFA</div></div>
+      <div class="method-card my-nita" data-method="mynita"><div class="method-icon my-nita"><i class="fas fa-hand-holding-heart"></i></div><div class="method-name">My Nita</div><div class="method-fee">Frais: 75 FCFA</div></div>
+      <div class="method-card amana" data-method="amana"><div class="method-icon amana"><i class="fas fa-building-columns"></i></div><div class="method-name">Amana</div><div class="method-fee">Frais: 50 FCFA</div></div>
+    </div>
+
+    <div class="phone-section">
+      <label class="amount-label"><i class="fas fa-phone-alt"></i> Numéro de téléphone</label>
+      <div class="phone-input-wrapper"><i class="fas fa-phone phone-icon"></i><input type="tel" id="phoneNumber" class="phone-input" placeholder="Ex: 90 12 34 56"></div>
+      <div class="phone-info"><i class="fas fa-info-circle"></i> Entrez le numéro ou identifiant de réception</div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-edit"></i> Montant à retirer</div>
+    <div class="amount-section">
+      <label class="amount-label">Entrez le montant (min 5 000 FCFA)</label>
+      <div class="amount-input-wrapper"><input type="number" id="amountInput" class="amount-input" placeholder="0" min="5000" step="1000" value="5000"><div class="currency-symbol">FCFA</div></div>
+      <div class="quick-amounts"><div class="quick-amount" data-amount="5000">5 000</div><div class="quick-amount" data-amount="10000">10 000</div><div class="quick-amount" data-amount="20000">20 000</div><div class="quick-amount" data-amount="50000">50 000</div></div>
+    </div>
+
+    <div class="summary-section">
+      <div class="summary-item"><span class="summary-label">Montant demandé</span><span class="summary-value" id="requestedAmount">0 FCFA</span></div>
+      <div class="summary-item"><span class="summary-label">Frais de service</span><span class="summary-value fee-amount" id="serviceFee">0 FCFA</span></div>
+      <div class="summary-item"><span class="summary-label">Montant reçu</span><span class="summary-value net-amount" id="netAmount">0 FCFA</span></div>
+    </div>
+
+    <button class="withdraw-btn" id="withdrawBtn" disabled><i class="fas fa-paper-plane"></i> DEMANDER LE RETRAIT</button>
+
+    <div class="history-section">
+      <div class="history-header"><div class="history-title"><i class="fas fa-history"></i> Historique des retraits</div><button class="clear-btn" id="clearHistoryBtn"><i class="fas fa-trash-alt"></i> Effacer</button></div>
+      <div class="history-list" id="historyList"><div class="empty-state"><i class="fas fa-history"></i><p>Aucun retrait effectué</p></div></div>
+    </div>
+  </div>
+</div>
+
+<a href="index.html" class="back-home"><i class="fas fa-home"></i> Retour à l'accueil</a>
+
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
+  import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, where, orderBy, onSnapshot } from "firebase/firestore";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  
+  setPersistence(auth, browserLocalPersistence);
+
+  let currentUser = null;
+  let userData = { balance: 0, investments: [] };
+  let withdrawalHistory = [];
+  let unsubscribeHistory = null;
+  let authChecked = false;
+  
+  const methods = { 
+    orange: { name: 'Orange Money', fee: 100 }, 
+    moov: { name: 'Moov Money', fee: 100 }, 
+    airtel: { name: 'Airtel Money', fee: 100 }, 
+    wave: { name: 'Wave', fee: 50 }, 
+    mynita: { name: 'My Nita', fee: 75 }, 
+    amana: { name: 'Amana', fee: 50 } 
+  };
+  let selectedMethod = 'orange';
+
+  function showRealContent() {
+    document.getElementById('skeletonUI').style.display = 'none';
+    document.getElementById('realContent').style.display = 'block';
+  }
+
+  function updateBalanceDisplay() {
+    const balance = userData?.balance || 0;
+    document.getElementById('currentBalance').innerHTML = balance.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('availableBalance').innerHTML = balance.toLocaleString('fr-FR') + ' FCFA';
+  }
+
+  function updateSummary() {
+    const amount = parseInt(document.getElementById('amountInput').value) || 0;
+    const fee = methods[selectedMethod]?.fee || 0;
+    const net = Math.max(0, amount - fee);
+    document.getElementById('requestedAmount').innerHTML = amount.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('serviceFee').innerHTML = fee.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('netAmount').innerHTML = net.toLocaleString('fr-FR') + ' FCFA';
+  }
+
+  function checkWithdrawButton() {
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const amount = parseInt(document.getElementById('amountInput').value) || 0;
+    const balance = userData?.balance || 0;
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    
+    if (amount >= 5000 && amount <= balance && phoneNumber.length >= 4) {
+      withdrawBtn.disabled = false;
+      withdrawBtn.innerHTML = '<i class="fas fa-paper-plane"></i> DEMANDER LE RETRAIT';
+    } else {
+      withdrawBtn.disabled = true;
+    }
+  }
+
+  function setAmount(amount) {
+    document.getElementById('amountInput').value = amount;
+    document.querySelectorAll('.quick-amount').forEach(btn => {
+      btn.classList.remove('active');
+      if (parseInt(btn.dataset.amount) === amount) btn.classList.add('active');
+    });
+    updateSummary();
+    checkWithdrawButton();
+  }
+
+  function checkWithdrawBlock() {
+    const investments = userData?.investments || [];
+    const activeInvestments = investments.filter(inv => inv.status === 'active');
+    const blockSection = document.getElementById('blockSection');
+    const activeList = document.getElementById('activeInvestmentsList');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const methodsGrid = document.getElementById('methodsGrid');
+    const amountInput = document.getElementById('amountInput');
+    const phoneInput = document.getElementById('phoneNumber');
+    
+    if (activeInvestments.length === 0) {
+      blockSection.innerHTML = '';
+      activeList.innerHTML = '';
+      methodsGrid.style.opacity = '1';
+      amountInput.disabled = false;
+      phoneInput.disabled = false;
+      checkWithdrawButton();
+      return;
+    }
+    
+    methodsGrid.style.opacity = '0.5';
+    amountInput.disabled = true;
+    phoneInput.disabled = true;
+    
+    const now = Date.now();
+    const endDates = activeInvestments.map(inv => new Date(inv.endDate).getTime());
+    const longestEndDate = Math.max(...endDates);
+    const daysLeft = Math.ceil((longestEndDate - now) / (86400000));
+    const totalDays = activeInvestments.reduce((sum, inv) => sum + inv.totalDays, 0);
+    const progress = Math.min(100, ((totalDays - daysLeft) / totalDays) * 100);
+    
+    blockSection.innerHTML = `<div class="block-card">
+      <div class="block-icon"><i class="fas fa-lock"></i></div>
+      <div class="block-content">
+        <div class="block-title">⛔ RETRAIT BLOQUÉ</div>
+        <div class="block-text">Vous avez ${activeInvestments.length} investissement(s) en cours. Le retrait sera possible après la fin de tous vos investissements.</div>
+        <div class="progress-bar-small"><div class="progress-fill-small" style="width: ${progress}%;"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-top:5px;"><span>En cours</span><span>${daysLeft} jours restants</span></div>
+      </div>
+    </div>`;
+    
+    let html = '<div class="investments-preview"><div class="section-title"><i class="fas fa-chart-line"></i> Investissements en cours</div>';
+    activeInvestments.forEach(inv => {
+      const endDate = new Date(inv.endDate);
+      const daysRemaining = Math.ceil((endDate - now) / 86400000);
+      html += `<div class="investment-item-mini">
+        <div><strong>Pack ${inv.packName}</strong><br><span style="font-size:11px;color:var(--text-dim);">Fin le ${endDate.toLocaleDateString('fr-FR')}</span></div>
+        <div class="investment-days">${daysRemaining}j</div>
+      </div>`;
+    });
+    html += '</div>';
+    activeList.innerHTML = html;
+    
+    withdrawBtn.disabled = true;
+    withdrawBtn.innerHTML = '<i class="fas fa-lock"></i> RETRAIT BLOQUÉ';
+  }
+
+  async function processWithdrawal() {
+    const amount = parseInt(document.getElementById('amountInput').value) || 0;
+    const fee = methods[selectedMethod].fee;
+    const net = amount - fee;
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const methodName = methods[selectedMethod].name;
+    
+    const investments = userData?.investments || [];
+    const activeInvestments = investments.filter(inv => inv.status === 'active');
+    
+    if (activeInvestments.length > 0) {
+      showNotification('❌ Bloqué', 'Vous avez encore des investissements actifs', 'error');
+      closeModal();
+      return;
+    }
+    
+    if (amount < 5000) {
+      showNotification('❌ Montant invalide', 'Minimum de retrait: 5 000 FCFA', 'error');
+      closeModal();
+      return;
+    }
+    
+    if (amount > (userData?.balance || 0)) {
+      showNotification('❌ Solde insuffisant', 'Vous n\'avez pas assez de fonds', 'error');
+      closeModal();
+      return;
+    }
+    
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      
+      await updateDoc(userRef, {
+        balance: (userData.balance || 0) - amount,
+        totalWithdrawn: (userData.totalWithdrawn || 0) + amount,
+        lastWithdrawal: new Date().toISOString()
+      });
+      
+      const withdrawal = {
+        userId: currentUser.uid,
+        date: new Date().toLocaleDateString('fr-FR'),
+        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        amount: amount,
+        net: net,
+        fee: fee,
+        method: methodName,
+        phone: phoneNumber,
+        status: 'pending',
+        timestamp: Date.now(),
+        createdAt: new Date().toISOString()
+      };
+      
+      const withdrawalsRef = collection(db, "withdrawals");
+      await addDoc(withdrawalsRef, withdrawal);
+      
+      userData.balance = (userData.balance || 0) - amount;
+      updateBalanceDisplay();
+      updateSummary();
+      closeModal();
+      showNotification('✅ Retrait demandé', `Vous recevrez ${net.toLocaleString('fr-FR')} FCFA sur ${phoneNumber}`, 'success');
+      
+      document.getElementById('amountInput').value = 5000;
+      setAmount(5000);
+      checkWithdrawButton();
+      
+    } catch (error) {
+      console.error("Erreur retrait:", error);
+      showNotification('❌ Erreur', "Impossible d'effectuer le retrait", 'error');
+      closeModal();
+    }
+  }
+
+  function listenToWithdrawalHistory() {
+    if (unsubscribeHistory) unsubscribeHistory();
+    if (!currentUser) return;
+    
+    const withdrawalsRef = collection(db, "withdrawals");
+    const q = query(withdrawalsRef, where("userId", "==", currentUser.uid), orderBy("timestamp", "desc"));
+    
+    unsubscribeHistory = onSnapshot(q, (snapshot) => {
+      withdrawalHistory = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (!data.hidden) {
+          withdrawalHistory.push({ id: docSnap.id, ...data });
+        }
+      });
+      displayHistory();
+    }, (error) => console.error("Erreur historique:", error));
+  }
+
+  function displayHistory() {
+    const container = document.getElementById('historyList');
+    
+    if (withdrawalHistory.length === 0) {
+      container.innerHTML = `<div class="empty-state"><i class="fas fa-history"></i><p>Aucun retrait effectué</p></div>`;
+      return;
+    }
+    
+    let html = '';
+    withdrawalHistory.forEach(item => {
+      const statusClass = item.status === 'completed' ? 'status-completed' : 'status-pending';
+      const statusText = item.status === 'completed' ? 'Validé' : 'En attente';
+      html += `<div class="history-item">
+        <div class="history-info">
+          <div class="history-date">${item.date} ${item.time || ''}</div>
+          <div class="history-method">${item.method}</div>
+          <div class="history-phone"><i class="fas fa-phone"></i> ${item.phone || 'Non spécifié'}</div>
+        </div>
+        <div>
+          <div class="history-amount requested">-${item.amount.toLocaleString('fr-FR')} FCFA</div>
+          <div class="history-amount received">+${item.net.toLocaleString('fr-FR')} FCFA</div>
+        </div>
+        <div class="history-status ${statusClass}">${statusText}</div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  async function clearHistory() {
+    if (withdrawalHistory.length === 0) {
+      showNotification('ℹ️ Info', 'Aucun historique à effacer', 'info');
+      return;
+    }
+    
+    openConfirmDialog('Effacer l\'historique ?', 'Cette action est irréversible', async () => {
+      try {
+        for (const item of withdrawalHistory) {
+          const withdrawalRef = doc(db, "withdrawals", item.id);
+          await updateDoc(withdrawalRef, { hidden: true });
+        }
+        showNotification('✅ Historique effacé', 'Tous les retraits ont été masqués', 'success');
+      } catch (error) {
+        console.error("Erreur effacement:", error);
+        showNotification('❌ Erreur', "Impossible d'effacer l'historique", 'error');
+      }
+    });
+  }
+
+  async function loadUserData(uid) {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      userData = userDoc.data();
+      userData.balance = userData.balance || 0;
+      userData.investments = userData.investments || [];
+      updateBalanceDisplay();
+      checkWithdrawBlock();
+      
+      if (userData.phone) {
+        document.getElementById('phoneNumber').value = userData.phone;
+      }
+    }
+    showRealContent();
+  }
+
+  function showNotification(title, message, type = 'success') {
+    document.getElementById('notificationTitle').textContent = title;
+    document.getElementById('notificationMessage').textContent = message;
+    const notification = document.getElementById('notification');
+    notification.classList.add('show');
+    setTimeout(() => notification.classList.remove('show'), 3500);
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+  
+  function openConfirmDialog(title, message, onConfirm) {
+    document.getElementById('modalDetails').innerHTML = `<p>${message}</p><p style="color:var(--danger);">Cette action est irréversible !</p>`;
+    document.getElementById('modalOverlay').classList.add('show');
+    document.getElementById('confirmModal').classList.add('show');
+    
+    const confirmBtn = document.getElementById('modalConfirm');
+    const cancelBtn = document.getElementById('modalCancel');
+    
+    const close = () => {
+      document.getElementById('modalOverlay').classList.remove('show');
+      document.getElementById('confirmModal').classList.remove('show');
+      confirmBtn.removeEventListener('click', okHandler);
+      cancelBtn.removeEventListener('click', close);
+    };
+    
+    const okHandler = () => {
+      close();
+      if (onConfirm) onConfirm();
+    };
+    
+    confirmBtn.addEventListener('click', okHandler);
+    cancelBtn.addEventListener('click', close);
+  }
+  
+  function openConfirmModal() {
+    const amount = parseInt(document.getElementById('amountInput').value) || 0;
+    const fee = methods[selectedMethod].fee;
+    const net = amount - fee;
+    const methodName = methods[selectedMethod].name;
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    
+    if (!phoneNumber) {
+      showNotification('❌ Erreur', 'Veuillez entrer votre numéro ou identifiant', 'error');
+      return;
+    }
+    if (phoneNumber.length < 4) {
+      showNotification('❌ Erreur', 'Identifiant invalide', 'error');
+      return;
+    }
+    if (amount < 5000) {
+      showNotification('❌ Erreur', 'Minimum de retrait: 5 000 FCFA', 'error');
+      return;
+    }
+    if (amount > (userData?.balance || 0)) {
+      showNotification('❌ Erreur', 'Solde insuffisant', 'error');
+      return;
+    }
+    if (amount < fee) {
+      showNotification('❌ Erreur', `Montant insuffisant pour couvrir les frais (${fee} FCFA)`, 'error');
+      return;
+    }
+    
+    document.getElementById('modalDetails').innerHTML = `
+      <p><strong>Méthode:</strong> ${methodName}</p>
+      <p><strong>Identifiant:</strong> ${phoneNumber}</p>
+      <p><strong>Montant demandé:</strong> ${amount.toLocaleString('fr-FR')} FCFA</p>
+      <p><strong>Frais:</strong> ${fee.toLocaleString('fr-FR')} FCFA</p>
+      <p><strong>Vous recevrez:</strong> ${net.toLocaleString('fr-FR')} FCFA</p>
+      <p><strong>Délai:</strong> 24-48 heures</p>
+    `;
+    document.getElementById('modalOverlay').classList.add('show');
+    document.getElementById('confirmModal').classList.add('show');
+    
+    const confirmBtn = document.getElementById('modalConfirm');
+    const cancelBtn = document.getElementById('modalCancel');
+    
+    const close = () => {
+      document.getElementById('modalOverlay').classList.remove('show');
+      document.getElementById('confirmModal').classList.remove('show');
+      confirmBtn.removeEventListener('click', okHandler);
+      cancelBtn.removeEventListener('click', close);
+    };
+    
+    const okHandler = () => {
+      close();
+      processWithdrawal();
+    };
+    
+    confirmBtn.addEventListener('click', okHandler);
+    cancelBtn.addEventListener('click', close);
+  }
+  
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+    document.getElementById('confirmModal').classList.remove('show');
+  }
+
+  function setupEventListeners() {
+    document.querySelectorAll('.method-card').forEach(card => {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedMethod = this.dataset.method;
+        updateSummary();
+        checkWithdrawButton();
+      });
+    });
+    
+    document.getElementById('amountInput').addEventListener('input', function() {
+      const amount = parseInt(this.value) || 0;
+      setAmount(amount);
+    });
+    
+    document.querySelectorAll('.quick-amount').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const amount = parseInt(this.dataset.amount);
+        setAmount(amount);
+      });
+    });
+    
+    document.getElementById('phoneNumber').addEventListener('input', function() {
+      checkWithdrawButton();
+    });
+    
+    document.getElementById('withdrawBtn').addEventListener('click', openConfirmModal);
+    document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+  }
+
+  // Auth state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      localStorage.setItem('earnzone_current_user', user.uid);
+      await loadUserData(user.uid);
+      listenToWithdrawalHistory();
+    } else {
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid && !authChecked) {
+        setTimeout(async () => {
+          if (!auth.currentUser) {
+            window.location.href = 'login.html';
+          }
+        }, 2000);
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+    authChecked = true;
+  });
+
+  setupEventListeners();
+  updateSummary();
+</script>
+</body>
+</html>

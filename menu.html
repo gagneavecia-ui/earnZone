@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>EarnZone - Menu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,6 @@
       --primary-light: #D4A1FF;
       --bg-dark: #030305;
       --bg-medium: #08080F;
-      --bg-light: #0F0F1A;
       --text-light: #FFFFFF;
       --text-dim: #8B90A8;
       --card-bg: rgba(15, 15, 26, 0.85);
@@ -39,6 +38,7 @@
       font-size: 14px;
       line-height: 1.5;
       overflow-x: hidden;
+      min-height: 100vh;
     }
 
     /* ===== BACKGROUND ===== */
@@ -62,7 +62,11 @@
     }
     .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
     .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
-    @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -20px) scale(1.05); }
+      66% { transform: translate(-15px, 15px) scale(0.95); }
+    }
 
     /* ===== HEADER ===== */
     .header {
@@ -100,16 +104,23 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .menu-btn {
+    .close-btn {
       width: 40px;
       height: 40px;
-      background: rgba(255,255,255,0.05);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      opacity: 0.5;
+      transition: var(--transition);
+      color: var(--text-dim);
+    }
+    .close-btn:active {
+      background: rgba(183, 110, 255, 0.1);
+      color: var(--primary);
+      transform: scale(0.95);
     }
 
     /* ===== MENU PRINCIPAL ===== */
@@ -117,6 +128,11 @@
       max-width: 500px;
       margin: 0 auto;
       padding: 24px 16px 60px;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .menu-header {
@@ -124,23 +140,58 @@
       text-align: center;
     }
     .menu-header h1 {
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 32px;
+      font-weight: 800;
       background: linear-gradient(135deg, var(--primary-light), var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
     }
     .menu-header p {
       color: var(--text-dim);
       font-size: 13px;
-      margin-top: 8px;
+    }
+
+    /* Infos utilisateur */
+    .user-info {
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.1), rgba(139, 63, 232, 0.05));
+      border-radius: 24px;
+      padding: 18px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid rgba(183, 110, 255, 0.12);
+      transition: var(--transition);
+    }
+    .user-info-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 0 20px rgba(183, 110, 255, 0.3);
+    }
+    .user-info-text h4 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .user-info-text p {
+      font-size: 12px;
+      color: var(--text-dim);
     }
 
     /* Grille menu */
     .menu-grid {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 32px;
     }
 
@@ -149,7 +200,7 @@
       backdrop-filter: blur(14px);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 16px 20px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       gap: 15px;
@@ -159,10 +210,22 @@
       position: relative;
       overflow: hidden;
     }
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(183, 110, 255, 0.08), transparent);
+      transition: left 0.4s ease;
+    }
+    .menu-item:active::before {
+      left: 100%;
+    }
     .menu-item:active {
       transform: scale(0.98);
       border-color: rgba(183, 110, 255, 0.3);
-      background: rgba(183, 110, 255, 0.05);
     }
     .menu-icon {
       width: 48px;
@@ -172,83 +235,73 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       color: var(--primary);
+      transition: var(--transition);
+    }
+    .menu-item:active .menu-icon {
+      transform: scale(1.05);
     }
     .menu-content {
       flex: 1;
     }
     .menu-content h3 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .menu-content p {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-dim);
     }
     .menu-arrow {
       color: var(--text-dim);
-      font-size: 14px;
+      font-size: 12px;
+      transition: var(--transition);
+    }
+    .menu-item:active .menu-arrow {
+      transform: translateX(5px);
+      color: var(--primary);
+    }
+
+    /* Badge spécial pour admin (optionnel) */
+    .admin-badge {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 9px;
+      font-weight: 700;
+      margin-left: 8px;
+      display: inline-block;
+      vertical-align: middle;
     }
 
     /* Section déconnexion */
     .logout-section {
       margin-top: 20px;
       padding-top: 20px;
-      border-top: 1px solid rgba(183, 110, 255, 0.1);
+      border-top: 1px solid rgba(183, 110, 255, 0.08);
     }
     .logout-btn {
-      background: rgba(255, 77, 109, 0.1);
-      border: 1px solid rgba(255, 77, 109, 0.3);
+      background: rgba(255, 77, 109, 0.08);
+      border: 1px solid rgba(255, 77, 109, 0.2);
       color: var(--danger);
     }
     .logout-btn .menu-icon {
-      background: rgba(255, 77, 109, 0.15);
+      background: rgba(255, 77, 109, 0.12);
       color: var(--danger);
     }
     .logout-btn:active {
-      background: rgba(255, 77, 109, 0.2);
-    }
-
-    /* Message utilisateur */
-    .user-info {
-      background: linear-gradient(135deg, rgba(183, 110, 255, 0.1), rgba(139, 63, 232, 0.05));
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 1px solid rgba(183, 110, 255, 0.1);
-    }
-    .user-info-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 700;
-      color: white;
-    }
-    .user-info-text h4 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .user-info-text p {
-      font-size: 12px;
-      color: var(--text-dim);
+      background: rgba(255, 77, 109, 0.15);
+      border-color: rgba(255, 77, 109, 0.4);
     }
 
     /* Footer */
     .footer {
       border-top: 1px solid rgba(183, 110, 255, 0.06);
-      padding: 30px 0 20px;
+      padding: 24px 0 16px;
       text-align: center;
+      margin-top: 20px;
     }
     .footer-text {
       color: var(--text-dim);
@@ -256,243 +309,293 @@
     }
 
     /* Loader */
-    .loader-spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 50%;
-      border-top-color: var(--primary);
-      animation: spin 0.8s linear infinite;
+    .skeleton {
+      background: linear-gradient(90deg, var(--card-border) 25%, var(--glass-border) 50%, var(--card-border) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 8px;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-text {
+      height: 16px;
+      width: 80%;
+      margin-bottom: 6px;
+    }
+    .skeleton-text-small {
+      height: 12px;
+      width: 60%;
+    }
+    .skeleton-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
     }
   </style>
 </head>
 <body>
 
-  <div class="gradient-bg"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-  <header class="header">
-    <a href="index.html" class="logo">
-      <div class="logo-text">EARN<span>ZONE</span></div>
-    </a>
-    <div class="menu-btn">
-      <i class="fas fa-bars"></i>
+<header class="header">
+  <a href="index.html" class="logo">
+    <div class="logo-text">Earn<span>Zone</span></div>
+  </a>
+  <div class="close-btn" onclick="window.location.href='index.html'">
+    <i class="fas fa-times"></i>
+  </div>
+</header>
+
+<main class="container">
+  <div class="menu-header">
+    <h1>Menu</h1>
+    <p>Naviguez facilement sur EarnZone</p>
+  </div>
+
+  <!-- Infos utilisateur (skeleton au chargement) -->
+  <div class="user-info" id="userInfo">
+    <div class="user-info-avatar" id="menuAvatar">U</div>
+    <div class="user-info-text">
+      <h4 id="menuUserName">Chargement...</h4>
+      <p id="menuUserEmail">patientez un instant</p>
     </div>
-  </header>
+  </div>
 
-  <main class="container">
-    <div class="menu-header">
-      <h1>Menu</h1>
-      <p>Naviguez facilement sur EarnZone</p>
-    </div>
-
-    <!-- Infos utilisateur -->
-    <div class="user-info" id="userInfo">
-      <div class="user-info-avatar" id="menuAvatar">U</div>
-      <div class="user-info-text">
-        <h4 id="menuUserName"><span class="loader-spinner"></span> Chargement...</h4>
-        <p id="menuUserEmail"></p>
+  <div class="menu-grid">
+    <a href="index.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-home"></i></div>
+      <div class="menu-content">
+        <h3>Accueil</h3>
+        <p>Retour à la page d'accueil</p>
       </div>
-    </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-    <div class="menu-grid">
-      <a href="index.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-home"></i></div>
-        <div class="menu-content">
-          <h3>Accueil</h3>
-          <p>Retour à la page d'accueil</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="profil.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-user-circle"></i></div>
+      <div class="menu-content">
+        <h3>Mon profil</h3>
+        <p>Voir et modifier mes informations</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="profil.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-user-circle"></i></div>
-        <div class="menu-content">
-          <h3>Mon profil</h3>
-          <p>Voir et modifier mes informations</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="investissement.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="menu-content">
+        <h3>Capital Croissance</h3>
+        <p>Investir et générer des gains</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="investissement.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
-        <div class="menu-content">
-          <h3>Capital Croissance</h3>
-          <p>Investir et générer des gains</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="activites.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-bolt"></i></div>
+      <div class="menu-content">
+        <h3>Bonus Quotidien Express</h3>
+        <p>Gagnez chaque jour rapidement</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="nex.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-bolt"></i></div>
-        <div class="menu-content">
-          <h3>Bonus NexFormation</h3>
-          <p>Gagnez dans la revente digitale</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="depot.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-coins"></i></div>
+      <div class="menu-content">
+        <h3>Dépôt</h3>
+        <p>Effectuer un dépôt (code coupon)</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="depot.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
-        <div class="menu-content">
-          <h3>Dépôt</h3>
-          <p>Effectuer un dépôt (code coupon)</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="retrait.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="menu-content">
+        <h3>Retrait</h3>
+        <p>Retirez vos gains instantanément</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="retrait.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
-        <div class="menu-content">
-          <h3>Retrait</h3>
-          <p>Retirez vos gains</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="formations.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div class="menu-content">
+        <h3>Formations</h3>
+        <p>Apprenez et progressez</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="avis.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-star"></i></div>
-        <div class="menu-content">
-          <h3>Avis membres</h3>
-          <p>Voir ce que les autres disent</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
+    <a href="avis.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-star"></i></div>
+      <div class="menu-content">
+        <h3>Avis membres</h3>
+        <p>Voir ce que les autres disent</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
 
-      <a href="informations.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-info-circle"></i></div>
-        <div class="menu-content">
-          <h3>À propos</h3>
-          <p>En savoir plus sur EarnZone</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
-    </div>
+    <a href="informations.html" class="menu-item">
+      <div class="menu-icon"><i class="fas fa-info-circle"></i></div>
+      <div class="menu-content">
+        <h3>À propos</h3>
+        <p>En savoir plus sur EarnZone</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
+  </div>
 
-    <!-- Déconnexion -->
-    <div class="logout-section">
-      <a href="#" class="menu-item logout-btn" id="logoutBtn">
-        <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
-        <div class="menu-content">
-          <h3>Déconnexion</h3>
-          <p>Se déconnecter de mon compte</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
-    </div>
+  <!-- Déconnexion -->
+  <div class="logout-section">
+    <a href="#" class="menu-item logout-btn" id="logoutBtn">
+      <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
+      <div class="menu-content">
+        <h3>Déconnexion</h3>
+        <p>Se déconnecter de mon compte</p>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </a>
+  </div>
 
-    <footer class="footer">
-      <p class="footer-text">&copy; 2026 EarnZone. Tous droits réservés.</p>
-    </footer>
-  </main>
+  <footer class="footer">
+    <p class="footer-text">&copy; 2026 EarnZone. Tous droits réservés.</p>
+  </footer>
+</main>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
-      }
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
     }
-  </script>
+  }
+</script>
 
-  <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-    import { getFirestore, doc, getDoc } from "firebase/firestore";
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "firebase/auth";
+  import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
-      authDomain: "earnzone-9e82e.firebaseapp.com",
-      projectId: "earnzone-9e82e",
-      storageBucket: "earnzone-9e82e.firebasestorage.app",
-      messagingSenderId: "1076831479440",
-      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    // VÉRIFICATION RAPIDE AVEC localStorage
-    const savedUid = localStorage.getItem('earnzone_current_user');
-    if (!savedUid) {
-      window.location.href = 'login.html';
-    }
+  // Persistance locale pour garder la session
+  setPersistence(auth, browserLocalPersistence);
 
-    onAuthStateChanged(auth, async (user) => {
-      // Si pas de user Firebase mais localStorage existe, on attend un peu
-      if (!user) {
-        if (savedUid) {
-          // Attendre 2 secondes pour voir si Firebase restaure la session
-          setTimeout(async () => {
-            const currentUser = auth.currentUser;
-            if (!currentUser) {
-              localStorage.removeItem('earnzone_current_user');
-              window.location.href = 'login.html';
-            } else {
-              // Recharger pour réinitialiser
-              window.location.reload();
-            }
-          }, 2000);
-          return;
-        }
-        window.location.href = 'login.html';
-        return;
-      }
+  // Vérification initiale via localStorage
+  const savedUid = localStorage.getItem('earnzone_current_user');
+  
+  let authStateChecked = false;
 
-      // Succès : utilisateur connecté
-      localStorage.setItem('earnzone_current_user', user.uid);
-
-      try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (!userDoc.exists()) {
-          await signOut(auth);
-          window.location.href = 'login.html';
-          return;
-        }
-
-        const userData = userDoc.data();
-        
-        // Vérifier si le compte est bloqué
-        if (userData.status === 'blocked') {
-          await signOut(auth);
-          window.location.href = 'login.html';
-          return;
-        }
-
-        // Affichage des infos utilisateur
-        const prenom = userData.prenom || '';
-        const nom = userData.nom || userData.fullName || 'Utilisateur';
-        const nomComplet = prenom ? `${prenom} ${nom}` : nom;
-        document.getElementById('menuUserName').innerText = nomComplet;
-        document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
-        document.getElementById('menuAvatar').innerText = (prenom?.charAt(0) || nom?.charAt(0) || 'U').toUpperCase();
-        
-      } catch (error) {
-        console.error("Erreur chargement utilisateur:", error);
-        document.getElementById('menuUserName').innerText = 'Utilisateur';
-        document.getElementById('menuUserEmail').innerText = 'Erreur de chargement';
-      }
-    });
-
-    // Déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-      e.preventDefault();
-      try {
+  async function loadUserData(user) {
+    try {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      
+      if (!userDoc.exists()) {
+        // Document utilisateur inexistant -> déconnexion
         await signOut(auth);
         localStorage.removeItem('earnzone_current_user');
         window.location.href = 'login.html';
-      } catch (error) {
-        console.error("Erreur déconnexion:", error);
-        window.location.href = 'login.html';
+        return false;
       }
-    });
-  </script>
+
+      const userData = userDoc.data();
+      
+      // Vérifier si le compte est bloqué
+      if (userData.status === 'blocked') {
+        await signOut(auth);
+        localStorage.removeItem('earnzone_current_user');
+        window.location.href = 'login.html';
+        return false;
+      }
+
+      // Affichage des infos utilisateur
+      const prenom = userData.prenom || '';
+      const nom = userData.nom || userData.fullName || 'Utilisateur';
+      const nomComplet = prenom ? `${prenom} ${nom}` : nom;
+      
+      document.getElementById('menuUserName').innerHTML = nomComplet;
+      document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
+      document.getElementById('menuAvatar').innerText = (prenom?.charAt(0) || nom?.charAt(0) || 'U').toUpperCase();
+      
+      // Mettre à jour le localStorage
+      localStorage.setItem('earnzone_current_user', user.uid);
+      
+      return true;
+    } catch (error) {
+      console.error("Erreur chargement utilisateur:", error);
+      document.getElementById('menuUserName').innerHTML = 'Utilisateur';
+      document.getElementById('menuUserEmail').innerText = 'Erreur de chargement';
+      return true;
+    }
+  }
+
+  // Gestionnaire d'état d'authentification
+  onAuthStateChanged(auth, async (user) => {
+    authStateChecked = true;
+    
+    if (!user) {
+      // Utilisateur non connecté -> redirection
+      localStorage.removeItem('earnzone_current_user');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    // Utilisateur connecté
+    await loadUserData(user);
+  });
+
+  // Délai de sécurité : si après 3 secondes toujours pas d'état auth, rediriger
+  setTimeout(() => {
+    if (!authStateChecked) {
+      const currentUser = auth.currentUser;
+      if (!currentUser && savedUid) {
+        // Attendre encore un peu
+        setTimeout(() => {
+          if (!auth.currentUser) {
+            window.location.href = 'login.html';
+          }
+        }, 2000);
+      }
+    }
+  }, 3000);
+
+  // Déconnexion
+  document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    try {
+      // Animation visuelle avant déconnexion
+      const btn = e.currentTarget;
+      btn.style.opacity = '0.6';
+      btn.style.transform = 'scale(0.98)';
+      
+      await signOut(auth);
+      localStorage.removeItem('earnzone_current_user');
+      
+      // Redirection
+      window.location.href = 'login.html';
+    } catch (error) {
+      console.error("Erreur déconnexion:", error);
+      // Redirection forcée en cas d'erreur
+      localStorage.removeItem('earnzone_current_user');
+      window.location.href = 'login.html';
+    }
+  });
+</script>
 </body>
 </html>

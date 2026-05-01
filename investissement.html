@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>EarnZone - Capital Maxim</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EarnZone - Capital Maxim | Investissement</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -11,22 +11,33 @@
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
       --primary-light: #D4A1FF;
+      --primary-glow: rgba(183, 110, 255, 0.3);
       --bg-dark: #030305;
       --bg-medium: #08080F;
       --text-light: #FFFFFF;
       --text-dim: #8B90A8;
       --card-bg: rgba(15, 15, 26, 0.85);
       --card-border: rgba(183, 110, 255, 0.08);
+      --card-border-hover: rgba(183, 110, 255, 0.25);
       --success: #2EE89A;
+      --success-glow: rgba(46, 232, 154, 0.2);
       --warning: #FFD166;
       --danger: #FF4D6D;
-      --transition: all 0.3s ease;
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-bg: rgba(183, 110, 255, 0.04);
+      --glass-border: rgba(183, 110, 255, 0.07);
       
+      /* Pack colors */
       --start: #9ca3af;
+      --start-glow: rgba(156, 163, 175, 0.2);
       --micro: #cd7f32;
+      --micro-glow: rgba(205, 127, 50, 0.2);
       --bronze: #b87333;
+      --bronze-glow: rgba(184, 115, 51, 0.2);
       --silver: #c0c0c0;
+      --silver-glow: rgba(192, 192, 192, 0.2);
       --gold: #ffd700;
+      --gold-glow: rgba(255, 215, 0, 0.2);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,17 +48,19 @@
       color: var(--text-light);
       font-size: 14px;
       line-height: 1.5;
+      min-height: 100vh;
       overflow-x: hidden;
-      padding-bottom: 80px;
+      padding-bottom: 90px;
     }
 
+    /* Background animé */
     .gradient-bg {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: -2;
-      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
-                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.2) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.15) 0%, transparent 55%),
                   linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
     }
 
@@ -56,12 +69,18 @@
       border-radius: 50%;
       filter: blur(80px);
       z-index: -1;
-      animation: orbFloat 8s ease-in-out infinite;
+      pointer-events: none;
+      animation: orbFloat 10s ease-in-out infinite;
     }
-    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
-    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
-    @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+    .orb-1 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(139, 63, 232, 0.12), transparent 70%); top: -150px; left: -100px; }
+    .orb-2 { width: 280px; height: 280px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 10%; right: -80px; animation-delay: -5s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(25px, -25px) scale(1.08); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
 
+    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -83,6 +102,7 @@
       color: var(--text-light);
       text-transform: uppercase;
       text-decoration: none;
+      transition: var(--transition);
     }
     .logo-text span {
       font-weight: 800;
@@ -99,33 +119,44 @@
       text-decoration: none;
       font-size: 14px;
       transition: var(--transition);
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: var(--glass-bg);
     }
-    .back-btn:active { color: var(--primary); }
+    .back-btn:active { 
+      background: rgba(183, 110, 255, 0.15);
+      color: var(--primary);
+      transform: scale(0.95);
+    }
 
     .balance-display {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(183, 110, 255, 0.1);
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.15), rgba(139, 63, 232, 0.08));
       border: 1px solid rgba(183, 110, 255, 0.2);
       border-radius: 30px;
       padding: 8px 16px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--primary-light);
     }
+    .balance-display i { font-size: 12px; }
 
+    /* Container */
     .container { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
 
+    /* Hero Card */
     .hero-card {
       background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.06));
       border-radius: 28px;
-      padding: 25px;
+      padding: 25px 20px;
       margin-bottom: 25px;
       border: 1px solid rgba(183, 110, 255, 0.15);
       text-align: center;
       position: relative;
       overflow: hidden;
+      animation: fadeInUp 0.6s ease;
     }
     .hero-card::before {
       content: '';
@@ -134,23 +165,28 @@
       left: 0;
       width: 100%;
       height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary-light));
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .hero-icon { font-size: 48px; color: var(--primary); margin-bottom: 15px; }
-    .hero-title { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+    .hero-title { font-size: 28px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
     .hero-title span { background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-description { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+    .hero-description { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; font-size: 13px; }
     .hero-stats {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: 25px;
       background: rgba(0, 0, 0, 0.3);
       border-radius: 50px;
-      padding: 12px;
+      padding: 12px 20px;
     }
-    .hero-stat-value { font-size: 20px; font-weight: 700; color: var(--primary-light); margin-bottom: 4px; }
-    .hero-stat-label { font-size: 11px; color: var(--text-dim); }
+    .hero-stat-value { font-size: 18px; font-weight: 700; color: var(--primary-light); margin-bottom: 3px; }
+    .hero-stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
 
+    /* Balance Section */
     .balance-section {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
@@ -161,6 +197,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      animation: fadeInUp 0.6s ease 0.1s both;
     }
     .balance-info { display: flex; align-items: center; gap: 15px; }
     .balance-icon {
@@ -173,41 +210,57 @@
       font-size: 22px;
       color: black;
     }
-    .balance-text h3 { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+    .balance-text h3 { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .balance-amount { font-size: 22px; font-weight: 700; color: var(--primary-light); }
     .balance-action {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 10px 16px;
       text-decoration: none;
       color: var(--text-light);
       font-size: 13px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       transition: var(--transition);
     }
-    .balance-action:active { border-color: var(--primary); }
+    .balance-action:active { 
+      border-color: var(--primary);
+      background: rgba(183, 110, 255, 0.1);
+      transform: scale(0.95);
+    }
 
+    /* Section Title */
     .section-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 18px;
       font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--primary-light);
+      margin-bottom: 18px;
+    }
+    .section-title i {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: white;
     }
     .section-badge {
       background: rgba(183, 110, 255, 0.12);
       border: 1px solid rgba(183, 110, 255, 0.2);
       border-radius: 30px;
       padding: 4px 12px;
-      font-size: 11px;
+      font-size: 10px;
       margin-left: 10px;
     }
 
+    /* Packs Grid */
     .packs-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
     .pack-card {
       background: var(--card-bg);
@@ -217,8 +270,16 @@
       overflow: hidden;
       transition: var(--transition);
       cursor: pointer;
+      animation: fadeInUp 0.5s ease both;
     }
-    .pack-card:active { transform: scale(0.98); }
+    .pack-card:active { transform: scale(0.98); border-color: var(--card-border-hover); }
+
+    /* Pack specific styles */
+    .pack-start { border-left: 4px solid var(--start); }
+    .pack-micro { border-left: 4px solid var(--micro); }
+    .pack-bronze { border-left: 4px solid var(--bronze); }
+    .pack-silver { border-left: 4px solid var(--silver); }
+    .pack-gold { border-left: 4px solid var(--gold); }
 
     .pack-header { padding: 16px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
     .pack-icon {
@@ -228,32 +289,33 @@
       align-items: center;
       justify-content: center;
       font-size: 24px;
+      transition: var(--transition);
     }
-    .pack-start .pack-icon { background: linear-gradient(135deg, var(--start), #6b7280); box-shadow: 0 5px 15px rgba(156, 163, 175, 0.3); }
-    .pack-micro .pack-icon { background: linear-gradient(135deg, var(--micro), #8b4513); box-shadow: 0 5px 15px rgba(205, 127, 50, 0.3); }
-    .pack-bronze .pack-icon { background: linear-gradient(135deg, var(--bronze), #8b4513); box-shadow: 0 5px 15px rgba(184, 115, 51, 0.3); }
-    .pack-silver .pack-icon { background: linear-gradient(135deg, var(--silver), #696969); box-shadow: 0 5px 15px rgba(192, 192, 192, 0.3); }
-    .pack-gold .pack-icon { background: linear-gradient(135deg, var(--gold), #b8860b); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+    .pack-start .pack-icon { background: linear-gradient(135deg, var(--start), #6b7280); box-shadow: 0 4px 15px var(--start-glow); }
+    .pack-micro .pack-icon { background: linear-gradient(135deg, var(--micro), #8b4513); box-shadow: 0 4px 15px var(--micro-glow); }
+    .pack-bronze .pack-icon { background: linear-gradient(135deg, var(--bronze), #8b4513); box-shadow: 0 4px 15px var(--bronze-glow); }
+    .pack-silver .pack-icon { background: linear-gradient(135deg, var(--silver), #696969); box-shadow: 0 4px 15px var(--silver-glow); }
+    .pack-gold .pack-icon { background: linear-gradient(135deg, var(--gold), #b8860b); box-shadow: 0 4px 15px var(--gold-glow); }
     .pack-icon i { color: black; }
 
     .pack-info { flex: 1; }
     .pack-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-    .pack-price { font-size: 14px; color: var(--text-dim); }
+    .pack-price { font-size: 13px; color: var(--text-dim); }
 
     .pack-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .pack-detail { text-align: center; }
-    .pack-detail-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+    .pack-detail-label { font-size: 10px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .pack-detail-value { font-size: 16px; font-weight: 700; }
     .pack-return { color: var(--primary-light); }
     .pack-total { color: var(--success); }
-    .pack-roi { grid-column: span 2; background: rgba(183, 110, 255, 0.1); border: 1px solid rgba(183, 110, 255, 0.15); border-radius: 20px; padding: 8px; text-align: center; font-size: 12px; color: var(--primary-light); }
+    .pack-roi { grid-column: span 2; background: rgba(183, 110, 255, 0.1); border: 1px solid rgba(183, 110, 255, 0.15); border-radius: 20px; padding: 8px; text-align: center; font-size: 11px; color: var(--primary-light); }
     .pack-footer { padding: 0 16px 16px 16px; }
     .invest-btn {
       width: 100%; padding: 14px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -266,6 +328,7 @@
     .invest-btn:active { transform: scale(0.97); }
     .invest-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+    /* Investments Section */
     .investments-section {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
@@ -273,14 +336,17 @@
       border-radius: 24px;
       padding: 20px;
       margin-bottom: 25px;
+      animation: fadeInUp 0.6s ease 0.2s both;
     }
     .investment-item {
       background: rgba(255, 255, 255, 0.02);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 16px;
       margin-bottom: 12px;
       border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: var(--transition);
     }
+    .investment-item:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.04); }
     .investment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .investment-pack { display: flex; align-items: center; gap: 10px; }
     .investment-pack-icon { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
@@ -290,16 +356,17 @@
     .silver-icon { background: linear-gradient(135deg, var(--silver), #696969); }
     .gold-icon { background: linear-gradient(135deg, var(--gold), #b8860b); }
     .investment-pack-icon i { color: black; }
-    .investment-pack-name { font-weight: 600; }
-    .investment-day { font-size: 12px; color: var(--primary-light); }
+    .investment-pack-name { font-weight: 600; font-size: 14px; }
+    .investment-day { font-size: 11px; color: var(--primary-light); font-weight: 600; }
     .progress-bar { height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 3px; overflow: hidden; margin: 10px 0; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark)); width: 0%; transition: width 0.5s; }
-    .investment-details { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-top: 10px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark)); width: 0%; transition: width 0.5s ease; }
+    .investment-details { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 10px; }
     .investment-earned { color: var(--success); font-weight: 600; }
     .investment-timer { display: flex; align-items: center; gap: 5px; color: var(--warning); }
-    .empty-state { text-align: center; padding: 40px; color: var(--text-dim); }
-    .empty-state i { font-size: 48px; margin-bottom: 15px; opacity: 0.3; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
+    .empty-state i { font-size: 48px; margin-bottom: 15px; opacity: 0.3; display: block; }
 
+    /* History */
     .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .clear-history-btn {
       background: rgba(255, 77, 109, 0.1);
@@ -307,22 +374,24 @@
       color: var(--danger);
       padding: 8px 16px;
       border-radius: 30px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
     }
-    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.02); border-radius: 14px; margin-bottom: 10px; }
+    .clear-history-btn:active { background: rgba(255, 77, 109, 0.2); transform: scale(0.95); }
+    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255, 255, 255, 0.02); border-radius: 16px; margin-bottom: 10px; transition: var(--transition); }
     .history-info { display: flex; align-items: center; gap: 12px; }
-    .history-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-    .history-details h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .history-details p { font-size: 11px; color: var(--text-dim); }
-    .history-amount { font-size: 14px; font-weight: 700; color: var(--success); }
+    .history-icon { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .history-details h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .history-details p { font-size: 10px; color: var(--text-dim); }
+    .history-amount { font-size: 13px; font-weight: 700; color: var(--success); }
 
+    /* Modal */
     .overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
       z-index: 1999;
       opacity: 0;
       visibility: hidden;
@@ -336,7 +405,7 @@
       backdrop-filter: blur(20px);
       border: 1px solid var(--primary);
       border-radius: 24px;
-      padding: 25px;
+      padding: 24px;
       width: 90%;
       max-width: 350px;
       z-index: 2000;
@@ -347,19 +416,21 @@
     .confirm-dialog.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
     .confirm-dialog-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; color: var(--primary); }
     .confirm-dialog-title { font-size: 18px; font-weight: 700; }
-    .confirm-dialog-content { margin-bottom: 20px; color: var(--text-dim); line-height: 1.6; }
+    .confirm-dialog-content { margin-bottom: 24px; color: var(--text-dim); line-height: 1.6; font-size: 13px; }
     .confirm-dialog-buttons { display: flex; gap: 12px; }
-    .confirm-dialog-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
+    .confirm-dialog-btn { flex: 1; padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
     .confirm-dialog-btn.cancel { background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.1); }
     .confirm-dialog-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+    .confirm-dialog-btn:active { transform: scale(0.97); }
 
+    /* Notification */
     .notification {
       position: fixed;
       bottom: 20px;
       left: 16px;
       right: 16px;
       background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--primary);
       border-radius: 16px;
       padding: 12px 16px;
@@ -369,252 +440,268 @@
       z-index: 1000;
       transform: translateY(200px);
       transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      max-width: 400px;
+      margin: 0 auto;
     }
     .notification.show { transform: translateY(0); }
-    .notification-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; }
+    .notification-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: black; }
     .notification-content h4 { font-size: 14px; margin-bottom: 4px; }
-    .notification-content p { font-size: 12px; color: var(--text-dim); }
+    .notification-content p { font-size: 11px; color: var(--text-dim); }
 
+    /* Footer Button */
     .back-home {
       position: fixed;
       bottom: 20px;
-      left: 20px;
-      right: 20px;
+      left: 16px;
+      right: 16px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
       padding: 16px;
-      border-radius: 14px;
+      border-radius: 20px;
       text-decoration: none;
       font-weight: 700;
       font-size: 16px;
       text-align: center;
-      box-shadow: 0 5px 20px rgba(183, 110, 255, 0.3);
+      box-shadow: 0 5px 25px var(--primary-glow);
       z-index: 99;
+      transition: var(--transition);
+      max-width: 500px;
+      margin: 0 auto;
     }
+    .back-home:active { transform: scale(0.97); opacity: 0.9; }
 
-    @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    .card { animation: slideIn 0.3s ease-out; }
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px; }
+      .hero-title { font-size: 24px; }
+      .hero-stats { gap: 15px; padding: 10px 15px; }
+      .hero-stat-value { font-size: 16px; }
+      .pack-name { font-size: 16px; }
+      .balance-amount { font-size: 18px; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="gradient-bg"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-  <div class="notification" id="notification">
-    <div class="notification-icon"><i class="fas fa-gift"></i></div>
-    <div class="notification-content">
-      <h4 id="notificationTitle">Succès !</h4>
-      <p id="notificationMessage">Action effectuée avec succès</p>
+<div class="notification" id="notification">
+  <div class="notification-icon"><i class="fas fa-gift"></i></div>
+  <div class="notification-content">
+    <h4 id="notificationTitle">Succès !</h4>
+    <p id="notificationMessage">Action effectuée avec succès</p>
+  </div>
+</div>
+
+<div class="overlay" id="confirmOverlay"></div>
+<div class="confirm-dialog" id="confirmDialog">
+  <div class="confirm-dialog-header"><i class="fas fa-question-circle"></i><span class="confirm-dialog-title" id="confirmTitle">Confirmation</span></div>
+  <div class="confirm-dialog-content" id="confirmMessage"></div>
+  <div class="confirm-dialog-buttons">
+    <button class="confirm-dialog-btn cancel" id="confirmCancelBtn">Annuler</button>
+    <button class="confirm-dialog-btn confirm" id="confirmOkBtn">Confirmer</button>
+  </div>
+</div>
+
+<header class="header">
+  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i><span>Retour</span></a>
+  <div class="logo-text">EARN<span>ZONE</span></div>
+  <div class="balance-display" id="balanceDisplay"><i class="fas fa-coins"></i><span id="currentBalance">0 FCFA</span></div>
+</header>
+
+<div class="container">
+  <div class="hero-card">
+    <div class="hero-icon"><i class="fas fa-chart-line"></i></div>
+    <h1 class="hero-title">Capital <span>Maxim</span></h1>
+    <p class="hero-description">Investissez et recevez des gains quotidiens garantis jusqu'à +233% de rendement.</p>
+    <div class="hero-stats">
+      <div class="hero-stat-item"><div class="hero-stat-value">+233%</div><div class="hero-stat-label">Rendement max</div></div>
+      <div class="hero-stat-item"><div class="hero-stat-value">24h</div><div class="hero-stat-label">Gain quotidien</div></div>
+      <div class="hero-stat-item"><div class="hero-stat-value">5</div><div class="hero-stat-label">Packs</div></div>
     </div>
   </div>
 
-  <div class="overlay" id="confirmOverlay"></div>
-  <div class="confirm-dialog" id="confirmDialog">
-    <div class="confirm-dialog-header"><i class="fas fa-question-circle"></i><span class="confirm-dialog-title" id="confirmTitle">Confirmation</span></div>
-    <div class="confirm-dialog-content" id="confirmMessage"></div>
-    <div class="confirm-dialog-buttons">
-      <button class="confirm-dialog-btn cancel" id="confirmCancelBtn">Annuler</button>
-      <button class="confirm-dialog-btn confirm" id="confirmOkBtn">Confirmer</button>
+  <div class="balance-section">
+    <div class="balance-info">
+      <div class="balance-icon"><i class="fas fa-wallet"></i></div>
+      <div class="balance-text"><h3>Solde disponible</h3><div class="balance-amount" id="availableBalance">0 FCFA</div></div>
     </div>
+    <a href="depot.html" class="balance-action"><i class="fas fa-plus-circle"></i> Recharger</a>
   </div>
 
-  <header class="header">
-    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i><span>Retour</span></a>
-    <div class="logo-text">EARN<span>ZONE</span></div>
-    <div class="balance-display" id="balanceDisplay"><i class="fas fa-coins"></i><span id="currentBalance">0 FCFA</span></div>
-  </header>
+  <div class="section-title"><i class="fas fa-boxes"></i> Packs disponibles <span class="section-badge">5 packs premium</span></div>
+  <div class="packs-grid" id="packsGrid"></div>
 
-  <div class="container">
-    <div class="hero-card">
-      <div class="hero-icon"><i class="fas fa-chart-line"></i></div>
-      <h1 class="hero-title">Capital <span>Maxim</span></h1>
-      <p class="hero-description">Investissez dans nos packs à haut rendement et recevez des gains quotidiens garantis.</p>
-      <div class="hero-stats">
-        <div class="hero-stat-item"><div class="hero-stat-value">+233%</div><div class="hero-stat-label">Rendement max</div></div>
-        <div class="hero-stat-item"><div class="hero-stat-value">24h</div><div class="hero-stat-label">Gain quotidien</div></div>
-        <div class="hero-stat-item"><div class="hero-stat-value">Flexible</div><div class="hero-stat-label">5 packs</div></div>
-      </div>
-    </div>
+  <section class="investments-section">
+    <div class="section-title"><i class="fas fa-chart-line"></i> Mes investissements</div>
+    <div id="activeInvestments"><div class="empty-state"><i class="fas fa-chart-line"></i><p>Aucun investissement actif</p><p style="font-size: 11px;">Achetez un pack pour commencer à gagner</p></div></div>
+  </section>
 
-    <div class="balance-section">
-      <div class="balance-info">
-        <div class="balance-icon"><i class="fas fa-wallet"></i></div>
-        <div class="balance-text"><h3>Solde disponible</h3><div class="balance-amount" id="availableBalance">0 FCFA</div></div>
-      </div>
-      <a href="depot.html" class="balance-action"><i class="fas fa-plus-circle"></i> Recharger</a>
-    </div>
+  <section class="investments-section">
+    <div class="history-header"><div class="section-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Historique</div><button class="clear-history-btn" id="clearHistoryBtn"><i class="fas fa-trash-alt"></i> Effacer</button></div>
+    <div id="investmentHistory"><div class="empty-state"><i class="fas fa-history"></i><p>Aucun historique</p></div></div>
+  </section>
+</div>
 
-    <div class="section-title"><i class="fas fa-boxes"></i> Packs disponibles <span class="section-badge">5 packs</span></div>
-    <div class="packs-grid" id="packsGrid"></div>
+<a href="index.html" class="back-home"><i class="fas fa-home"></i> Retour à l'accueil</a>
 
-    <section class="investments-section">
-      <div class="section-title"><i class="fas fa-chart-line"></i> Mes investissements</div>
-      <div id="activeInvestments"><div class="empty-state"><i class="fas fa-chart-line"></i><p>Aucun investissement actif</p><p style="font-size: 12px;">Achetez un pack pour commencer à gagner</p></div></div>
-    </section>
-
-    <section class="investments-section">
-      <div class="history-header"><div class="section-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Historique</div><button class="clear-history-btn" id="clearHistoryBtn"><i class="fas fa-trash-alt"></i> Effacer</button></div>
-      <div id="investmentHistory"><div class="empty-state"><i class="fas fa-history"></i><p>Aucun historique</p></div></div>
-    </section>
-  </div>
-
-  <a href="index.html" class="back-home"><i class="fas fa-home"></i> Retour à l'accueil</a>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
-      }
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
     }
-  </script>
+  }
+</script>
 
-  <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, onAuthStateChanged } from "firebase/auth";
-    import { getFirestore, doc, getDoc, updateDoc, arrayUnion, runTransaction } from "firebase/firestore";
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
+  import { getFirestore, doc, getDoc, updateDoc, runTransaction } from "firebase/firestore";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
-      authDomain: "earnzone-9e82e.firebaseapp.com",
-      projectId: "earnzone-9e82e",
-      storageBucket: "earnzone-9e82e.firebasestorage.app",
-      messagingSenderId: "1076831479440",
-      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    let currentUser = null;
-    let userData = { balance: 0, investments: [] };
-    let investmentsData = { active: [], completed: [] };
+  setPersistence(auth, browserLocalPersistence);
 
-    const packs = {
-      start: { name: 'Start', price: 3000, dailyReturn: 200, totalDays: 50, totalReturn: 10000, netProfit: 7000, icon: 'fa-seedling', color: '#9ca3af' },
-      micro: { name: 'Micro', price: 5000, dailyReturn: 350, totalDays: 40, totalReturn: 14000, netProfit: 9000, icon: 'fa-chart-simple', color: '#cd7f32' },
-      bronze: { name: 'Bronze', price: 10000, dailyReturn: 700, totalDays: 30, totalReturn: 21000, netProfit: 11000, icon: 'fa-medal', color: '#b87333' },
-      silver: { name: 'Silver', price: 15000, dailyReturn: 1100, totalDays: 25, totalReturn: 27500, netProfit: 12500, icon: 'fa-gem', color: '#c0c0c0' },
-      gold: { name: 'Gold', price: 25000, dailyReturn: 2000, totalDays: 20, totalReturn: 40000, netProfit: 15000, icon: 'fa-crown', color: '#ffd700' }
-    };
+  let currentUser = null;
+  let userData = { balance: 0, investments: [] };
+  let investmentsData = { active: [], completed: [] };
 
-    function updateBalanceDisplay() {
-      const balance = userData.balance || 0;
-      document.getElementById('currentBalance').innerText = balance.toLocaleString('fr-FR') + ' FCFA';
-      document.getElementById('availableBalance').innerText = balance.toLocaleString('fr-FR') + ' FCFA';
-    }
+  const packs = {
+    start: { name: 'Start', price: 3000, dailyReturn: 200, totalDays: 50, totalReturn: 10000, netProfit: 7000, icon: 'fa-seedling', color: '#9ca3af', roi: '+233%' },
+    micro: { name: 'Micro', price: 5000, dailyReturn: 350, totalDays: 40, totalReturn: 14000, netProfit: 9000, icon: 'fa-chart-simple', color: '#cd7f32', roi: '+180%' },
+    bronze: { name: 'Bronze', price: 10000, dailyReturn: 700, totalDays: 30, totalReturn: 21000, netProfit: 11000, icon: 'fa-medal', color: '#b87333', roi: '+110%' },
+    silver: { name: 'Silver', price: 15000, dailyReturn: 1100, totalDays: 25, totalReturn: 27500, netProfit: 12500, icon: 'fa-gem', color: '#c0c0c0', roi: '+83%' },
+    gold: { name: 'Gold', price: 25000, dailyReturn: 2000, totalDays: 20, totalReturn: 40000, netProfit: 15000, icon: 'fa-crown', color: '#ffd700', roi: '+60%' }
+  };
 
-    function loadInvestmentsFromUserData() {
-      if (userData.investments) {
-        const now = new Date().getTime();
-        investmentsData = { active: [], completed: [] };
-        userData.investments.forEach(inv => {
-          if (inv.status === 'active') {
-            const endTime = new Date(inv.endDate).getTime();
-            if (endTime <= now) {
-              inv.status = 'completed';
-              investmentsData.completed.unshift(inv);
-            } else {
-              investmentsData.active.push(inv);
-            }
-          } else {
-            investmentsData.completed.unshift(inv);
-          }
-        });
-      } else {
-        investmentsData = { active: [], completed: [] };
-      }
-    }
+  function updateBalanceDisplay() {
+    const balance = userData.balance || 0;
+    document.getElementById('currentBalance').innerText = balance.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('availableBalance').innerText = balance.toLocaleString('fr-FR') + ' FCFA';
+  }
 
-    function saveInvestmentsToFirebase() {
-      if (!currentUser) return;
-      const allInvestments = [...investmentsData.active, ...investmentsData.completed];
-      const userRef = doc(db, "users", currentUser.uid);
-      updateDoc(userRef, { investments: allInvestments });
-    }
-
-    async function checkDailyPayouts() {
-      if (!currentUser || investmentsData.active.length === 0) return;
-      
-      let updated = false;
+  function loadInvestmentsFromUserData() {
+    if (userData.investments && userData.investments.length > 0) {
       const now = new Date().getTime();
-      const userRef = doc(db, "users", currentUser.uid);
-      
-      await runTransaction(db, async (transaction) => {
-        const userDoc = await transaction.get(userRef);
-        if (!userDoc.exists()) return;
-        
-        const currentBalance = userDoc.data().balance || 0;
-        let newBalance = currentBalance;
-        let updatedActive = [...investmentsData.active];
-        let updatedCompleted = [...investmentsData.completed];
-        let investmentsChanged = false;
-        
-        for (let i = 0; i < updatedActive.length; i++) {
-          const inv = updatedActive[i];
-          const lastPayout = new Date(inv.lastPayout).getTime();
-          const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
-          
-          if (hoursSince >= 24) {
-            const daysToPay = Math.floor(hoursSince / 24);
-            const remainingDays = inv.totalDays - inv.currentDay + 1;
-            const actualDays = Math.min(daysToPay, remainingDays);
-            
-            if (actualDays > 0) {
-              const gain = inv.dailyReturn * actualDays;
-              newBalance += gain;
-              inv.totalEarned += gain;
-              inv.currentDay += actualDays;
-              inv.lastPayout = new Date().toISOString();
-              investmentsChanged = true;
-              
-              if (inv.currentDay > inv.totalDays) {
-                inv.status = 'completed';
-                updatedCompleted.unshift(inv);
-                updatedActive.splice(i, 1);
-                i--;
-              }
-              updated = true;
-            }
+      investmentsData = { active: [], completed: [] };
+      userData.investments.forEach(inv => {
+        if (inv.status === 'active') {
+          const endTime = new Date(inv.endDate).getTime();
+          if (endTime <= now) {
+            inv.status = 'completed';
+            investmentsData.completed.unshift(inv);
+          } else {
+            investmentsData.active.push(inv);
           }
-        }
-        
-        if (investmentsChanged) {
-          transaction.update(userRef, { 
-            balance: newBalance,
-            investments: [...updatedActive, ...updatedCompleted]
-          });
-          investmentsData.active = updatedActive;
-          investmentsData.completed = updatedCompleted;
-          userData.balance = newBalance;
-          userData.investments = [...updatedActive, ...updatedCompleted];
+        } else {
+          investmentsData.completed.unshift(inv);
         }
       });
-      
-      if (updated) {
-        updateBalanceDisplay();
-        renderInvestments();
-        renderHistory();
-      }
+    } else {
+      investmentsData = { active: [], completed: [] };
     }
+  }
 
-    // ============================================
-    // ACHAT DE PACK AVEC DATE D'EXPIRATION
-    // ============================================
-    async function buyPack(packKey) {
-      const pack = packs[packKey];
-      const balance = userData.balance || 0;
+  function saveInvestmentsToFirebase() {
+    if (!currentUser) return;
+    const allInvestments = [...investmentsData.active, ...investmentsData.completed];
+    const userRef = doc(db, "users", currentUser.uid);
+    updateDoc(userRef, { investments: allInvestments });
+  }
+
+  async function checkDailyPayouts() {
+    if (!currentUser || investmentsData.active.length === 0) return;
+    
+    let updated = false;
+    const now = new Date().getTime();
+    const userRef = doc(db, "users", currentUser.uid);
+    
+    await runTransaction(db, async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists()) return;
       
-      if (balance < pack.price) {
-        showNotification('Solde insuffisant', `Il vous manque ${(pack.price - balance).toLocaleString('fr-FR')} FCFA`, 'error');
-        return;
+      let currentBalance = userDoc.data().balance || 0;
+      let updatedActive = [...investmentsData.active];
+      let updatedCompleted = [...investmentsData.completed];
+      let investmentsChanged = false;
+      
+      for (let i = 0; i < updatedActive.length; i++) {
+        const inv = updatedActive[i];
+        const lastPayout = new Date(inv.lastPayout).getTime();
+        const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
+        
+        if (hoursSince >= 24) {
+          const daysToPay = Math.floor(hoursSince / 24);
+          const remainingDays = inv.totalDays - inv.currentDay + 1;
+          const actualDays = Math.min(daysToPay, remainingDays);
+          
+          if (actualDays > 0) {
+            const gain = inv.dailyReturn * actualDays;
+            currentBalance += gain;
+            inv.totalEarned += gain;
+            inv.currentDay += actualDays;
+            inv.lastPayout = new Date().toISOString();
+            investmentsChanged = true;
+            
+            if (inv.currentDay > inv.totalDays) {
+              inv.status = 'completed';
+              updatedCompleted.unshift(inv);
+              updatedActive.splice(i, 1);
+              i--;
+            }
+            updated = true;
+          }
+        }
       }
       
-      showConfirmationDialog('Confirmer l\'investissement', `Acheter le pack ${pack.name} pour ${pack.price.toLocaleString('fr-FR')} FCFA ? Gain quotidien: ${pack.dailyReturn.toLocaleString('fr-FR')} FCFA pendant ${pack.totalDays} jours`, async () => {
+      if (investmentsChanged) {
+        transaction.update(userRef, { 
+          balance: currentBalance,
+          investments: [...updatedActive, ...updatedCompleted]
+        });
+        investmentsData.active = updatedActive;
+        investmentsData.completed = updatedCompleted;
+        userData.balance = currentBalance;
+        userData.investments = [...updatedActive, ...updatedCompleted];
+      }
+    });
+    
+    if (updated) {
+      updateBalanceDisplay();
+      renderInvestments();
+      renderHistory();
+      showNotification('Gains quotidiens', 'Vos gains ont été crédités automatiquement !', 'success');
+    }
+  }
+
+  async function buyPack(packKey) {
+    const pack = packs[packKey];
+    const balance = userData.balance || 0;
+    
+    if (balance < pack.price) {
+      showNotification('Solde insuffisant', `Il vous manque ${(pack.price - balance).toLocaleString('fr-FR')} FCFA`, 'error');
+      if (navigator.vibrate) navigator.vibrate(100);
+      return;
+    }
+    
+    showConfirmationDialog('Confirmer l\'investissement', 
+      `Pack ${pack.name}<br><br>💰 Prix: ${pack.price.toLocaleString('fr-FR')} FCFA<br>📈 Gain/jour: +${pack.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${pack.totalDays} jours<br>💵 Gain total: ${pack.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ ROI: ${pack.roi}`, 
+      async () => {
         const userRef = doc(db, "users", currentUser.uid);
         
         await runTransaction(db, async (transaction) => {
@@ -625,11 +712,9 @@
           if (currentBalance < pack.price) throw new Error("Solde insuffisant");
           
           const now = new Date();
-          // Calcul de la date de fin du pack
           const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
-          // Calcul de la date d'expiration (J+49 pour pack de 50 jours, J+39 pour 40 jours, etc.)
           const expiryDate = new Date(now);
-          expiryDate.setDate(expiryDate.getDate() + (pack.totalDays - 1));
+          expiryDate.setDate(expiryDate.getDate() + pack.totalDays);
           
           const investment = {
             id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -650,19 +735,17 @@
           const newBalance = currentBalance - pack.price;
           const existingInvestments = userDoc.data().investments || [];
           
-          // Mise à jour du document utilisateur
           transaction.update(userRef, {
             balance: newBalance,
             investments: [...existingInvestments, investment],
-            status: 'active',  // Statut actif
-            subscriptionEnd: expiryDate.toISOString().split('T')[0], // Date d'expiration
+            status: 'active',
+            subscriptionEnd: expiryDate.toISOString().split('T')[0],
             totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
             lastInvestment: now.toISOString()
           });
           
           userData.balance = newBalance;
           userData.investments = [...existingInvestments, investment];
-          userData.status = 'active';
           userData.subscriptionEnd = expiryDate.toISOString().split('T')[0];
           investmentsData.active.push(investment);
         });
@@ -670,195 +753,197 @@
         updateBalanceDisplay();
         renderInvestments();
         renderHistory();
-        showNotification('Investissement réussi !', `Pack ${pack.name} acheté`, 'success');
+        showNotification('Investissement réussi !', `Pack ${pack.name} acheté avec succès`, 'success');
+        if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
       });
+  }
+
+  function renderInvestments() {
+    const container = document.getElementById('activeInvestments');
+    if (investmentsData.active.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="fas fa-chart-line"></i><p>Aucun investissement actif</p><p style="font-size: 11px;">Achetez un pack pour commencer à gagner</p></div>';
+      return;
     }
-
-    function renderInvestments() {
-      const container = document.getElementById('activeInvestments');
-      if (investmentsData.active.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-chart-line"></i><p>Aucun investissement actif</p></div>';
-        return;
-      }
-      
-      let html = '';
-      investmentsData.active.forEach(inv => {
-        const pack = packs[inv.pack];
-        const progress = (inv.currentDay / inv.totalDays) * 100;
-        const endTime = inv.endTimestamp;
-        const timeLeft = endTime - new Date().getTime();
-        let timeDisplay = '';
-        if (timeLeft > 0) {
-          const days = Math.floor(timeLeft / (86400000));
-          const hours = Math.floor((timeLeft % 86400000) / 3600000);
-          timeDisplay = `${days}j ${hours}h`;
-        }
-        html += `<div class="investment-item">
-          <div class="investment-header">
-            <div class="investment-pack">
-              <div class="investment-pack-icon ${inv.pack}-icon"><i class="fas ${pack.icon}"></i></div>
-              <span class="investment-pack-name">Pack ${inv.packName}</span>
-            </div>
-            <span class="investment-day">Jour ${inv.currentDay}/${inv.totalDays}</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%;"></div></div>
-          <div class="investment-details">
-            <span>Investi: ${inv.amount.toLocaleString('fr-FR')} FCFA</span>
-            <span class="investment-earned">Gagné: ${inv.totalEarned.toLocaleString('fr-FR')} FCFA</span>
-          </div>
-          <div class="investment-details">
-            <span>Prochain gain: +${inv.dailyReturn.toLocaleString('fr-FR')} FCFA</span>
-            <span class="investment-timer"><i class="fas fa-hourglass-half"></i> ${timeDisplay}</span>
-          </div>
-        </div>`;
-      });
-      container.innerHTML = html;
-    }
-
-    function renderHistory() {
-      const container = document.getElementById('investmentHistory');
-      if (investmentsData.completed.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>Aucun historique</p></div>';
-        return;
-      }
-      
-      let html = '';
-      investmentsData.completed.slice(0, 10).forEach(inv => {
-        const pack = packs[inv.pack];
-        const startDate = new Date(inv.startDate).toLocaleDateString('fr-FR');
-        const endDate = new Date(inv.endDate || inv.lastPayout).toLocaleDateString('fr-FR');
-        html += `<div class="history-item">
-          <div class="history-info">
-            <div class="history-icon ${inv.pack}-icon"><i class="fas ${pack.icon}"></i></div>
-            <div class="history-details">
-              <h4>Pack ${inv.packName}</h4>
-              <p>${startDate} - ${endDate}</p>
-            </div>
-          </div>
-          <div class="history-amount">+${inv.totalEarned.toLocaleString('fr-FR')} FCFA</div>
-        </div>`;
-      });
-      container.innerHTML = html;
-    }
-
-    function renderPacks() {
-      const grid = document.getElementById('packsGrid');
-      const packKeys = ['start', 'micro', 'bronze', 'silver', 'gold'];
-      grid.innerHTML = packKeys.map(key => {
-        const p = packs[key];
-        let packClass = `pack-${key}`;
-        return `<div class="pack-card ${packClass}" onclick="window.showPackDetails('${key}')">
-          <div class="pack-header">
-            <div class="pack-icon"><i class="fas ${p.icon}"></i></div>
-            <div class="pack-info">
-              <div class="pack-name">Pack ${p.name}</div>
-              <div class="pack-price">${p.price.toLocaleString('fr-FR')} FCFA</div>
-            </div>
-          </div>
-          <div class="pack-body">
-            <div class="pack-detail">
-              <div class="pack-detail-label">Gain/jour</div>
-              <div class="pack-detail-value pack-return">+${p.dailyReturn.toLocaleString('fr-FR')} FCFA</div>
-            </div>
-            <div class="pack-detail">
-              <div class="pack-detail-label">Gain total</div>
-              <div class="pack-detail-value pack-total">${p.totalReturn.toLocaleString('fr-FR')} FCFA</div>
-            </div>
-            <div class="pack-roi">+${Math.round(p.netProfit/p.price*100)}% ROI • +${p.netProfit.toLocaleString('fr-FR')} FCFA net</div>
-          </div>
-          <div class="pack-footer">
-            <button class="invest-btn" onclick="window.buyPack('${key}'); event.stopPropagation();">
-              <i class="fas fa-shopping-cart"></i> INVESTIR ${p.price.toLocaleString('fr-FR')} FCFA
-            </button>
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    window.showPackDetails = function(packKey) {
-      const p = packs[packKey];
-      showConfirmationDialog(`Pack ${p.name}`, `💰 Prix: ${p.price.toLocaleString('fr-FR')} FCFA\n📈 Gain journalier: +${p.dailyReturn.toLocaleString('fr-FR')} FCFA\n📊 Durée: ${p.totalDays} jours\n💵 Gain total: ${p.totalReturn.toLocaleString('fr-FR')} FCFA\n✨ Bénéfice net: +${p.netProfit.toLocaleString('fr-FR')} FCFA`, () => buyPack(packKey));
-    };
-
-    window.buyPack = buyPack;
-
-    async function clearInvestmentHistory() {
-      if (investmentsData.completed.length === 0) {
-        showNotification('Aucun historique', 'Rien à effacer', 'warning');
-        return;
-      }
-      
-      showConfirmationDialog('Effacer l\'historique ?', 'Cette action est irréversible !', async () => {
-        const userRef = doc(db, "users", currentUser.uid);
-        const allInvestments = [...investmentsData.active];
-        
-        await updateDoc(userRef, { investments: allInvestments });
-        investmentsData.completed = [];
-        userData.investments = allInvestments;
-        renderHistory();
-        showNotification('Historique effacé', 'Succès', 'success');
-      });
-    }
-
-    function showNotification(title, message, type = 'success') {
-      document.getElementById('notificationTitle').innerText = title;
-      document.getElementById('notificationMessage').innerText = message;
-      const notif = document.getElementById('notification');
-      notif.classList.add('show');
-      setTimeout(() => notif.classList.remove('show'), 3000);
-    }
-
-    function showConfirmationDialog(title, message, onConfirm) {
-      document.getElementById('confirmTitle').innerText = title;
-      document.getElementById('confirmMessage').innerHTML = message.replace(/\n/g, '<br>');
-      document.getElementById('confirmOverlay').classList.add('show');
-      document.getElementById('confirmDialog').classList.add('show');
-      
-      const cancel = () => {
-        document.getElementById('confirmOverlay').classList.remove('show');
-        document.getElementById('confirmDialog').classList.remove('show');
-        document.getElementById('confirmCancelBtn').removeEventListener('click', cancel);
-        document.getElementById('confirmOkBtn').removeEventListener('click', ok);
-      };
-      
-      const ok = () => {
-        cancel();
-        if (onConfirm) onConfirm();
-      };
-      
-      document.getElementById('confirmCancelBtn').addEventListener('click', cancel);
-      document.getElementById('confirmOkBtn').addEventListener('click', ok);
-    }
-
-    async function loadUserData(uid) {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        userData = userDoc.data();
-        userData.balance = userData.balance || 0;
-        userData.investments = userData.investments || [];
-        updateBalanceDisplay();
-        loadInvestmentsFromUserData();
-        renderInvestments();
-        renderHistory();
-      }
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        await loadUserData(user.uid);
-        
-        setInterval(() => checkDailyPayouts(), 60000);
-        checkDailyPayouts();
+    
+    let html = '';
+    investmentsData.active.forEach(inv => {
+      const pack = packs[inv.pack];
+      const progress = (inv.currentDay / inv.totalDays) * 100;
+      const endTime = inv.endTimestamp;
+      const timeLeft = endTime - new Date().getTime();
+      let timeDisplay = '';
+      if (timeLeft > 0) {
+        const days = Math.floor(timeLeft / (86400000));
+        const hours = Math.floor((timeLeft % 86400000) / 3600000);
+        timeDisplay = `${days}j ${hours}h`;
       } else {
-        window.location.href = 'login.html';
+        timeDisplay = 'Terminé';
       }
+      html += `<div class="investment-item">
+        <div class="investment-header">
+          <div class="investment-pack">
+            <div class="investment-pack-icon ${inv.pack}-icon"><i class="fas ${pack.icon}"></i></div>
+            <span class="investment-pack-name">Pack ${inv.packName}</span>
+          </div>
+          <span class="investment-day">Jour ${inv.currentDay}/${inv.totalDays}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%;"></div></div>
+        <div class="investment-details">
+          <span>Investi: ${inv.amount.toLocaleString('fr-FR')} FCFA</span>
+          <span class="investment-earned">Gagné: ${inv.totalEarned.toLocaleString('fr-FR')} FCFA</span>
+        </div>
+        <div class="investment-details">
+          <span>Prochain gain: +${inv.dailyReturn.toLocaleString('fr-FR')} FCFA</span>
+          <span class="investment-timer"><i class="fas fa-hourglass-half"></i> ${timeDisplay}</span>
+        </div>
+      </div>`;
     });
+    container.innerHTML = html;
+  }
 
-    document.getElementById('clearHistoryBtn').addEventListener('click', clearInvestmentHistory);
-    renderPacks();
-  </script>
+  function renderHistory() {
+    const container = document.getElementById('investmentHistory');
+    if (investmentsData.completed.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>Aucun historique</p></div>';
+      return;
+    }
+    
+    let html = '';
+    investmentsData.completed.slice(0, 10).forEach(inv => {
+      const pack = packs[inv.pack];
+      const startDate = new Date(inv.startDate).toLocaleDateString('fr-FR');
+      const endDate = new Date(inv.endDate || inv.lastPayout).toLocaleDateString('fr-FR');
+      html += `<div class="history-item">
+        <div class="history-info">
+          <div class="history-icon ${inv.pack}-icon"><i class="fas ${pack.icon}"></i></div>
+          <div class="history-details">
+            <h4>Pack ${inv.packName}</h4>
+            <p>${startDate} - ${endDate}</p>
+          </div>
+        </div>
+        <div class="history-amount">+${inv.totalEarned.toLocaleString('fr-FR')} FCFA</div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderPacks() {
+    const grid = document.getElementById('packsGrid');
+    const packKeys = ['start', 'micro', 'bronze', 'silver', 'gold'];
+    grid.innerHTML = packKeys.map(key => {
+      const p = packs[key];
+      return `<div class="pack-card pack-${key}" onclick="window.showPackDetails('${key}')">
+        <div class="pack-header">
+          <div class="pack-icon"><i class="fas ${p.icon}"></i></div>
+          <div class="pack-info">
+            <div class="pack-name">Pack ${p.name}</div>
+            <div class="pack-price">${p.price.toLocaleString('fr-FR')} FCFA</div>
+          </div>
+        </div>
+        <div class="pack-body">
+          <div class="pack-detail">
+            <div class="pack-detail-label">Gain/jour</div>
+            <div class="pack-detail-value pack-return">+${p.dailyReturn.toLocaleString('fr-FR')} FCFA</div>
+          </div>
+          <div class="pack-detail">
+            <div class="pack-detail-label">Gain total</div>
+            <div class="pack-detail-value pack-total">${p.totalReturn.toLocaleString('fr-FR')} FCFA</div>
+          </div>
+          <div class="pack-roi">${p.roi} ROI • +${p.netProfit.toLocaleString('fr-FR')} FCFA net</div>
+        </div>
+        <div class="pack-footer">
+          <button class="invest-btn" onclick="window.buyPack('${key}'); event.stopPropagation();">
+            <i class="fas fa-shopping-cart"></i> INVESTIR ${p.price.toLocaleString('fr-FR')} FCFA
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  window.showPackDetails = function(packKey) {
+    const p = packs[packKey];
+    showConfirmationDialog(`Pack ${p.name}`, 
+      `💰 Prix: ${p.price.toLocaleString('fr-FR')} FCFA<br>📈 Gain journalier: +${p.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${p.totalDays} jours<br>💵 Gain total: ${p.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ Bénéfice net: +${p.netProfit.toLocaleString('fr-FR')} FCFA<br>📈 ROI: ${p.roi}`, 
+      () => buyPack(packKey));
+  };
+
+  window.buyPack = buyPack;
+
+  async function clearInvestmentHistory() {
+    if (investmentsData.completed.length === 0) {
+      showNotification('Aucun historique', 'Rien à effacer', 'warning');
+      return;
+    }
+    
+    showConfirmationDialog('Effacer l\'historique ?', 'Cette action est irréversible et ne peut pas être annulée.', async () => {
+      const userRef = doc(db, "users", currentUser.uid);
+      const allInvestments = [...investmentsData.active];
+      
+      await updateDoc(userRef, { investments: allInvestments });
+      investmentsData.completed = [];
+      userData.investments = allInvestments;
+      renderHistory();
+      showNotification('Historique effacé', 'L\'historique a été supprimé avec succès', 'success');
+      if (navigator.vibrate) navigator.vibrate(50);
+    });
+  }
+
+  function showNotification(title, message, type = 'success') {
+    document.getElementById('notificationTitle').innerText = title;
+    document.getElementById('notificationMessage').innerHTML = message;
+    const notif = document.getElementById('notification');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3500);
+  }
+
+  let pendingConfirm = null;
+  function closeModal() {
+    document.getElementById('confirmOverlay').classList.remove('show');
+    document.getElementById('confirmDialog').classList.remove('show');
+    pendingConfirm = null;
+  }
+  function showConfirmationDialog(title, message, onConfirm) {
+    document.getElementById('confirmTitle').innerText = title;
+    document.getElementById('confirmMessage').innerHTML = message;
+    document.getElementById('confirmOverlay').classList.add('show');
+    document.getElementById('confirmDialog').classList.add('show');
+    pendingConfirm = onConfirm;
+  }
+  document.getElementById('confirmOkBtn').onclick = () => { if (pendingConfirm) pendingConfirm(); closeModal(); };
+  document.getElementById('confirmCancelBtn').onclick = closeModal;
+  document.getElementById('confirmOverlay').onclick = closeModal;
+
+  async function loadUserData(uid) {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      userData = userDoc.data();
+      userData.balance = userData.balance || 0;
+      userData.investments = userData.investments || [];
+      updateBalanceDisplay();
+      loadInvestmentsFromUserData();
+      renderInvestments();
+      renderHistory();
+    }
+  }
+
+  // Auth State - Redirection si non connecté
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadUserData(user.uid);
+      
+      // Vérification des gains toutes les minutes
+      setInterval(() => checkDailyPayouts(), 60000);
+      checkDailyPayouts();
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  document.getElementById('clearHistoryBtn').addEventListener('click', clearInvestmentHistory);
+  renderPacks();
+</script>
 </body>
 </html>

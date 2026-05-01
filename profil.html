@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>EarnZone - Mon profil</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ===== TOUT VOTRE CSS EXISTANT (GARDÉ) ===== */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -20,7 +21,7 @@
       --success: #2EE89A;
       --warning: #FFD166;
       --danger: #FF4D6D;
-      --transition: all 0.3s ease;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,7 +33,7 @@
       font-size: 14px;
       line-height: 1.5;
       overflow-x: hidden;
-      padding-bottom: 60px;
+      min-height: 100vh;
     }
 
     .gradient-bg {
@@ -54,7 +55,11 @@
     }
     .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
     .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
-    @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -20px) scale(1.05); }
+      66% { transform: translate(-15px, 15px) scale(0.95); }
+    }
 
     .header {
       display: flex;
@@ -93,13 +98,21 @@
       text-decoration: none;
       font-size: 14px;
       transition: var(--transition);
+      padding: 6px 12px;
+      border-radius: 30px;
+      background: rgba(183, 110, 255, 0.05);
     }
-    .back-btn:active { color: var(--primary); }
+    .back-btn:active { 
+      color: var(--primary);
+      background: rgba(183, 110, 255, 0.12);
+      transform: scale(0.97);
+    }
 
     .menu-btn {
       width: 40px;
       height: 40px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(183, 110, 255, 0.08);
+      border: 1px solid rgba(183, 110, 255, 0.1);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -107,9 +120,13 @@
       cursor: pointer;
       transition: var(--transition);
     }
-    .menu-btn:active { background: rgba(183, 110, 255, 0.2); }
+    .menu-btn:active { 
+      background: rgba(183, 110, 255, 0.2);
+      transform: scale(0.95);
+    }
 
-    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px 40px; }
+    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px 60px; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     .profile-header {
       text-align: center;
@@ -128,11 +145,15 @@
       margin: 0 auto 16px;
       color: black;
       box-shadow: 0 10px 30px rgba(183, 110, 255, 0.3);
+      transition: var(--transition);
     }
     .profile-name {
       font-size: 24px;
       font-weight: 700;
       margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .profile-email {
       font-size: 14px;
@@ -152,7 +173,9 @@
       border-radius: 20px;
       padding: 15px;
       text-align: center;
+      transition: var(--transition);
     }
+    .stat-card:active { transform: scale(0.98); }
     .stat-card i {
       font-size: 24px;
       color: var(--primary);
@@ -172,11 +195,22 @@
     .section-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 16px;
       color: var(--primary-light);
+    }
+    .section-title i {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: black;
     }
 
     .info-card {
@@ -212,6 +246,11 @@
     .info-value {
       font-weight: 600;
       text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
     .edit-btn {
       background: rgba(183, 110, 255, 0.1);
@@ -223,10 +262,10 @@
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
-      margin-left: 10px;
     }
     .edit-btn:active {
-      background: rgba(183, 110, 255, 0.2);
+      background: rgba(183, 110, 255, 0.25);
+      transform: scale(0.95);
     }
 
     .form-group {
@@ -264,6 +303,11 @@
     }
     .edit-form.show {
       display: block;
+      animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .btn-save {
@@ -313,7 +357,7 @@
       left: 16px;
       right: 16px;
       background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--primary);
       border-radius: 16px;
       padding: 12px 16px;
@@ -323,6 +367,8 @@
       z-index: 1000;
       transform: translateY(200px);
       transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 400px;
+      margin: 0 auto;
     }
     .notification.show { transform: translateY(0); }
     .notification-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; }
@@ -332,14 +378,15 @@
     .overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
       z-index: 1999;
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s;
     }
     .overlay.show { opacity: 1; visibility: visible; }
+    
     .confirm-dialog {
       position: fixed;
       top: 50%; left: 50%;
@@ -357,13 +404,15 @@
       transition: all 0.3s;
     }
     .confirm-dialog.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
-    .confirm-dialog-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; color: var(--primary); }
+    .confirm-dialog-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+    .confirm-dialog-header i { font-size: 28px; color: var(--primary); }
     .confirm-dialog-title { font-size: 18px; font-weight: 700; }
     .confirm-dialog-content { margin-bottom: 20px; color: var(--text-dim); line-height: 1.6; }
     .confirm-dialog-buttons { display: flex; gap: 12px; }
     .confirm-dialog-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
     .confirm-dialog-btn.cancel { background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid rgba(255, 255, 255, 0.1); }
     .confirm-dialog-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+    .confirm-dialog-btn:active { transform: scale(0.97); }
 
     .spinner {
       display: inline-block;
@@ -377,40 +426,82 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* Skeleton loader */
+    .skeleton-text {
+      height: 20px;
+      background: linear-gradient(90deg, rgba(183, 110, 255, 0.1) 25%, rgba(183, 110, 255, 0.2) 50%, rgba(183, 110, 255, 0.1) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.1), rgba(139, 63, 232, 0.05));
+      margin: 0 auto 16px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="gradient-bg"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-  <div class="notification" id="notification">
-    <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
-    <div class="notification-content">
-      <h4 id="notificationTitle">Succès !</h4>
-      <p id="notificationMessage">Action effectuée</p>
+<div class="notification" id="notification">
+  <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+  <div class="notification-content">
+    <h4 id="notificationTitle">Succès !</h4>
+    <p id="notificationMessage">Action effectuée</p>
+  </div>
+</div>
+
+<div class="overlay" id="confirmOverlay"></div>
+<div class="confirm-dialog" id="confirmDialog">
+  <div class="confirm-dialog-header"><i class="fas fa-sign-out-alt"></i><span class="confirm-dialog-title">Déconnexion</span></div>
+  <div class="confirm-dialog-content">Voulez-vous vraiment vous déconnecter ?</div>
+  <div class="confirm-dialog-buttons">
+    <button class="confirm-dialog-btn cancel" id="confirmCancelBtn">Annuler</button>
+    <button class="confirm-dialog-btn confirm" id="confirmOkBtn">Se déconnecter</button>
+  </div>
+</div>
+
+<header class="header">
+  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
+  <div class="logo-text">EARN<span>ZONE</span></div>
+  <div class="menu-btn" onclick="window.location.href='menu.html'"><i class="fas fa-bars"></i></div>
+</header>
+
+<main class="container">
+  <!-- Skeleton UI (affiché immédiatement) -->
+  <div id="skeletonUI" style="display: block;">
+    <div class="profile-header">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-text" style="width: 60%; margin: 0 auto;"></div>
+      <div class="skeleton-text" style="width: 40%; margin: 8px auto;"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="skeleton-text" style="height: 40px;"></div></div>
+      <div class="stat-card"><div class="skeleton-text" style="height: 40px;"></div></div>
+      <div class="stat-card"><div class="skeleton-text" style="height: 40px;"></div></div>
+    </div>
+    <div class="info-card">
+      <div class="skeleton-text" style="height: 50px;"></div>
+      <div class="skeleton-text" style="height: 50px; margin-top: 10px;"></div>
+      <div class="skeleton-text" style="height: 50px; margin-top: 10px;"></div>
     </div>
   </div>
 
-  <div class="overlay" id="confirmOverlay"></div>
-  <div class="confirm-dialog" id="confirmDialog">
-    <div class="confirm-dialog-header"><i class="fas fa-sign-out-alt"></i><span class="confirm-dialog-title">Déconnexion</span></div>
-    <div class="confirm-dialog-content">Voulez-vous vraiment vous déconnecter ?</div>
-    <div class="confirm-dialog-buttons">
-      <button class="confirm-dialog-btn cancel" id="confirmCancelBtn">Annuler</button>
-      <button class="confirm-dialog-btn confirm" id="confirmOkBtn">Se déconnecter</button>
-    </div>
-  </div>
-
-  <header class="header">
-    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
-    <div class="logo-text">EARN<span>ZONE</span></div>
-    <div class="menu-btn" onclick="window.location.href='menu.html'"><i class="fas fa-bars"></i></div>
-  </header>
-
-  <main class="container">
-    <div class="profile-header" id="profileHeader">
+  <!-- Contenu réel (caché au départ) -->
+  <div id="realContent" style="display: none;">
+    <div class="profile-header">
       <div class="profile-avatar" id="profileAvatar">U</div>
       <div class="profile-name" id="profileName">Utilisateur</div>
       <div class="profile-email" id="profileEmail">email@exemple.com</div>
@@ -426,40 +517,40 @@
     <div class="info-card">
       <div class="info-row">
         <div class="info-label"><i class="fas fa-user"></i> Nom complet</div>
-        <div class="info-value"><span id="displayFullName">-</span> <button class="edit-btn" onclick="window.showEditForm('name')"><i class="fas fa-pen"></i> Modifier</button></div>
+        <div class="info-value"><span id="displayFullName">-</span> <button class="edit-btn" onclick="showEditForm('name')"><i class="fas fa-pen"></i> Modifier</button></div>
       </div>
       <div id="editNameForm" class="edit-form">
         <div class="form-group"><label>Prénom</label><input type="text" id="editPrenom" placeholder="Votre prénom"></div>
         <div class="form-group"><label>Nom</label><input type="text" id="editNom" placeholder="Votre nom"></div>
-        <button class="btn-save" onclick="window.saveName()"><i class="fas fa-save"></i> Enregistrer</button>
+        <button class="btn-save" onclick="saveName()"><i class="fas fa-save"></i> Enregistrer</button>
       </div>
 
       <div class="info-row">
         <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
-        <div class="info-value"><span id="displayEmail">-</span> <button class="edit-btn" onclick="window.showEditForm('email')"><i class="fas fa-pen"></i> Modifier</button></div>
+        <div class="info-value"><span id="displayEmail">-</span> <button class="edit-btn" onclick="showEditForm('email')"><i class="fas fa-pen"></i> Modifier</button></div>
       </div>
       <div id="editEmailForm" class="edit-form">
         <div class="form-group"><label>Nouvel email</label><input type="email" id="editEmail" placeholder="exemple@email.com"></div>
-        <button class="btn-save" onclick="window.saveEmail()"><i class="fas fa-save"></i> Enregistrer</button>
+        <button class="btn-save" onclick="saveEmail()"><i class="fas fa-save"></i> Enregistrer</button>
       </div>
 
       <div class="info-row">
         <div class="info-label"><i class="fas fa-phone"></i> Téléphone</div>
-        <div class="info-value"><span id="displayPhone">-</span> <button class="edit-btn" onclick="window.showEditForm('phone')"><i class="fas fa-pen"></i> Modifier</button></div>
+        <div class="info-value"><span id="displayPhone">-</span> <button class="edit-btn" onclick="showEditForm('phone')"><i class="fas fa-pen"></i> Modifier</button></div>
       </div>
       <div id="editPhoneForm" class="edit-form">
         <div class="form-group"><label>Numéro de téléphone</label><input type="tel" id="editPhone" placeholder="Ex: 90 12 34 56"></div>
-        <button class="btn-save" onclick="window.savePhone()"><i class="fas fa-save"></i> Enregistrer</button>
+        <button class="btn-save" onclick="savePhone()"><i class="fas fa-save"></i> Enregistrer</button>
       </div>
 
       <div class="info-row">
         <div class="info-label"><i class="fas fa-lock"></i> Mot de passe</div>
-        <div class="info-value">•••••••• <button class="edit-btn" onclick="window.showEditForm('password')"><i class="fas fa-pen"></i> Modifier</button></div>
+        <div class="info-value">•••••••• <button class="edit-btn" onclick="showEditForm('password')"><i class="fas fa-pen"></i> Modifier</button></div>
       </div>
       <div id="editPasswordForm" class="edit-form">
         <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="editPassword" placeholder="Minimum 6 caractères"></div>
         <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="editPasswordConfirm" placeholder="Répétez le mot de passe"></div>
-        <button class="btn-save" onclick="window.savePassword()"><i class="fas fa-save"></i> Enregistrer</button>
+        <button class="btn-save" onclick="savePassword()"><i class="fas fa-save"></i> Enregistrer</button>
       </div>
 
       <div class="info-row">
@@ -476,306 +567,340 @@
     </div>
 
     <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button>
-  </main>
+  </div>
+</main>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
-      }
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
     }
-  </script>
+  }
+</script>
 
-  <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, onAuthStateChanged, signOut, updatePassword, sendEmailVerification, verifyBeforeUpdateEmail } from "firebase/auth";
-    import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged, signOut, updatePassword, verifyBeforeUpdateEmail, setPersistence, browserLocalPersistence } from "firebase/auth";
+  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
-      authDomain: "earnzone-9e82e.firebaseapp.com",
-      projectId: "earnzone-9e82e",
-      storageBucket: "earnzone-9e82e.firebasestorage.app",
-      messagingSenderId: "1076831479440",
-      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  
+  // Persistance locale
+  setPersistence(auth, browserLocalPersistence);
 
-    let currentUser = null;
-    let userData = null;
+  let currentUser = null;
+  let userData = null;
+  let authReady = false;
 
-    async function loadUserData(uid) {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        userData = userDoc.data();
-        userData.balance = userData.balance || 0;
-        userData.investments = userData.investments || [];
-        updateUI();
-      } else {
-        await signOut(auth);
-        window.location.href = 'login.html';
-      }
+  function showRealContent() {
+    document.getElementById('skeletonUI').style.display = 'none';
+    document.getElementById('realContent').style.display = 'block';
+  }
+
+  async function loadUserData(uid) {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      userData = userDoc.data();
+      userData.balance = userData.balance || 0;
+      userData.investments = userData.investments || [];
+      updateUI();
+      showRealContent();
+    } else {
+      await signOut(auth);
+      window.location.href = 'login.html';
     }
+  }
 
-    async function updateUI() {
-      if (!userData) return;
-      
-      const prenom = userData.prenom || '';
-      const nom = userData.nom || '';
-      const fullName = prenom && nom ? `${prenom} ${nom}` : (userData.fullName || 'Utilisateur');
-      document.getElementById('profileName').innerText = fullName;
-      document.getElementById('displayFullName').innerHTML = `${prenom || '-'} ${nom || '-'}`;
-      document.getElementById('profileEmail').innerText = currentUser?.email || userData.email || 'email@non.renseigné';
-      document.getElementById('displayEmail').innerText = currentUser?.email || userData.email || '-';
-      document.getElementById('displayPhone').innerText = userData.phone || '-';
-      document.getElementById('profileAvatar').innerText = (prenom || nom || 'U').charAt(0).toUpperCase();
-      
-      document.getElementById('statBalance').innerHTML = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
-      const investmentsCount = (userData.investments || []).filter(i => i.status === 'active').length;
-      document.getElementById('statInvestments').innerText = investmentsCount;
-      
-      if (userData.registrationDate) {
-        const days = Math.floor((new Date() - new Date(userData.registrationDate)) / 86400000);
-        document.getElementById('statDays').innerText = days;
-      }
-      
-      let totalEarned = 0;
-      if (userData.investments) {
-        totalEarned = userData.investments.reduce((sum, inv) => sum + (inv.totalEarned || 0), 0);
-      }
-      document.getElementById('totalEarned').innerHTML = (totalEarned || 0).toLocaleString('fr-FR') + ' FCFA';
-      
-      let totalWithdrawn = 0;
-      try {
-        const withdrawalsRef = collection(db, "withdrawals");
-        const q = query(withdrawalsRef, where("userId", "==", currentUser.uid), where("status", "==", "completed"));
-        const snapshot = await getDocs(q);
-        snapshot.forEach((doc) => {
-          totalWithdrawn += doc.data().amount || 0;
-        });
-      } catch (error) {
-        console.error("Erreur chargement retraits:", error);
-      }
-      document.getElementById('totalWithdrawn').innerHTML = totalWithdrawn.toLocaleString('fr-FR') + ' FCFA';
-      
-      document.getElementById('totalPacks').innerText = (userData.investments || []).length;
-      
-      if (userData.registrationDate) {
-        const date = new Date(userData.registrationDate).toLocaleDateString('fr-FR');
-        document.getElementById('displayDate').innerHTML = date;
-      }
-      
-      document.getElementById('editPrenom').value = userData.prenom || '';
-      document.getElementById('editNom').value = userData.nom || '';
-      document.getElementById('editEmail').value = currentUser?.email || userData.email || '';
-      document.getElementById('editPhone').value = userData.phone || '';
+  async function updateUI() {
+    if (!userData) return;
+    
+    const prenom = userData.prenom || '';
+    const nom = userData.nom || '';
+    const fullName = prenom && nom ? `${prenom} ${nom}` : (userData.fullName || 'Utilisateur');
+    document.getElementById('profileName').innerHTML = fullName;
+    document.getElementById('displayFullName').innerHTML = `${prenom || '-'} ${nom || '-'}`;
+    document.getElementById('profileEmail').innerText = currentUser?.email || userData.email || 'email@non.renseigné';
+    document.getElementById('displayEmail').innerText = currentUser?.email || userData.email || '-';
+    document.getElementById('displayPhone').innerText = userData.phone || '-';
+    document.getElementById('profileAvatar').innerText = (prenom || nom || 'U').charAt(0).toUpperCase();
+    
+    document.getElementById('statBalance').innerHTML = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
+    const investmentsCount = (userData.investments || []).filter(i => i.status === 'active').length;
+    document.getElementById('statInvestments').innerText = investmentsCount;
+    
+    if (userData.registrationDate) {
+      const days = Math.floor((new Date() - new Date(userData.registrationDate)) / 86400000);
+      document.getElementById('statDays').innerText = days;
     }
-
-    function hideAllForms() {
-      document.querySelectorAll('.edit-form').forEach(form => form.classList.remove('show'));
+    
+    let totalEarned = 0;
+    if (userData.investments) {
+      totalEarned = userData.investments.reduce((sum, inv) => sum + (inv.totalEarned || 0), 0);
     }
-
-    window.showEditForm = function(type) {
-      hideAllForms();
-      const formId = type === 'name' ? 'editNameForm' : type === 'email' ? 'editEmailForm' : type === 'phone' ? 'editPhoneForm' : 'editPasswordForm';
-      document.getElementById(formId).classList.add('show');
-    }
-
-    function showNotification(title, message, type = 'success') {
-      document.getElementById('notificationTitle').innerText = title;
-      document.getElementById('notificationMessage').innerText = message;
-      const notif = document.getElementById('notification');
-      notif.classList.add('show');
-      setTimeout(() => notif.classList.remove('show'), 3000);
-    }
-
-    window.saveName = async function() {
-      const newPrenom = document.getElementById('editPrenom').value.trim();
-      const newNom = document.getElementById('editNom').value.trim();
-      if (!newPrenom && !newNom) {
-        showNotification('Erreur', 'Veuillez remplir au moins un champ', 'error');
-        return;
-      }
-      
-      const btn = document.querySelector('#editNameForm .btn-save');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
-      
-      try {
-        const userRef = doc(db, "users", currentUser.uid);
-        const updates = {};
-        if (newPrenom) updates.prenom = newPrenom;
-        if (newNom) updates.nom = newNom;
-        updates.fullName = `${newPrenom || userData.prenom || ''} ${newNom || userData.nom || ''}`.trim();
-        await updateDoc(userRef, updates);
-        
-        userData.prenom = newPrenom || userData.prenom;
-        userData.nom = newNom || userData.nom;
-        userData.fullName = updates.fullName;
-        
-        await updateUI();
-        hideAllForms();
-        showNotification('Succès', 'Nom mis à jour');
-      } catch (error) {
-        console.error("Erreur:", error);
-        showNotification('Erreur', "Impossible de mettre à jour", 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
-      }
-    }
-
-    window.saveEmail = async function() {
-      const newEmail = document.getElementById('editEmail').value.trim();
-      if (!newEmail) {
-        showNotification('Erreur', 'Veuillez entrer un email', 'error');
-        return;
-      }
-      if (!newEmail.includes('@') || !newEmail.includes('.')) {
-        showNotification('Erreur', 'Email invalide', 'error');
-        return;
-      }
-      
-      const btn = document.querySelector('#editEmailForm .btn-save');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
-      
-      try {
-        await verifyBeforeUpdateEmail(currentUser, newEmail);
-        
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, { email: newEmail });
-        
-        showNotification('Succès', 'Email mis à jour. Vérifiez votre boîte mail pour confirmer', 'success');
-        hideAllForms();
-      } catch (error) {
-        console.error("Erreur:", error);
-        if (error.code === 'auth/email-already-in-use') {
-          showNotification('Erreur', 'Cet email est déjà utilisé', 'error');
-        } else {
-          showNotification('Erreur', error.message, 'error');
-        }
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
-      }
-    }
-
-    window.savePhone = async function() {
-      const newPhone = document.getElementById('editPhone').value.trim();
-      if (!newPhone) {
-        showNotification('Erreur', 'Veuillez entrer un numéro', 'error');
-        return;
-      }
-      
-      const btn = document.querySelector('#editPhoneForm .btn-save');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
-      
-      try {
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, { phone: newPhone });
-        
-        userData.phone = newPhone;
-        await updateUI();
-        hideAllForms();
-        showNotification('Succès', 'Téléphone mis à jour');
-      } catch (error) {
-        console.error("Erreur:", error);
-        showNotification('Erreur', "Impossible de mettre à jour", 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
-      }
-    }
-
-    window.savePassword = async function() {
-      const newPassword = document.getElementById('editPassword').value;
-      const confirmPassword = document.getElementById('editPasswordConfirm').value;
-      
-      if (!newPassword) {
-        showNotification('Erreur', 'Veuillez entrer un mot de passe', 'error');
-        return;
-      }
-      if (newPassword.length < 6) {
-        showNotification('Erreur', 'Mot de passe trop court (minimum 6 caractères)', 'error');
-        return;
-      }
-      if (newPassword !== confirmPassword) {
-        showNotification('Erreur', 'Les mots de passe ne correspondent pas', 'error');
-        return;
-      }
-      
-      const btn = document.querySelector('#editPasswordForm .btn-save');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
-      
-      try {
-        await updatePassword(currentUser, newPassword);
-        showNotification('Succès', 'Mot de passe mis à jour');
-        hideAllForms();
-        document.getElementById('editPassword').value = '';
-        document.getElementById('editPasswordConfirm').value = '';
-      } catch (error) {
-        console.error("Erreur:", error);
-        showNotification('Erreur', "Impossible de mettre à jour le mot de passe", 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
-      }
-    }
-
-    function showConfirmDialog(callback) {
-      const overlay = document.getElementById('confirmOverlay');
-      const dialog = document.getElementById('confirmDialog');
-      overlay.classList.add('show');
-      dialog.classList.add('show');
-      
-      const cancelHandler = () => {
-        overlay.classList.remove('show');
-        dialog.classList.remove('show');
-        cancelBtn.removeEventListener('click', cancelHandler);
-        okBtn.removeEventListener('click', okHandler);
-      };
-      
-      const okHandler = () => {
-        cancelHandler();
-        if (callback) callback();
-      };
-      
-      const cancelBtn = document.getElementById('confirmCancelBtn');
-      const okBtn = document.getElementById('confirmOkBtn');
-      cancelBtn.addEventListener('click', cancelHandler);
-      okBtn.addEventListener('click', okHandler);
-    }
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      showConfirmDialog(async () => {
-        try {
-          await signOut(auth);
-          window.location.href = 'login.html';
-        } catch (error) {
-          console.error("Erreur déconnexion:", error);
-        }
+    document.getElementById('totalEarned').innerHTML = (totalEarned || 0).toLocaleString('fr-FR') + ' FCFA';
+    
+    let totalWithdrawn = 0;
+    try {
+      const withdrawalsRef = collection(db, "withdrawals");
+      const q = query(withdrawalsRef, where("userId", "==", currentUser.uid), where("status", "==", "completed"));
+      const snapshot = await getDocs(q);
+      snapshot.forEach((docSnap) => {
+        totalWithdrawn += docSnap.data().amount || 0;
       });
-    });
+    } catch (error) {
+      console.error("Erreur chargement retraits:", error);
+    }
+    document.getElementById('totalWithdrawn').innerHTML = totalWithdrawn.toLocaleString('fr-FR') + ' FCFA';
+    
+    document.getElementById('totalPacks').innerText = (userData.investments || []).length;
+    
+    if (userData.registrationDate) {
+      const date = new Date(userData.registrationDate).toLocaleDateString('fr-FR');
+      document.getElementById('displayDate').innerHTML = date;
+    }
+    
+    document.getElementById('editPrenom').value = userData.prenom || '';
+    document.getElementById('editNom').value = userData.nom || '';
+    document.getElementById('editEmail').value = currentUser?.email || userData.email || '';
+    document.getElementById('editPhone').value = userData.phone || '';
+  }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        await loadUserData(user.uid);
+  function hideAllForms() {
+    document.querySelectorAll('.edit-form').forEach(form => form.classList.remove('show'));
+  }
+
+  window.showEditForm = function(type) {
+    hideAllForms();
+    const formId = type === 'name' ? 'editNameForm' : type === 'email' ? 'editEmailForm' : type === 'phone' ? 'editPhoneForm' : 'editPasswordForm';
+    document.getElementById(formId).classList.add('show');
+  }
+
+  function showNotification(title, message, type = 'success') {
+    document.getElementById('notificationTitle').innerText = title;
+    document.getElementById('notificationMessage').innerText = message;
+    const notif = document.getElementById('notification');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3500);
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  window.saveName = async function() {
+    const newPrenom = document.getElementById('editPrenom').value.trim();
+    const newNom = document.getElementById('editNom').value.trim();
+    if (!newPrenom && !newNom) {
+      showNotification('Erreur', 'Veuillez remplir au moins un champ', 'error');
+      return;
+    }
+    
+    const btn = document.querySelector('#editNameForm .btn-save');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      const updates = {};
+      if (newPrenom) updates.prenom = newPrenom;
+      if (newNom) updates.nom = newNom;
+      updates.fullName = `${newPrenom || userData.prenom || ''} ${newNom || userData.nom || ''}`.trim();
+      await updateDoc(userRef, updates);
+      
+      userData.prenom = newPrenom || userData.prenom;
+      userData.nom = newNom || userData.nom;
+      userData.fullName = updates.fullName;
+      
+      await updateUI();
+      hideAllForms();
+      showNotification('Succès', 'Nom mis à jour');
+    } catch (error) {
+      console.error("Erreur:", error);
+      showNotification('Erreur', "Impossible de mettre à jour", 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+    }
+  }
+
+  window.saveEmail = async function() {
+    const newEmail = document.getElementById('editEmail').value.trim();
+    if (!newEmail) {
+      showNotification('Erreur', 'Veuillez entrer un email', 'error');
+      return;
+    }
+    if (!newEmail.includes('@') || !newEmail.includes('.')) {
+      showNotification('Erreur', 'Email invalide', 'error');
+      return;
+    }
+    
+    const btn = document.querySelector('#editEmailForm .btn-save');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    
+    try {
+      await verifyBeforeUpdateEmail(currentUser, newEmail);
+      
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, { email: newEmail });
+      
+      showNotification('Succès', 'Email mis à jour. Vérifiez votre boîte mail pour confirmer', 'success');
+      hideAllForms();
+    } catch (error) {
+      console.error("Erreur:", error);
+      if (error.code === 'auth/email-already-in-use') {
+        showNotification('Erreur', 'Cet email est déjà utilisé', 'error');
       } else {
+        showNotification('Erreur', error.message || 'Erreur lors de la mise à jour', 'error');
+      }
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+    }
+  }
+
+  window.savePhone = async function() {
+    const newPhone = document.getElementById('editPhone').value.trim();
+    if (!newPhone) {
+      showNotification('Erreur', 'Veuillez entrer un numéro', 'error');
+      return;
+    }
+    
+    const btn = document.querySelector('#editPhoneForm .btn-save');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, { phone: newPhone });
+      
+      userData.phone = newPhone;
+      await updateUI();
+      hideAllForms();
+      showNotification('Succès', 'Téléphone mis à jour');
+    } catch (error) {
+      console.error("Erreur:", error);
+      showNotification('Erreur', "Impossible de mettre à jour", 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+    }
+  }
+
+  window.savePassword = async function() {
+    const newPassword = document.getElementById('editPassword').value;
+    const confirmPassword = document.getElementById('editPasswordConfirm').value;
+    
+    if (!newPassword) {
+      showNotification('Erreur', 'Veuillez entrer un mot de passe', 'error');
+      return;
+    }
+    if (newPassword.length < 6) {
+      showNotification('Erreur', 'Mot de passe trop court (minimum 6 caractères)', 'error');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showNotification('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+      return;
+    }
+    
+    const btn = document.querySelector('#editPasswordForm .btn-save');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    
+    try {
+      await updatePassword(currentUser, newPassword);
+      showNotification('Succès', 'Mot de passe mis à jour');
+      hideAllForms();
+      document.getElementById('editPassword').value = '';
+      document.getElementById('editPasswordConfirm').value = '';
+    } catch (error) {
+      console.error("Erreur:", error);
+      showNotification('Erreur', "Impossible de mettre à jour le mot de passe", 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+    }
+  }
+
+  function showConfirmDialog(callback) {
+    const overlay = document.getElementById('confirmOverlay');
+    const dialog = document.getElementById('confirmDialog');
+    overlay.classList.add('show');
+    dialog.classList.add('show');
+    
+    const closeDialog = () => {
+      overlay.classList.remove('show');
+      dialog.classList.remove('show');
+      cancelBtn.removeEventListener('click', cancelHandler);
+      okBtn.removeEventListener('click', okHandler);
+    };
+    
+    const cancelHandler = () => closeDialog();
+    const okHandler = () => {
+      closeDialog();
+      if (callback) callback();
+    };
+    
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+    const okBtn = document.getElementById('confirmOkBtn');
+    cancelBtn.addEventListener('click', cancelHandler);
+    okBtn.addEventListener('click', okHandler);
+  }
+
+  document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    showConfirmDialog(async () => {
+      try {
+        await signOut(auth);
+        localStorage.removeItem('earnzone_current_user');
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error("Erreur déconnexion:", error);
         window.location.href = 'login.html';
       }
     });
-  </script>
+  });
+
+  // ============================================
+  // AUTHENTIFICATION CORRIGÉE
+  // ============================================
+  let firstCheckDone = false;
+  
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      localStorage.setItem('earnzone_current_user', user.uid);
+      await loadUserData(user.uid);
+    } else {
+      // Vérifier si on a déjà un utilisateur dans localStorage (session persistante)
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid && !firstCheckDone) {
+        // Attendre que Firebase restaure la session
+        setTimeout(async () => {
+          const restoredUser = auth.currentUser;
+          if (!restoredUser) {
+            localStorage.removeItem('earnzone_current_user');
+            window.location.href = 'login.html';
+          }
+        }, 2000);
+      } else if (!firstCheckDone) {
+        window.location.href = 'login.html';
+      }
+    }
+    firstCheckDone = true;
+  });
+</script>
 </body>
 </html>
-      

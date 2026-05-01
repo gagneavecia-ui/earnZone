@@ -1,6 +1,6 @@
 {
-  "name": "EarnZone",
-  "short_name": "EarnZone",
+  "name": "EarnManager",
+  "short_name": "EarnManager",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

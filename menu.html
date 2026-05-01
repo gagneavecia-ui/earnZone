@@ -254,6 +254,20 @@
       color: var(--text-dim);
       font-size: 11px;
     }
+
+    /* Loader */
+    .loader-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -281,8 +295,8 @@
     <div class="user-info" id="userInfo">
       <div class="user-info-avatar" id="menuAvatar">U</div>
       <div class="user-info-text">
-        <h4 id="menuUserName">Utilisateur</h4>
-        <p id="menuUserEmail">email@exemple.com</p>
+        <h4 id="menuUserName"><span class="loader-spinner"></span> Chargement...</h4>
+        <p id="menuUserEmail"></p>
       </div>
     </div>
 
@@ -405,48 +419,79 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Vérification de l'utilisateur connecté
+    // VÉRIFICATION RAPIDE AVEC localStorage
+    const savedUid = localStorage.getItem('earnzone_current_user');
+    if (!savedUid) {
+      window.location.href = 'login.html';
+    }
+
     onAuthStateChanged(auth, async (user) => {
+      // Si pas de user Firebase mais localStorage existe, on attend un peu
       if (!user) {
+        if (savedUid) {
+          // Attendre 2 secondes pour voir si Firebase restaure la session
+          setTimeout(async () => {
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+              localStorage.removeItem('earnzone_current_user');
+              window.location.href = 'login.html';
+            } else {
+              // Recharger pour réinitialiser
+              window.location.reload();
+            }
+          }, 2000);
+          return;
+        }
         window.location.href = 'login.html';
         return;
       }
 
-      // Récupérer les données utilisateur depuis Firestore
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (!userDoc.exists()) {
-        await signOut(auth);
-        window.location.href = 'login.html';
-        return;
-      }
-
-      const userData = userDoc.data();
-      
-      // Vérifier si le compte est bloqué
-      if (userData.status === 'blocked') {
-        await signOut(auth);
-        window.location.href = 'login.html';
-        return;
-      }
-
-      // Affichage des infos utilisateur
-      const prenom = userData.prenom || '';
-      const nom = userData.nom || userData.fullName || 'Utilisateur';
-      const nomComplet = prenom ? `${prenom} ${nom}` : nom;
-      document.getElementById('menuUserName').innerText = nomComplet;
-      document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
-      document.getElementById('menuAvatar').innerText = (prenom?.charAt(0) || nom?.charAt(0) || 'U').toUpperCase();
-
-      // Stocker dans localStorage pour la session
+      // Succès : utilisateur connecté
       localStorage.setItem('earnzone_current_user', user.uid);
+
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (!userDoc.exists()) {
+          await signOut(auth);
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const userData = userDoc.data();
+        
+        // Vérifier si le compte est bloqué
+        if (userData.status === 'blocked') {
+          await signOut(auth);
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Affichage des infos utilisateur
+        const prenom = userData.prenom || '';
+        const nom = userData.nom || userData.fullName || 'Utilisateur';
+        const nomComplet = prenom ? `${prenom} ${nom}` : nom;
+        document.getElementById('menuUserName').innerText = nomComplet;
+        document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
+        document.getElementById('menuAvatar').innerText = (prenom?.charAt(0) || nom?.charAt(0) || 'U').toUpperCase();
+        
+      } catch (error) {
+        console.error("Erreur chargement utilisateur:", error);
+        document.getElementById('menuUserName').innerText = 'Utilisateur';
+        document.getElementById('menuUserEmail').innerText = 'Erreur de chargement';
+      }
     });
 
     // Déconnexion
     document.getElementById('logoutBtn').addEventListener('click', async (e) => {
       e.preventDefault();
-      await signOut(auth);
-      localStorage.removeItem('earnzone_current_user');
-      window.location.href = 'login.html';
+      try {
+        await signOut(auth);
+        localStorage.removeItem('earnzone_current_user');
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error("Erreur déconnexion:", error);
+        window.location.href = 'login.html';
+      }
     });
   </script>
 </body>

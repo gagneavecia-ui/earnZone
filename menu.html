@@ -21,7 +21,7 @@
       --text-light: #FFFFFF;
       --text-dim: #8B90A8;
       --card-bg: rgba(15, 15, 26, 0.85);
-          --card-border: rgba(183, 110, 255, 0.08);
+      --card-border: rgba(183, 110, 255, 0.08);
       --success: #2EE89A;
       --warning: #FFD166;
       --danger: #FF4D6D;
@@ -98,6 +98,18 @@
       background: linear-gradient(135deg, var(--primary-light), var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.5;
     }
 
     /* ===== MENU PRINCIPAL ===== */
@@ -220,9 +232,7 @@
       justify-content: center;
       font-size: 22px;
       font-weight: 700;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      outline: 1.5px solid rgba(183, 110, 255, 0.4);
+      color: white;
     }
     .user-info-text h4 {
       font-size: 16px;
@@ -256,9 +266,8 @@
     <a href="index.html" class="logo">
       <div class="logo-text">EARN<span>ZONE</span></div>
     </a>
-    <div class="header-actions">
-        <i class="fas fa-bars"></i>
-      </div>
+    <div class="menu-btn">
+      <i class="fas fa-bars"></i>
     </div>
   </header>
 
@@ -314,20 +323,20 @@
         <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
       </a>
 
-      <a href="formations.html" class="menu-item">
-        <div class="menu-icon"><i class="fas fa-graduation-cap"></i></div>
-        <div class="menu-content">
-          <h3>Formations</h3>
-          <p>Apprenez et développez vos compétences</p>
-        </div>
-        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-      </a>
-
       <a href="depot.html" class="menu-item">
         <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
         <div class="menu-content">
           <h3>Dépôt</h3>
           <p>Effectuer un dépôt (code coupon)</p>
+        </div>
+        <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+      </a>
+
+      <a href="retrait.html" class="menu-item">
+        <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
+        <div class="menu-content">
+          <h3>Retrait</h3>
+          <p>Retirez vos gains</p>
         </div>
         <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
       </a>
@@ -349,15 +358,6 @@
         </div>
         <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
       </a>
-      
-      <a href="retrait.html" class="menu-item">
-  <div class="menu-icon"><i class="fas fa-money-bill-wave"></i></div>
-  <div class="menu-content">
-    <h3>Retrait</h3>
-    <p>Retirez vos gains</p>
-  </div>
-  <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
-</a>
     </div>
 
     <!-- Déconnexion -->
@@ -377,33 +377,74 @@
     </footer>
   </main>
 
-  <script>
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+    import { getFirestore, doc, getDoc } from "firebase/firestore";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+      authDomain: "earnzone-9e82e.firebaseapp.com",
+      projectId: "earnzone-9e82e",
+      storageBucket: "earnzone-9e82e.firebasestorage.app",
+      messagingSenderId: "1076831479440",
+      appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
     // Vérification de l'utilisateur connecté
-    const userId = localStorage.getItem('earnzone_current_user');
-    if (!userId) {
-      window.location.href = 'login.html';
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
 
-    let userData = {};
-    const savedData = localStorage.getItem(`earnzone_user_${userId}`);
-    if (savedData) {
-      userData = JSON.parse(savedData);
-    } else {
-      localStorage.removeItem('earnzone_current_user');
-      window.location.href = 'login.html';
-    }
+      // Récupérer les données utilisateur depuis Firestore
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists()) {
+        await signOut(auth);
+        window.location.href = 'login.html';
+        return;
+      }
 
-    // Affichage des infos utilisateur
-    const nom = userData.nom || userData.name || 'Utilisateur';
-    const prenom = userData.prenom || '';
-    const nomComplet = prenom ? `${prenom} ${nom}` : nom;
-    document.getElementById('menuUserName').innerText = nomComplet;
-    document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
-    document.getElementById('menuAvatar').innerText = (nom || 'U').charAt(0).toUpperCase();
+      const userData = userDoc.data();
+      
+      // Vérifier si le compte est bloqué
+      if (userData.status === 'blocked') {
+        await signOut(auth);
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Affichage des infos utilisateur
+      const prenom = userData.prenom || '';
+      const nom = userData.nom || userData.fullName || 'Utilisateur';
+      const nomComplet = prenom ? `${prenom} ${nom}` : nom;
+      document.getElementById('menuUserName').innerText = nomComplet;
+      document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
+      document.getElementById('menuAvatar').innerText = (prenom?.charAt(0) || nom?.charAt(0) || 'U').toUpperCase();
+
+      // Stocker dans localStorage pour la session
+      localStorage.setItem('earnzone_current_user', user.uid);
+    });
 
     // Déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
       e.preventDefault();
+      await signOut(auth);
       localStorage.removeItem('earnzone_current_user');
       window.location.href = 'login.html';
     });

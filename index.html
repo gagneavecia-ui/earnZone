@@ -319,12 +319,12 @@
   let withdrawIndex = 0;
   let intervalTimer = null;
 
-  function updateUI() {
-    if (!userData) return;
+  // Fonction qui met à jour l'UI à partir des données (cachée ou Firebase)
+  function updateUIFromData(data) {
+    if (!data) return;
     
-    // Affichage du nom
-    const prenom = userData.prenom || '';
-    const nom = userData.nom || '';
+    const prenom = data.prenom || '';
+    const nom = data.nom || '';
     let displayName = 'Utilisateur';
     if (prenom && nom) displayName = `${prenom} ${nom}`;
     else if (prenom) displayName = prenom;
@@ -334,23 +334,19 @@
     const avatarLettre = displayName.charAt(0).toUpperCase();
     document.getElementById('userAvatar').innerHTML = avatarLettre;
     
-    // Stats
-    document.getElementById('statBalance').innerText = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
-    const activeInvestments = (userData.investments || []).filter(inv => inv.status === 'active').length;
+    document.getElementById('statBalance').innerText = (data.balance || 0).toLocaleString('fr-FR') + ' FCFA';
+    const activeInvestments = (data.investments || []).filter(inv => inv.status === 'active').length;
     document.getElementById('statInvestments').innerText = activeInvestments;
-    document.getElementById('statGains').innerText = (userData.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('statGains').innerText = (data.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
     
-    if (userData.registrationDate) {
-      const days = Math.floor((new Date() - new Date(userData.registrationDate)) / 86400000);
+    if (data.registrationDate) {
+      const days = Math.floor((new Date() - new Date(data.registrationDate)) / 86400000);
       document.getElementById('statDays').innerText = days;
     }
     
-    // ============================================
-    // BANDEAU DÉPÔT - Disparaît UNIQUEMENT si l'utilisateur a déjà déposé
-    // ============================================
     const depotBanner = document.getElementById('depotBanner');
     if (depotBanner) {
-      if (userData.hasDeposited === true) {
+      if (data.hasDeposited === true) {
         depotBanner.classList.add('hidden');
       } else {
         depotBanner.classList.remove('hidden');
@@ -358,19 +354,50 @@
     }
   }
 
+  // Mise en cache dans localStorage
+  function cacheUserData(uid, data) {
+    localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
+  }
+
+  // Récupération depuis le cache localStorage
+  function getCachedUserData(uid) {
+    const cached = localStorage.getItem(`earnzone_user_${uid}`);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch(e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   async function loadUserData(uid) {
+    // 1. AFFICHAGE IMMÉDIAT depuis le cache localStorage (0ms)
+    const cachedData = getCachedUserData(uid);
+    if (cachedData) {
+      updateUIFromData(cachedData);
+    }
+    
     try {
+      // 2. CHARGEMENT FIREBASE en arrière-plan
       const userRef = doc(db, "users", uid);
       const userDoc = await getDoc(userRef);
       
       if (userDoc.exists()) {
-        userData = userDoc.data();
-        userData.balance = userData.balance || 0;
-        userData.investments = userData.investments || [];
-        updateUI();
+        const freshData = userDoc.data();
+        freshData.balance = freshData.balance || 0;
+        freshData.investments = freshData.investments || [];
+        
+        // 3. MISE À JOUR du cache
+        cacheUserData(uid, freshData);
+        
+        // 4. MISE À JOUR de l'UI si différente du cache
+        updateUIFromData(freshData);
+        userData = freshData;
         return true;
       } else {
-        // Création auto du document utilisateur si inexistant
+        // Création auto du document utilisateur
         const defaultData = {
           uid: uid,
           email: currentUser.email,
@@ -388,13 +415,15 @@
           investments: []
         };
         await setDoc(userRef, defaultData);
+        cacheUserData(uid, defaultData);
+        updateUIFromData(defaultData);
         userData = defaultData;
-        updateUI();
         return true;
       }
     } catch (error) {
-      console.error("Erreur chargement user:", error);
-      return false;
+      console.error("Erreur Firebase:", error);
+      // En cas d'erreur réseau, on garde les données du cache
+      return cachedData !== null;
     }
   }
 
@@ -428,6 +457,7 @@
       if (savedUid && !authChecked) {
         setTimeout(async () => {
           if (!auth.currentUser) {
+            localStorage.removeItem('earnzone_current_user');
             window.location.href = 'login.html';
           }
         }, 2000);

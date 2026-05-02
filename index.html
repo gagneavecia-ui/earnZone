@@ -510,12 +510,23 @@
   }
 
   function startNotificationTimer() {
-    if (notificationTimer) clearInterval(notificationTimer);
-    setTimeout(() => showRandomNotification(), 3000);
-    notificationTimer = setInterval(() => {
-      showRandomNotification();
-    }, 45000);
-  }
+  if (notificationTimer) clearInterval(notificationTimer);
+  
+  // Premier affichage après 3 secondes
+  setTimeout(() => showRandomNotification(), 3000);
+  
+  // Récupération du statut de dépôt
+  const hasDeposited = userData?.hasDeposited === true;
+  
+  // Intervalle : 10 secondes si PAS de dépôt, 2 minutes (120000ms) si dépôt effectué
+  const intervalTime = hasDeposited ? 120000 : 10000;
+  
+  console.log(`Notification: intervalle ${intervalTime / 1000} secondes (dépôt: ${hasDeposited})`);
+  
+  notificationTimer = setInterval(() => {
+    showRandomNotification();
+  }, intervalTime);
+      }
 
   // ============================================
   // AFFICHAGE DES DONNÉES UTILISATEUR

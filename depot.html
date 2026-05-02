@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>EarnZone - Rechargement Premium</title>
+  <title>EarnZone - Rechargement</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,21 +11,14 @@
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
       --primary-light: #D4A1FF;
-      --primary-glow: rgba(183, 110, 255, 0.3);
       --bg-dark: #030305;
-      --bg-medium: #08080F;
       --text-light: #FFFFFF;
       --text-dim: #8B90A8;
       --card-bg: rgba(15, 15, 26, 0.85);
       --card-border: rgba(183, 110, 255, 0.08);
-      --card-border-hover: rgba(183, 110, 255, 0.25);
       --success: #2EE89A;
-      --success-glow: rgba(46, 232, 154, 0.2);
       --danger: #FF4D6D;
-      --warning: #FFD166;
-      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      --glass-bg: rgba(183, 110, 255, 0.04);
-      --glass-border: rgba(183, 110, 255, 0.07);
+      --transition: all 0.3s ease;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,17 +30,15 @@
       font-size: 14px;
       line-height: 1.5;
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    /* Background animé */
     .gradient-bg {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: -2;
-      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.2) 0%, transparent 60%),
-                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.15) 0%, transparent 55%),
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
                   linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
     }
 
@@ -56,18 +47,16 @@
       border-radius: 50%;
       filter: blur(80px);
       z-index: -1;
-      pointer-events: none;
-      animation: orbFloat 10s ease-in-out infinite;
+      animation: orbFloat 8s ease-in-out infinite;
     }
-    .orb-1 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(139, 63, 232, 0.12), transparent 70%); top: -150px; left: -100px; }
-    .orb-2 { width: 280px; height: 280px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 10%; right: -80px; animation-delay: -5s; }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
     @keyframes orbFloat {
       0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(25px, -25px) scale(1.08); }
-      66% { transform: translate(-20px, 20px) scale(0.95); }
+      33% { transform: translate(20px, -20px) scale(1.05); }
+      66% { transform: translate(-15px, 15px) scale(0.95); }
     }
 
-    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -89,7 +78,6 @@
       color: var(--text-light);
       text-transform: uppercase;
       text-decoration: none;
-      transition: var(--transition);
     }
     .logo-text span {
       font-weight: 800;
@@ -101,8 +89,8 @@
     .back-btn {
       width: 40px;
       height: 40px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
+      background: rgba(183, 110, 255, 0.08);
+      border: 1px solid rgba(183, 110, 255, 0.1);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -112,31 +100,20 @@
       color: var(--text-dim);
     }
     .back-btn:active {
-      background: rgba(183, 110, 255, 0.1);
-      color: var(--primary);
+      background: rgba(183, 110, 255, 0.2);
       transform: scale(0.95);
     }
 
-    /* Container */
     .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 60px; }
 
-    /* Page Header */
     .page-header { text-align: center; margin-bottom: 32px; animation: fadeInDown 0.6s ease; }
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .page-header h1 {
-      font-size: 32px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary), var(--primary-dark));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
+    .page-header h1 { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, var(--primary-light), var(--primary), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
     .page-header p { color: var(--text-dim); font-size: 13px; }
 
-    /* Solde Card */
     .solde-card {
       background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.06));
       border-radius: 28px;
@@ -151,57 +128,13 @@
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .solde-label {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .solde-value {
-      font-size: 42px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -1px;
-    }
-    .solde-value small {
-      font-size: 16px;
-      font-weight: 500;
-      background: none;
-      -webkit-text-fill-color: var(--text-dim);
-    }
+    .solde-label { font-size: 13px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .solde-value { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
 
-    /* Section Title */
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-title i {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: white;
-    }
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+    .section-title i { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; }
 
-    /* Packs Grid */
-    .packs-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
+    .packs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
     .pack-card {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
@@ -213,71 +146,18 @@
       position: relative;
       overflow: hidden;
     }
-    .pack-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(183, 110, 255, 0.1), transparent);
-      transition: left 0.5s ease;
-    }
-    .pack-card:active::before { left: 100%; }
     .pack-card.selected {
       border-color: var(--primary);
       background: linear-gradient(135deg, rgba(183, 110, 255, 0.15), rgba(139, 63, 232, 0.08));
-      box-shadow: 0 0 20px var(--primary-glow);
+      box-shadow: 0 0 20px rgba(183, 110, 255, 0.3);
       transform: scale(1.02);
     }
-    .pack-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, rgba(183, 110, 255, 0.15), rgba(139, 63, 232, 0.08));
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-    .pack-info h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .pack-info p {
-      font-size: 11px;
-      color: var(--text-dim);
-    }
-    .pack-price {
-      margin-top: 12px;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--primary-light);
-      display: flex;
-      align-items: baseline;
-      gap: 2px;
-    }
-    .pack-price span {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-dim);
-    }
-    .pack-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: linear-gradient(135deg, var(--success), #00cc44);
-      color: black;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 20px;
-    }
+    .pack-icon { width: 48px; height: 48px; background: linear-gradient(135deg, rgba(183, 110, 255, 0.15), rgba(139, 63, 232, 0.08)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); margin-bottom: 12px; }
+    .pack-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .pack-info p { font-size: 11px; color: var(--text-dim); }
+    .pack-price { margin-top: 12px; font-size: 18px; font-weight: 800; color: var(--primary-light); }
+    .pack-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--success), #00cc44); color: black; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
 
-    /* Code Input */
     .code-input {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
@@ -287,21 +167,9 @@
       margin-bottom: 24px;
       transition: var(--transition);
     }
-    .code-input:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(183, 110, 255, 0.15);
-    }
-    .code-input label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--text-dim);
-    }
-    .code-input label i {
-      color: var(--primary);
-      margin-right: 6px;
-    }
+    .code-input:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(183, 110, 255, 0.15); }
+    .code-input label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text-dim); }
+    .code-input label i { color: var(--primary); margin-right: 6px; }
     .code-input input {
       width: 100%;
       padding: 14px 16px;
@@ -315,18 +183,8 @@
       text-transform: uppercase;
       transition: var(--transition);
     }
-    .code-input input:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: rgba(20, 20, 35, 1);
-    }
-    .code-input input::placeholder {
-      text-transform: none;
-      letter-spacing: normal;
-      color: var(--text-dim);
-    }
+    .code-input input:focus { outline: none; border-color: var(--primary); }
 
-    /* Button */
     .btn-valider {
       width: 100%;
       padding: 18px;
@@ -342,89 +200,20 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      position: relative;
-      overflow: hidden;
     }
-    .btn-valider::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s ease;
-    }
-    .btn-valider:active::before { left: 100%; }
     .btn-valider:active { transform: scale(0.97); }
-    .btn-valider:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .btn-valider:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Message */
-    .message {
-      margin-top: 20px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      font-size: 13px;
-      text-align: center;
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .message.error {
-      background: rgba(255, 77, 109, 0.12);
-      border: 1px solid rgba(255, 77, 109, 0.3);
-      color: var(--danger);
-      display: block;
-    }
-    .message.success {
-      background: rgba(46, 232, 154, 0.12);
-      border: 1px solid rgba(46, 232, 154, 0.3);
-      color: var(--success);
-      display: block;
-    }
+    .message { margin-top: 20px; padding: 14px 16px; border-radius: 16px; font-size: 13px; text-align: center; display: none; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .message.error { background: rgba(255, 77, 109, 0.12); border: 1px solid rgba(255, 77, 109, 0.3); color: var(--danger); display: block; }
+    .message.success { background: rgba(46, 232, 154, 0.12); border: 1px solid rgba(46, 232, 154, 0.3); color: var(--success); display: block; }
 
-    /* Loader */
-    .loader {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid white;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 0.6s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    .loader { display: inline-block; width: 18px; height: 18px; border: 2px solid white; border-radius: 50%; border-top-color: transparent; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 24px 0 20px;
-      border-top: 1px solid rgba(183, 110, 255, 0.06);
-      margin-top: 20px;
-    }
-    .footer p {
-      color: var(--text-dim);
-      font-size: 11px;
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .packs-grid { gap: 10px; }
-      .pack-card { padding: 14px 10px; }
-      .pack-icon { width: 40px; height: 40px; font-size: 16px; margin-bottom: 8px; }
-      .pack-price { font-size: 16px; }
-      .solde-value { font-size: 34px; }
-      .page-header h1 { font-size: 28px; }
-    }
+    .footer { text-align: center; padding: 24px 0 20px; border-top: 1px solid rgba(183, 110, 255, 0.06); margin-top: 20px; }
+    .footer p { color: var(--text-dim); font-size: 11px; }
   </style>
 </head>
 <body>
@@ -435,9 +224,7 @@
 
 <header class="header">
   <a href="index.html" class="logo-text">EARN<span>ZONE</span></a>
-  <div class="back-btn" onclick="window.location.href='index.html'">
-    <i class="fas fa-arrow-left"></i>
-  </div>
+  <div class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i></div>
 </header>
 
 <main class="container">
@@ -448,13 +235,10 @@
 
   <div class="solde-card">
     <div class="solde-label">Votre solde actuel</div>
-    <div class="solde-value" id="soldeValue">0 <small>FCFA</small></div>
+    <div class="solde-value" id="soldeValue">0 FCFA</div>
   </div>
 
-  <div class="section-title">
-    <i class="fas fa-gem"></i>
-    <span>Choisissez votre montant</span>
-  </div>
+  <div class="section-title"><i class="fas fa-gem"></i><span>Choisissez votre montant</span></div>
   <div class="packs-grid" id="packsGrid"></div>
 
   <div class="code-input">
@@ -462,15 +246,11 @@
     <input type="text" id="couponCode" placeholder="Ex: ABC-1234" autocomplete="off">
   </div>
 
-  <button class="btn-valider" id="validerBtn">
-    <i class="fas fa-check-circle"></i> Valider le rechargement
-  </button>
+  <button class="btn-valider" id="validerBtn"><i class="fas fa-check-circle"></i> Valider le rechargement</button>
   <div id="message" class="message"></div>
 </main>
 
-<footer class="footer">
-  <p>&copy; 2026 EarnZone. Tous droits réservés.</p>
-</footer>
+<footer class="footer"><p>&copy; 2026 EarnZone. Tous droits réservés.</p></footer>
 
 <script type="importmap">
   {
@@ -499,8 +279,6 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-
-  // Persistance locale
   setPersistence(auth, browserLocalPersistence);
 
   let currentUser = null;
@@ -515,10 +293,35 @@
     { id: "gold", montant: 25000, label: "Gold", icon: "🥇", badge: "BEST VALUE" }
   ];
 
-  function updateSolde() {
+  // ========== FONCTIONS CACHE LOCALSTORAGE ==========
+  function updateLocalStorageCache(uid) {
+    getDoc(doc(db, "users", uid)).then(docSnap => {
+      if (docSnap.exists()) {
+        localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(docSnap.data()));
+        console.log("✅ Cache localStorage mis à jour pour:", uid);
+      }
+    }).catch(console.error);
+  }
+
+  function getCachedUserData(uid) {
+    const cached = localStorage.getItem(`earnzone_user_${uid}`);
+    return cached ? JSON.parse(cached) : null;
+  }
+
+  function updateSoldeFromCache() {
+    if (!currentUser) return;
+    const cached = getCachedUserData(currentUser.uid);
+    if (cached && cached.balance !== undefined) {
+      const soldeEl = document.getElementById('soldeValue');
+      soldeEl.innerHTML = `${cached.balance.toLocaleString('fr-FR')} FCFA`;
+      userData.balance = cached.balance;
+    }
+  }
+
+  function updateSoldeFromFirebase(balance) {
     const soldeEl = document.getElementById('soldeValue');
-    const balance = userData.balance || 0;
-    soldeEl.innerHTML = `${balance.toLocaleString('fr-FR')} <small>FCFA</small>`;
+    soldeEl.innerHTML = `${balance.toLocaleString('fr-FR')} FCFA`;
+    userData.balance = balance;
   }
 
   function renderPacks() {
@@ -531,9 +334,7 @@
           <h3>Pack ${pack.label}</h3>
           <p>Crédit instantané</p>
         </div>
-        <div class="pack-price">
-          ${pack.montant.toLocaleString('fr-FR')}<span>FCFA</span>
-        </div>
+        <div class="pack-price">${pack.montant.toLocaleString('fr-FR')} FCFA</div>
       </div>
     `).join('');
 
@@ -545,7 +346,6 @@
           id: card.dataset.id,
           montant: parseInt(card.dataset.montant)
         };
-        // Haptique (vibration si supporté)
         if (navigator.vibrate) navigator.vibrate(50);
       });
     });
@@ -573,7 +373,6 @@
     const messageDiv = document.getElementById('message');
     const btn = document.getElementById('validerBtn');
 
-    // Réinitialiser message
     messageDiv.className = 'message';
     messageDiv.innerText = '';
 
@@ -581,7 +380,6 @@
       messageDiv.className = 'message error';
       messageDiv.innerText = '✨ Veuillez sélectionner un montant de rechargement.';
       setTimeout(() => messageDiv.className = 'message', 3000);
-      if (navigator.vibrate) navigator.vibrate(100);
       return;
     }
 
@@ -589,21 +387,17 @@
       messageDiv.className = 'message error';
       messageDiv.innerText = '🔑 Veuillez entrer un code coupon.';
       setTimeout(() => messageDiv.className = 'message', 3000);
-      if (navigator.vibrate) navigator.vibrate(100);
       return;
     }
 
-    // Vérification du code
     const isValid = await validateCoupon(code, selectedPack.montant);
     if (!isValid) {
       messageDiv.className = 'message error';
       messageDiv.innerText = '❌ Code invalide, déjà utilisé ou montant incorrect.';
       setTimeout(() => messageDiv.className = 'message', 3500);
-      if (navigator.vibrate) navigator.vibrate(100);
       return;
     }
 
-    // Désactiver bouton
     btn.disabled = true;
     btn.innerHTML = '<span class="loader"></span> Traitement en cours...';
 
@@ -616,7 +410,7 @@
       const currentBalance = userDoc.data().balance || 0;
       const newBalance = currentBalance + selectedPack.montant;
       
-      // Mise à jour du solde
+      // 1. MISE À JOUR FIREBASE
       await updateDoc(userRef, {
         balance: newBalance,
         hasDeposited: true,
@@ -624,7 +418,7 @@
         totalInvested: (userDoc.data().totalInvested || 0) + selectedPack.montant
       });
 
-      // Enregistrement du dépôt
+      // 2. ENREGISTREMENT DU DÉPÔT
       await addDoc(collection(db, "deposits"), {
         userId: currentUser.uid,
         amount: selectedPack.montant,
@@ -635,14 +429,15 @@
         pack: selectedPack.id
       });
 
-      userData.balance = newBalance;
-      updateSolde();
+      // 3. MISE À JOUR DU CACHE LOCALSTORAGE (IMPORTANT !)
+      updateLocalStorageCache(currentUser.uid);
 
-      // Succès
+      // 4. MISE À JOUR DE L'UI
+      updateSoldeFromFirebase(newBalance);
+
       messageDiv.className = 'message success';
       messageDiv.innerHTML = `✅ <strong>Rechargement réussi !</strong><br>${selectedPack.montant.toLocaleString('fr-FR')} FCFA ajoutés à votre solde.`;
       
-      // Reset
       document.getElementById('couponCode').value = '';
       selectedPack = null;
       document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
@@ -662,32 +457,55 @@
   }
 
   async function loadUserData(uid) {
-    const userRef = doc(db, "users", uid);
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) {
-      userData = userDoc.data();
-      userData.balance = userData.balance || 0;
-      updateSolde();
+    // 1. AFFICHAGE IMMÉDIAT depuis localStorage
+    const cached = getCachedUserData(uid);
+    if (cached && cached.balance !== undefined) {
+      updateSoldeFromCache();
+    }
+    
+    // 2. CHARGEMENT FIREBASE en arrière-plan
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const freshData = userDoc.data();
+        updateSoldeFromFirebase(freshData.balance || 0);
+        userData = freshData;
+        // Mise à jour du cache
+        localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(freshData));
+      }
+    } catch (error) {
+      console.error("Erreur Firebase:", error);
     }
   }
 
-  // Auth State - Redirection si non connecté
+  // AUTHENTIFICATION
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
+      localStorage.setItem('earnzone_current_user', user.uid);
       await loadUserData(user.uid);
     } else {
-      window.location.href = 'login.html';
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid) {
+        setTimeout(async () => {
+          if (!auth.currentUser) {
+            localStorage.removeItem('earnzone_current_user');
+            window.location.href = 'login.html';
+          }
+        }, 2000);
+      } else {
+        window.location.href = 'login.html';
+      }
     }
   });
 
-  // Event listeners
+  // Événements
   document.getElementById('validerBtn').addEventListener('click', processRechargement);
   document.getElementById('couponCode').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') processRechargement();
   });
   
-  // Initialisation
   renderPacks();
 </script>
 </body>

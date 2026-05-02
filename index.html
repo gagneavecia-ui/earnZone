@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>EarnZone - Investissez et Gagnez</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,21 +75,9 @@
       border-bottom: 1px solid rgba(183, 110, 255, 0.07);
     }
 
-    .logo-text {
-      font-size: 18px;
-      font-weight: 600;
-      font-family: 'Playfair Display', serif;
-      letter-spacing: 2px;
-      color: var(--text-light);
-      text-transform: uppercase;
-      text-decoration: none;
-    }
-    .logo-text span {
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    .logo { display: flex; align-items: baseline; gap: 6px; text-decoration: none; }
+    .logo-text { font-size: 18px; font-weight: 600; font-family: 'Playfair Display', serif; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase; }
+    .logo-text span { font-weight: 800; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
     .user-profile {
       display: flex;
@@ -130,11 +118,11 @@
       justify-content: center;
       color: var(--text-dim);
       cursor: pointer;
+      transition: var(--transition);
     }
     .header-actions { display: flex; align-items: center; gap: 12px; }
 
     .container { max-width: 500px; margin: 0 auto; padding: 24px 16px; }
-
     .hero-section { margin-bottom: 44px; animation: slideInUp 0.7s ease; }
     @keyframes slideInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(90deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08)); border: 1px solid rgba(183, 110, 255, 0.25); border-radius: 50px; padding: 7px 14px; margin-bottom: 22px; }
@@ -175,23 +163,8 @@
     .formation-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08)); color: var(--primary-light); border: 1px solid rgba(183, 110, 255, 0.22); border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
     .formation-btn.free { background: linear-gradient(135deg, rgba(46, 232, 154, 0.12), rgba(0, 204, 68, 0.08)); border-color: rgba(46, 232, 154, 0.3); color: var(--success); }
 
-    .depot-banner {
-      background: linear-gradient(135deg, rgba(255, 77, 109, 0.12), rgba(255, 77, 109, 0.05));
-      border: 1px solid rgba(255, 77, 109, 0.25);
-      border-radius: 16px;
-      padding: 14px 18px;
-      margin-bottom: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+    .depot-banner { background: linear-gradient(135deg, rgba(255, 77, 109, 0.12), rgba(255, 77, 109, 0.05)); border: 1px solid rgba(255, 77, 109, 0.25); border-radius: 16px; padding: 14px 18px; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
     .depot-banner.hidden { display: none; }
-    .depot-banner-content { display: flex; align-items: center; gap: 12px; }
-    .depot-banner-icon { width: 40px; height: 40px; background: rgba(255, 77, 109, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--danger); }
-    .depot-banner-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
-    .depot-banner-text p { font-size: 12px; color: var(--text-dim); }
     .depot-banner-btn { padding: 10px 18px; background: linear-gradient(135deg, var(--danger), #ff1a4f); border: none; border-radius: 12px; color: white; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; }
 
     .info-button-container { text-align: center; margin-bottom: 44px; }
@@ -202,28 +175,11 @@
     .testimonial-card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px; }
     .testimonial-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; font-size: 18px; color: black; font-weight: 700; }
-    .testimonial-info h4 { font-size: 15px; font-weight: 700; }
     .testimonial-rating { color: #FFD166; margin-bottom: 10px; font-size: 12px; }
     .testimonial-text { color: var(--text-dim); font-size: 13px; line-height: 1.5; font-style: italic; }
     .see-all-reviews-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: 16px; color: white; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
 
-    .withdraw-notification {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(120%);
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(183, 110, 255, 0.35);
-      border-radius: 50px;
-      padding: 8px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 10000;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      max-width: 90%;
-    }
+    .withdraw-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(183, 110, 255, 0.35); border-radius: 50px; padding: 8px 18px; display: flex; align-items: center; gap: 10px; z-index: 10000; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90%; }
     .withdraw-notification.show { transform: translateX(-50%) translateY(0); }
     .withdraw-amount { font-weight: 800; color: var(--success); }
 
@@ -234,6 +190,10 @@
     .social-links { display: flex; justify-content: center; gap: 12px; }
     .social-link { width: 40px; height: 40px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
+
+    .skeleton-text { height: 20px; background: linear-gradient(90deg, rgba(183,110,255,0.1) 25%, rgba(183,110,255,0.2) 50%, rgba(183,110,255,0.1) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; margin: 8px 0; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(183,110,255,0.2); }
   </style>
 </head>
 <body>
@@ -251,7 +211,7 @@
 </div>
 
 <header class="header">
-  <a href="index.html" class="logo-text">EARN<span>ZONE</span></a>
+  <a href="index.html" class="logo"><div class="logo-text">EARN<span>ZONE</span></div></a>
   <div class="header-actions">
     <a href="profil.html" class="user-profile" id="userProfile">
       <div class="user-avatar" id="userAvatar">U</div>
@@ -305,7 +265,7 @@
     </a>
   </div>
 
-  div class="testimonials-section">
+   <div class="testimonials-section">
     <div class="section-header"><div class="section-subtitle">Ils nous font confiance</div><h2 class="section-title">Avis <span>membres</span></h2></div>
     <div class="testimonials-grid">
       <div class="testimonial-card"><div class="testimonial-header"><div class="testimonial-avatar">K</div><div class="testimonial-info"><h4>Koffi A.</h4><p>Membre depuis 3 mois</p></div></div><div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Grâce à EarnZone, j'ai gagné plus de 50 000 FCFA en 2 mois. Les formations sont top !"</p></div>
@@ -350,10 +310,9 @@
   
   setPersistence(auth, browserLocalPersistence);
 
-  let userData = { balance: 0, investments: [], gainsTotal: 0, nom: "Utilisateur", prenom: "" };
-  let notificationTimer = null;
-  let intervalTimer = null;
-  let withdrawIndex = 0;
+  let userData = null;
+  let currentUser = null;
+  let authChecked = false;
 
   const retraitsSimules = [
     { nom: "Samuel", montant: 65000 }, { nom: "Awa", montant: 12500 },
@@ -361,69 +320,42 @@
     { nom: "Jean", montant: 62000 }, { nom: "Mariam", montant: 15400 },
     { nom: "Sékou", montant: 92500 }, { nom: "Moussa", montant: 33100 }
   ];
-
-  async function loadUserData(uid) {
-    try {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        userData = userDoc.data();
-        userData.balance = userData.balance || 0;
-        userData.investments = userData.investments || [];
-        userData.gainsTotal = userData.gainsTotal || 0;
-        updateUI();
-        return true;
-      } else {
-        console.error("Document utilisateur non trouvé");
-        return false;
-      }
-    } catch (error) {
-      console.error("Erreur chargement:", error);
-      return false;
-    }
-  }
+  let withdrawIndex = 0;
+  let intervalTimer = null;
 
   function updateUI() {
-    // Mise à jour du solde
-    document.getElementById('statBalance').innerText = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
+    if (!userData) return;
     
-    // Investissements actifs
+    // Affichage du nom (CORRECTION ICI)
+    const prenom = userData.prenom || '';
+    const nom = userData.nom || '';
+    let displayName = 'Utilisateur';
+    
+    if (prenom && nom) {
+      displayName = `${prenom} ${nom}`;
+    } else if (prenom) {
+      displayName = prenom;
+    } else if (nom) {
+      displayName = nom;
+    }
+    
+    document.getElementById('userName').innerHTML = displayName;
+    const avatarLettre = displayName.charAt(0).toUpperCase();
+    document.getElementById('userAvatar').innerHTML = avatarLettre;
+    
+    // Stats
+    document.getElementById('statBalance').innerText = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
     const activeInvestments = (userData.investments || []).filter(inv => inv.status === 'active').length;
     document.getElementById('statInvestments').innerText = activeInvestments;
-    
-    // Gains totaux
     document.getElementById('statGains').innerText = (userData.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
     
-    // Jours actifs
     if (userData.registrationDate) {
       const days = Math.floor((new Date() - new Date(userData.registrationDate)) / 86400000);
       document.getElementById('statDays').innerText = days;
     }
     
-    // AFFICHAGE DU NOM (CORRIGÉ)
-    const prenom = userData.prenom || '';
-    const nom = userData.nom || '';
-    let displayName = '';
-    
-    if (prenom && nom) {
-      displayName = prenom;  // Affiche seulement le prénom
-    } else if (prenom) {
-      displayName = prenom;
-    } else if (nom) {
-      displayName = nom;
-    } else {
-      displayName = 'Utilisateur';
-    }
-    
-    document.getElementById('userName').innerText = displayName;
-    
-    // Avatar : première lettre du prénom ou nom
-    const avatarLettre = (prenom || nom || 'U').charAt(0).toUpperCase();
-    document.getElementById('userAvatar').innerText = avatarLettre;
-    
-    // Bandeau dépôt (caché si déjà déposé)
-    const hasDeposited = userData.hasDeposited === true;
+    // Bandeau dépôt
+    const hasDeposited = localStorage.getItem('earnzone_has_deposited') === 'true' || (userData.hasDeposited === true);
     const depotBanner = document.getElementById('depotBanner');
     if (depotBanner) {
       if (hasDeposited) {
@@ -434,11 +366,32 @@
     }
   }
 
+  async function loadUserData(uid) {
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        userData.balance = userData.balance || 0;
+        userData.investments = userData.investments || [];
+        updateUI();
+        return true;
+      } else {
+        console.warn("Document utilisateur non trouvé pour:", uid);
+        return false;
+      }
+    } catch (error) {
+      console.error("Erreur chargement user:", error);
+      return false;
+    }
+  }
+
   function showWithdrawNotification() {
     const retrait = retraitsSimules[withdrawIndex % retraitsSimules.length];
     withdrawIndex++;
-    document.getElementById('withdrawName').innerText = retrait.nom;
-    document.getElementById('withdrawAmount').innerText = retrait.montant.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('withdrawName').innerHTML = retrait.nom;
+    document.getElementById('withdrawAmount').innerHTML = retrait.montant.toLocaleString('fr-FR') + ' FCFA';
     const notif = document.getElementById('withdrawNotification');
     notif.classList.add('show');
     setTimeout(() => notif.classList.remove('show'), 5000);
@@ -446,17 +399,47 @@
 
   function startNotificationTimer() {
     if (intervalTimer) clearInterval(intervalTimer);
-    const hasDeposited = userData.hasDeposited === true;
+    const hasDeposited = localStorage.getItem('earnzone_has_deposited') === 'true';
     const intervalMs = hasDeposited ? 90000 : 10000;
     intervalTimer = setInterval(showWithdrawNotification, intervalMs);
   }
 
-  // AUTHENTIFICATION - PAS DE REDIRECTION AUTO VERS ADMIN
-  let authChecked = false;
-  
+  // AUTHENTIFICATION - CORRIGÉE
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      // Non connecté → redirection vers login
+    if (user) {
+      currentUser = user;
+      localStorage.setItem('earnzone_current_user', user.uid);
+      const success = await loadUserData(user.uid);
+      
+      if (success) {
+        startNotificationTimer();
+        setTimeout(() => showWithdrawNotification(), 2000);
+      } else {
+        // Création d'un document par défaut si inexistant
+        const defaultData = {
+          uid: user.uid,
+          email: user.email,
+          nom: '',
+          prenom: 'Utilisateur',
+          pays: 'Niger',
+          phone: '',
+          balance: 0,
+          status: 'active',
+          role: 'user',
+          registrationDate: new Date().toISOString(),
+          hasDeposited: false,
+          totalInvested: 0,
+          gainsTotal: 0,
+          investments: []
+        };
+        await import("firebase/firestore").then(({ setDoc, doc }) => {
+          setDoc(doc(db, "users", user.uid), defaultData);
+        });
+        userData = defaultData;
+        updateUI();
+        startNotificationTimer();
+      }
+    } else {
       const savedUid = localStorage.getItem('earnzone_current_user');
       if (savedUid && !authChecked) {
         setTimeout(async () => {
@@ -464,19 +447,9 @@
             window.location.href = 'login.html';
           }
         }, 2000);
-      } else {
+      } else if (!authChecked) {
         window.location.href = 'login.html';
       }
-      return;
-    }
-    
-    // Connecté → charger ses données depuis Firestore
-    localStorage.setItem('earnzone_current_user', user.uid);
-    const success = await loadUserData(user.uid);
-    
-    if (success) {
-      startNotificationTimer();
-      setTimeout(() => showWithdrawNotification(), 2000);
     }
     authChecked = true;
   });

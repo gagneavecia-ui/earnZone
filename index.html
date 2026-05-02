@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="icon.png">
   
   <style>
     :root {
@@ -185,8 +183,21 @@
     .footer-about { text-align: center; }
     .footer-logo { font-size: 18px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Playfair Display', serif; }
     .footer-text { color: var(--text-dim); font-size: 12.5px; margin-bottom: 20px; }
-    .social-links { display: flex; justify-content: center; gap: 12px; }
-    .social-link { width: 40px; height: 40px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; }
+    .social-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .social-link {
+      width: 40px;
+      height: 40px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .social-link:active { background: rgba(183, 110, 255, 0.15); transform: scale(0.95); }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
 
     /* ===== NOTIFICATION COMPACTE ===== */
@@ -380,7 +391,7 @@
   <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
   <div class="features-grid">
     <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
-     <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
+    <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
   </div>
 
   <div class="section-header"><div class="section-subtitle">Formations exclusives</div><h2 class="section-title">Développez vos <span>compétences</span></h2><p class="section-description">Apprenez à votre rythme avec nos cours pratiques.</p></div>
@@ -405,7 +416,15 @@
   </div>
 
   <footer class="footer">
-    <div class="footer-about"><div class="footer-logo">EarnZone</div><p class="footer-text">La plateforme d'investissement qui vous aide à faire fructifier votre argent.</p><div class="social-links"><a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a><a href="#" class="social-link"><i class="fab fa-telegram"></i></a><a href="#" class="social-link"><i class="fab fa-instagram"></i></a></div></div>
+    <div class="footer-about"><div class="footer-logo">EarnZone</div><p class="footer-text">La plateforme d'investissement qui vous aide à faire fructifier votre argent.</p></div>
+    <div class="social-links">
+      <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+      <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+      <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+      <!-- BOUTON ADMIN CADENAS - Visible uniquement pour l'admin -->
+      <a href="#" class="social-link" id="adminLockBtn" style="display: none;"><i class="fas fa-lock"></i></a>
+    </div>
     <div class="footer-bottom"><p>&copy; 2026 EarnZone. Tous droits réservés.</p></div>
   </footer>
 </main>
@@ -441,9 +460,11 @@
 
   let userData = null;
   let authChecked = false;
+  let notificationTimer = null;
+  let currentTimeout = null;
 
   // ============================================
-  // NOTIFICATIONS DE RETRAITS ULTRA RÉALISTES
+  // NOTIFICATIONS DE RETRAITS
   // ============================================
   
   const users = [
@@ -463,7 +484,7 @@
     { nom: "My Nita", icone: "💜" }, { nom: "Amana", icone: "🏦" }
   ];
 
-  const montants = [12500, 15000, 23000, 25000, 33100, 45200, 50000, 62000, 65000, 80700, 92500, 100000, 150000];
+  const montants = [5000, 12500, 15000, 23000, 25000, 33100, 45200, 50000, 62000, 65000, 80700, 92500, 100000, 150000];
 
   function getRandomTime() {
     const times = ["⚡ à l'instant", "🕐 1min", "🕑 2min", "🕒 3min", "🕔 5min", "🕙 10min"];
@@ -476,9 +497,6 @@
     const montant = montants[Math.floor(Math.random() * montants.length)];
     return { nom: user.prenom, pays: user.pays, montant, methode: methode.nom, icone: methode.icone, temps: getRandomTime() };
   }
-
-  let currentTimeout = null;
-  let notificationTimer = null;
 
   function showNotification(data) {
     const toast = document.getElementById('notifToast');
@@ -512,27 +530,47 @@
   }
 
   function startNotificationTimer() {
-  if (notificationTimer) clearInterval(notificationTimer);
-  
-  // Premier affichage après 3 secondes
-  setTimeout(() => showRandomNotification(), 3000);
-  
-  // Récupération du statut de dépôt
-  const hasDeposited = userData?.hasDeposited === true;
-  
-  // Intervalle : 10 secondes si PAS de dépôt, 2 minutes (120000ms) si dépôt effectué
-  const intervalTime = hasDeposited ? 120000 : 10000;
-  
-  console.log(`Notification: intervalle ${intervalTime / 1000} secondes (dépôt: ${hasDeposited})`);
-  
-  notificationTimer = setInterval(() => {
-    showRandomNotification();
-  }, intervalTime);
-      }
+    if (notificationTimer) clearInterval(notificationTimer);
+    
+    setTimeout(() => showRandomNotification(), 3000);
+    
+    const hasDeposited = userData?.hasDeposited === true;
+    const intervalTime = hasDeposited ? 120000 : 10000;
+    
+    notificationTimer = setInterval(() => {
+      showRandomNotification();
+    }, intervalTime);
+  }
 
   // ============================================
   // AFFICHAGE DES DONNÉES UTILISATEUR
   // ============================================
+
+  // Vérifier et afficher le bouton admin (cadenas) uniquement pour l'admin
+  function checkAndShowAdminButton() {
+    const adminBtn = document.getElementById('adminLockBtn');
+    if (!adminBtn) return;
+    
+    const user = auth.currentUser;
+    
+    if (user && user.email === 'gagneavecia@gmail.com') {
+      adminBtn.style.display = 'flex';
+      adminBtn.href = 'admin/index.html';
+      adminBtn.style.background = 'rgba(183, 110, 255, 0.15)';
+      adminBtn.style.border = '1px solid rgba(183, 110, 255, 0.3)';
+      adminBtn.style.color = '#B76EFF';
+      adminBtn.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = 'admin/index.html';
+      };
+    } else {
+      adminBtn.style.display = 'none';
+      adminBtn.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = 'about:blank';
+      };
+    }
+  }
 
   function updateUI(data) {
     if (!data) return;
@@ -551,6 +589,8 @@
     }
     const banner = document.getElementById('depotBanner');
     if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
+    
+    checkAndShowAdminButton();
   }
 
   function cacheUserData(uid, data) {
@@ -572,12 +612,14 @@
         cacheUserData(uid, fresh);
         updateUI(fresh);
         userData = fresh;
+        startNotificationTimer();
       } else {
         const defaultData = { uid, email: auth.currentUser?.email, nom: '', prenom: 'Utilisateur', balance: 0, status: 'active', role: 'user', hasDeposited: false, registrationDate: new Date().toISOString(), investments: [] };
         await setDoc(doc(db, "users", uid), defaultData);
         cacheUserData(uid, defaultData);
         updateUI(defaultData);
         userData = defaultData;
+        startNotificationTimer();
       }
     } catch(e) { console.error("Firestore error:", e); }
   }
@@ -586,7 +628,6 @@
     if (user) {
       localStorage.setItem('earnzone_current_user', user.uid);
       await loadUser(user.uid);
-      startNotificationTimer();
     } else {
       const saved = localStorage.getItem('earnzone_current_user');
       if (saved && !authChecked) setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
@@ -597,4 +638,3 @@
 </script>
 </body>
 </html>
- 

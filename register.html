@@ -444,33 +444,59 @@
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      console.log("✅ 1. Auth créé - UID:", user.uid);
+      console.log("✅ Auth créé - UID:", user.uid);
 
-      // 2. Création du document Firestore
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, {
+      // 2. Date actuelle pour les timestamps
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      
+      // 3. Création du document utilisateur avec TOUTES les colonnes nécessaires
+      const userData = {
+        // Identité
         uid: user.uid,
         email: email,
         nom: nom,
         prenom: prenom,
         pays: pays,
         phone: `${indicatif} ${telephone}`,
+        
+        // Comptes financiers
         balance: 0,
+        gainsTotal: 0,
+        totalInvested: 0,
+        totalWithdrawn: 0,
+        
+        // Statut
         status: "active",
         role: "user",
-        registrationDate: new Date().toISOString(),
         hasDeposited: false,
-        totalInvested: 0,
-        gainsTotal: 0,
-        investments: []
-      });
-      
-      console.log("✅ 2. Firestore document créé - users/" + user.uid);
+        
+        // Dates importantes
+        registrationDate: now.toISOString(),
+        lastGainDate: now.toISOString(),
+        lastInvestment: null,
+        lastWithdrawal: null,
+        subscriptionEnd: null,
+        
+        // Investissements
+        investments: [],
+        
+        // Historique des gains
+        gainsHistory: [],
+        
+        // Cache des données utilisateur pour localStorage
+        createdAt: new Date().toISOString()
+      };
 
-      // 3. Stockage localStorage
+      await setDoc(doc(db, "users", user.uid), userData);
+      
+      console.log("✅ Firestore document créé avec toutes les colonnes");
+
+      // 4. Stockage localStorage pour affichage instantané
+      localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
       localStorage.setItem('earnzone_current_user', user.uid);
       
-      console.log("✅ 3. Inscription terminée avec succès");
+      console.log("✅ Cache localStorage mis à jour");
 
       showSuccess();
       
@@ -493,7 +519,7 @@
           errorMsg = 'Mot de passe trop faible (minimum 6 caractères).';
           break;
         case 'permission-denied':
-          errorMsg = 'Erreur Firestore: Vérifiez les règles de sécurité dans Firebase Console.';
+          errorMsg = 'Erreur de sécurité. Vérifiez les règles Firestore.';
           break;
         default:
           errorMsg = error.message || 'Erreur lors de l\'inscription. Réessayez.';

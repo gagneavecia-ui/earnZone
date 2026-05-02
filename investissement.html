@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ===== TOUT TON CSS EXISTANT GARDÉ ===== */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -27,7 +28,6 @@
       --glass-bg: rgba(183, 110, 255, 0.04);
       --glass-border: rgba(183, 110, 255, 0.07);
       
-      /* Pack colors */
       --start: #9ca3af;
       --start-glow: rgba(156, 163, 175, 0.2);
       --micro: #cd7f32;
@@ -53,7 +53,6 @@
       padding-bottom: 90px;
     }
 
-    /* Background animé */
     .gradient-bg {
       position: fixed;
       top: 0; left: 0;
@@ -80,7 +79,6 @@
       66% { transform: translate(-20px, 20px) scale(0.95); }
     }
 
-    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -143,10 +141,8 @@
     }
     .balance-display i { font-size: 12px; }
 
-    /* Container */
     .container { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
 
-    /* Hero Card */
     .hero-card {
       background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.06));
       border-radius: 28px;
@@ -186,7 +182,6 @@
     .hero-stat-value { font-size: 18px; font-weight: 700; color: var(--primary-light); margin-bottom: 3px; }
     .hero-stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* Balance Section */
     .balance-section {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
@@ -231,7 +226,6 @@
       transform: scale(0.95);
     }
 
-    /* Section Title */
     .section-title {
       display: flex;
       align-items: center;
@@ -260,7 +254,6 @@
       margin-left: 10px;
     }
 
-    /* Packs Grid */
     .packs-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
     .pack-card {
       background: var(--card-bg);
@@ -273,8 +266,6 @@
       animation: fadeInUp 0.5s ease both;
     }
     .pack-card:active { transform: scale(0.98); border-color: var(--card-border-hover); }
-
-    /* Pack specific styles */
     .pack-start { border-left: 4px solid var(--start); }
     .pack-micro { border-left: 4px solid var(--micro); }
     .pack-bronze { border-left: 4px solid var(--bronze); }
@@ -328,7 +319,6 @@
     .invest-btn:active { transform: scale(0.97); }
     .invest-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Investments Section */
     .investments-section {
       background: var(--card-bg);
       backdrop-filter: blur(14px);
@@ -366,7 +356,6 @@
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
     .empty-state i { font-size: 48px; margin-bottom: 15px; opacity: 0.3; display: block; }
 
-    /* History */
     .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .clear-history-btn {
       background: rgba(255, 77, 109, 0.1);
@@ -387,7 +376,6 @@
     .history-details p { font-size: 10px; color: var(--text-dim); }
     .history-amount { font-size: 13px; font-weight: 700; color: var(--success); }
 
-    /* Modal */
     .overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.85);
@@ -423,7 +411,6 @@
     .confirm-dialog-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
     .confirm-dialog-btn:active { transform: scale(0.97); }
 
-    /* Notification */
     .notification {
       position: fixed;
       bottom: 20px;
@@ -448,7 +435,6 @@
     .notification-content h4 { font-size: 14px; margin-bottom: 4px; }
     .notification-content p { font-size: 11px; color: var(--text-dim); }
 
-    /* Footer Button */
     .back-home {
       position: fixed;
       bottom: 20px;
@@ -470,7 +456,6 @@
     }
     .back-home:active { transform: scale(0.97); opacity: 0.9; }
 
-    /* Responsive */
     @media (max-width: 480px) {
       .container { padding: 16px 12px; }
       .hero-title { font-size: 24px; }
@@ -580,6 +565,7 @@
   let currentUser = null;
   let userData = { balance: 0, investments: [] };
   let investmentsData = { active: [], completed: [] };
+  let gainCheckInterval = null;
 
   const packs = {
     start: { name: 'Start', price: 3000, dailyReturn: 200, totalDays: 50, totalReturn: 10000, netProfit: 7000, icon: 'fa-seedling', color: '#9ca3af', roi: '+233%' },
@@ -588,6 +574,17 @@
     silver: { name: 'Silver', price: 15000, dailyReturn: 1100, totalDays: 25, totalReturn: 27500, netProfit: 12500, icon: 'fa-gem', color: '#c0c0c0', roi: '+83%' },
     gold: { name: 'Gold', price: 25000, dailyReturn: 2000, totalDays: 20, totalReturn: 40000, netProfit: 15000, icon: 'fa-crown', color: '#ffd700', roi: '+60%' }
   };
+
+  // Mise à jour localStorage cache
+  function updateLocalStorageCache(uid) {
+    if (!uid) return;
+    getDoc(doc(db, "users", uid)).then(docSnap => {
+      if (docSnap.exists()) {
+        localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(docSnap.data()));
+        console.log("✅ Cache mis à jour");
+      }
+    }).catch(console.error);
+  }
 
   function updateBalanceDisplay() {
     const balance = userData.balance || 0;
@@ -621,71 +618,89 @@
     if (!currentUser) return;
     const allInvestments = [...investmentsData.active, ...investmentsData.completed];
     const userRef = doc(db, "users", currentUser.uid);
-    updateDoc(userRef, { investments: allInvestments });
+    updateDoc(userRef, { investments: allInvestments }).then(() => {
+      updateLocalStorageCache(currentUser.uid);
+    });
   }
 
   async function checkDailyPayouts() {
-    if (!currentUser || investmentsData.active.length === 0) return;
+    if (!currentUser || investmentsData.active.length === 0) return false;
     
     let updated = false;
     const now = new Date().getTime();
     const userRef = doc(db, "users", currentUser.uid);
     
-    await runTransaction(db, async (transaction) => {
-      const userDoc = await transaction.get(userRef);
-      if (!userDoc.exists()) return;
-      
-      let currentBalance = userDoc.data().balance || 0;
-      let updatedActive = [...investmentsData.active];
-      let updatedCompleted = [...investmentsData.completed];
-      let investmentsChanged = false;
-      
-      for (let i = 0; i < updatedActive.length; i++) {
-        const inv = updatedActive[i];
-        const lastPayout = new Date(inv.lastPayout).getTime();
-        const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
+    try {
+      const result = await runTransaction(db, async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+        if (!userDoc.exists()) return false;
         
-        if (hoursSince >= 24) {
-          const daysToPay = Math.floor(hoursSince / 24);
-          const remainingDays = inv.totalDays - inv.currentDay + 1;
-          const actualDays = Math.min(daysToPay, remainingDays);
+        let currentBalance = userDoc.data().balance || 0;
+        let updatedActive = [...investmentsData.active];
+        let updatedCompleted = [...investmentsData.completed];
+        let investmentsChanged = false;
+        let totalGain = 0;
+        
+        for (let i = 0; i < updatedActive.length; i++) {
+          const inv = updatedActive[i];
+          const lastPayout = new Date(inv.lastPayout).getTime();
+          const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
           
-          if (actualDays > 0) {
-            const gain = inv.dailyReturn * actualDays;
-            currentBalance += gain;
-            inv.totalEarned += gain;
-            inv.currentDay += actualDays;
-            inv.lastPayout = new Date().toISOString();
-            investmentsChanged = true;
+          if (hoursSince >= 24) {
+            const daysToPay = Math.floor(hoursSince / 24);
+            const remainingDays = inv.totalDays - inv.currentDay + 1;
+            const actualDays = Math.min(daysToPay, remainingDays);
             
-            if (inv.currentDay > inv.totalDays) {
-              inv.status = 'completed';
-              updatedCompleted.unshift(inv);
-              updatedActive.splice(i, 1);
-              i--;
+            if (actualDays > 0) {
+              const gain = inv.dailyReturn * actualDays;
+              currentBalance += gain;
+              inv.totalEarned += gain;
+              inv.currentDay += actualDays;
+              inv.lastPayout = new Date().toISOString();
+              totalGain += gain;
+              investmentsChanged = true;
+              
+              if (inv.currentDay > inv.totalDays) {
+                inv.status = 'completed';
+                updatedCompleted.unshift(inv);
+                updatedActive.splice(i, 1);
+                i--;
+              }
+              updated = true;
             }
-            updated = true;
           }
         }
-      }
+        
+        if (investmentsChanged) {
+          transaction.update(userRef, { 
+            balance: currentBalance,
+            gainsTotal: (userDoc.data().gainsTotal || 0) + totalGain,
+            investments: [...updatedActive, ...updatedCompleted]
+          });
+          investmentsData.active = updatedActive;
+          investmentsData.completed = updatedCompleted;
+          userData.balance = currentBalance;
+          userData.investments = [...updatedActive, ...updatedCompleted];
+          userData.gainsTotal = (userData.gainsTotal || 0) + totalGain;
+          
+          if (totalGain > 0) {
+            showNotification('💰 Gains quotidiens !', `+${totalGain.toLocaleString('fr-FR')} FCFA ont été ajoutés à votre solde.`, 'success');
+            if (navigator.vibrate) navigator.vibrate(100);
+          }
+        }
+        return investmentsChanged;
+      });
       
-      if (investmentsChanged) {
-        transaction.update(userRef, { 
-          balance: currentBalance,
-          investments: [...updatedActive, ...updatedCompleted]
-        });
-        investmentsData.active = updatedActive;
-        investmentsData.completed = updatedCompleted;
-        userData.balance = currentBalance;
-        userData.investments = [...updatedActive, ...updatedCompleted];
+      if (result) {
+        updateBalanceDisplay();
+        renderInvestments();
+        renderHistory();
+        updateLocalStorageCache(currentUser.uid);
       }
-    });
-    
-    if (updated) {
-      updateBalanceDisplay();
-      renderInvestments();
-      renderHistory();
-      showNotification('Gains quotidiens', 'Vos gains ont été crédités automatiquement !', 'success');
+      return result;
+    } catch (error) {
+      console.error("Erreur gains:", error);
+      return false;
     }
   }
 
@@ -753,6 +768,7 @@
         updateBalanceDisplay();
         renderInvestments();
         renderHistory();
+        updateLocalStorageCache(currentUser.uid);
         showNotification('Investissement réussi !', `Pack ${pack.name} acheté avec succès`, 'success');
         if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
       });
@@ -883,6 +899,7 @@
       investmentsData.completed = [];
       userData.investments = allInvestments;
       renderHistory();
+      updateLocalStorageCache(currentUser.uid);
       showNotification('Historique effacé', 'L\'historique a été supprimé avec succès', 'success');
       if (navigator.vibrate) navigator.vibrate(50);
     });
@@ -934,9 +951,9 @@
       currentUser = user;
       await loadUserData(user.uid);
       
-      // Vérification des gains toutes les minutes
-      setInterval(() => checkDailyPayouts(), 60000);
-      checkDailyPayouts();
+      if (gainCheckInterval) clearInterval(gainCheckInterval);
+      await checkDailyPayouts();
+      gainCheckInterval = setInterval(() => checkDailyPayouts(), 60000);
     } else {
       window.location.href = 'login.html';
     }

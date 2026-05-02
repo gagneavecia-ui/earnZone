@@ -190,10 +190,6 @@
     .social-links { display: flex; justify-content: center; gap: 12px; }
     .social-link { width: 40px; height: 40px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
-
-    .skeleton-text { height: 20px; background: linear-gradient(90deg, rgba(183,110,255,0.1) 25%, rgba(183,110,255,0.2) 50%, rgba(183,110,255,0.1) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; margin: 8px 0; }
-    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .skeleton-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(183,110,255,0.2); }
   </style>
 </head>
 <body>
@@ -265,7 +261,7 @@
     </a>
   </div>
 
-   <div class="testimonials-section">
+  <div class="testimonials-section">
     <div class="section-header"><div class="section-subtitle">Ils nous font confiance</div><h2 class="section-title">Avis <span>membres</span></h2></div>
     <div class="testimonials-grid">
       <div class="testimonial-card"><div class="testimonial-header"><div class="testimonial-avatar">K</div><div class="testimonial-info"><h4>Koffi A.</h4><p>Membre depuis 3 mois</p></div></div><div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Grâce à EarnZone, j'ai gagné plus de 50 000 FCFA en 2 mois. Les formations sont top !"</p></div>
@@ -293,7 +289,7 @@
 <script type="module">
   import { initializeApp } from "firebase/app";
   import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc } from "firebase/firestore";
+  import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -326,18 +322,13 @@
   function updateUI() {
     if (!userData) return;
     
-    // Affichage du nom (CORRECTION ICI)
+    // Affichage du nom
     const prenom = userData.prenom || '';
     const nom = userData.nom || '';
     let displayName = 'Utilisateur';
-    
-    if (prenom && nom) {
-      displayName = `${prenom} ${nom}`;
-    } else if (prenom) {
-      displayName = prenom;
-    } else if (nom) {
-      displayName = nom;
-    }
+    if (prenom && nom) displayName = `${prenom} ${nom}`;
+    else if (prenom) displayName = prenom;
+    else if (nom) displayName = nom;
     
     document.getElementById('userName').innerHTML = displayName;
     const avatarLettre = displayName.charAt(0).toUpperCase();
@@ -354,11 +345,12 @@
       document.getElementById('statDays').innerText = days;
     }
     
-    // Bandeau dépôt
-    const hasDeposited = localStorage.getItem('earnzone_has_deposited') === 'true' || (userData.hasDeposited === true);
+    // ============================================
+    // BANDEAU DÉPÔT - Disparaît UNIQUEMENT si l'utilisateur a déjà déposé
+    // ============================================
     const depotBanner = document.getElementById('depotBanner');
     if (depotBanner) {
-      if (hasDeposited) {
+      if (userData.hasDeposited === true) {
         depotBanner.classList.add('hidden');
       } else {
         depotBanner.classList.remove('hidden');
@@ -378,8 +370,27 @@
         updateUI();
         return true;
       } else {
-        console.warn("Document utilisateur non trouvé pour:", uid);
-        return false;
+        // Création auto du document utilisateur si inexistant
+        const defaultData = {
+          uid: uid,
+          email: currentUser.email,
+          nom: '',
+          prenom: 'Utilisateur',
+          pays: 'Niger',
+          phone: '',
+          balance: 0,
+          status: 'active',
+          role: 'user',
+          hasDeposited: false,
+          registrationDate: new Date().toISOString(),
+          totalInvested: 0,
+          gainsTotal: 0,
+          investments: []
+        };
+        await setDoc(userRef, defaultData);
+        userData = defaultData;
+        updateUI();
+        return true;
       }
     } catch (error) {
       console.error("Erreur chargement user:", error);
@@ -399,46 +410,19 @@
 
   function startNotificationTimer() {
     if (intervalTimer) clearInterval(intervalTimer);
-    const hasDeposited = localStorage.getItem('earnzone_has_deposited') === 'true';
+    const hasDeposited = userData?.hasDeposited === true;
     const intervalMs = hasDeposited ? 90000 : 10000;
     intervalTimer = setInterval(showWithdrawNotification, intervalMs);
   }
 
-  // AUTHENTIFICATION - CORRIGÉE
+  // AUTHENTIFICATION
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       localStorage.setItem('earnzone_current_user', user.uid);
-      const success = await loadUserData(user.uid);
-      
-      if (success) {
-        startNotificationTimer();
-        setTimeout(() => showWithdrawNotification(), 2000);
-      } else {
-        // Création d'un document par défaut si inexistant
-        const defaultData = {
-          uid: user.uid,
-          email: user.email,
-          nom: '',
-          prenom: 'Utilisateur',
-          pays: 'Niger',
-          phone: '',
-          balance: 0,
-          status: 'active',
-          role: 'user',
-          registrationDate: new Date().toISOString(),
-          hasDeposited: false,
-          totalInvested: 0,
-          gainsTotal: 0,
-          investments: []
-        };
-        await import("firebase/firestore").then(({ setDoc, doc }) => {
-          setDoc(doc(db, "users", user.uid), defaultData);
-        });
-        userData = defaultData;
-        updateUI();
-        startNotificationTimer();
-      }
+      await loadUserData(user.uid);
+      startNotificationTimer();
+      setTimeout(() => showWithdrawNotification(), 2000);
     } else {
       const savedUid = localStorage.getItem('earnzone_current_user');
       if (savedUid && !authChecked) {

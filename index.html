@@ -179,10 +179,6 @@
     .testimonial-text { color: var(--text-dim); font-size: 13px; line-height: 1.5; font-style: italic; }
     .see-all-reviews-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: 16px; color: white; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
 
-    .withdraw-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(183, 110, 255, 0.35); border-radius: 50px; padding: 8px 18px; display: flex; align-items: center; gap: 10px; z-index: 10000; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90%; }
-    .withdraw-notification.show { transform: translateX(-50%) translateY(0); }
-    .withdraw-amount { font-weight: 800; color: var(--success); }
-
     .footer { border-top: 1px solid rgba(183, 110, 255, 0.06); padding: 40px 0 24px; }
     .footer-about { text-align: center; }
     .footer-logo { font-size: 18px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Playfair Display', serif; }
@@ -190,6 +186,127 @@
     .social-links { display: flex; justify-content: center; gap: 12px; }
     .social-link { width: 40px; height: 40px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
+
+    /* ===== NOTIFICATION COMPACTE ===== */
+    .notif-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      width: calc(100% - 32px);
+      max-width: 360px;
+      background: linear-gradient(135deg, rgba(10, 10, 20, 0.98), rgba(5, 5, 10, 0.98));
+      backdrop-filter: blur(16px);
+      border-radius: 60px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(183, 110, 255, 0.12);
+      z-index: 10000;
+      transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+      overflow: hidden;
+    }
+
+    .notif-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .notif-toast-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+    }
+
+    .notif-icon-circle {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #2EE89A, #00cc66);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #030305;
+      flex-shrink: 0;
+    }
+
+    .notif-info {
+      flex: 1;
+    }
+
+    .notif-user-line {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 3px;
+    }
+
+    .notif-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .notif-pays {
+      font-size: 10px;
+      color: #8B90A8;
+    }
+
+    .notif-details-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .notif-amount {
+      font-size: 14px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #B76EFF, #D4A1FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .notif-method {
+      font-size: 10px;
+      color: #B76EFF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .notif-time {
+      font-size: 9px;
+      color: #5a6070;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .notif-progress-line {
+      height: 2px;
+      background: rgba(183, 110, 255, 0.15);
+    }
+
+    .notif-progress-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #B76EFF, #2EE89A);
+      animation: shrink 5s linear forwards;
+    }
+
+    @keyframes shrink {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    .flash {
+      animation: flash 0.2s ease;
+    }
+
+    @keyframes flash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; transform: scale(0.98); }
+    }
   </style>
 </head>
 <body>
@@ -198,11 +315,26 @@
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<div class="withdraw-notification" id="withdrawNotification">
-  <div class="withdraw-icon"><i class="fas fa-money-bill-wave"></i></div>
-  <div class="withdraw-content">
-    <h4 id="withdrawName">Utilisateur</h4>
-    <p>vient de retirer <span id="withdrawAmount" class="withdraw-amount">0 FCFA</span></p>
+<!-- NOTIFICATION COMPACTE -->
+<div class="notif-toast" id="notifToast">
+  <div class="notif-toast-content">
+    <div class="notif-icon-circle">
+      <i class="fas fa-arrow-down"></i>
+    </div>
+    <div class="notif-info">
+      <div class="notif-user-line">
+        <span class="notif-name" id="notifName">Samuel</span>
+        <span class="notif-pays" id="notifPays">🇨🇮 CI</span>
+      </div>
+      <div class="notif-details-line">
+        <span class="notif-amount" id="notifAmount">-65 000 FCFA</span>
+        <span class="notif-method" id="notifMethod">📱 Orange Money</span>
+        <span class="notif-time" id="notifTime">⚡ à l'instant</span>
+      </div>
+    </div>
+  </div>
+  <div class="notif-progress-line">
+    <div class="notif-progress-fill" id="progressFill"></div>
   </div>
 </div>
 
@@ -246,7 +378,7 @@
   <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
   <div class="features-grid">
     <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
-    <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
+     <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
   </div>
 
   <div class="section-header"><div class="section-subtitle">Formations exclusives</div><h2 class="section-title">Développez vos <span>compétences</span></h2><p class="section-description">Apprenez à votre rythme avec nos cours pratiques.</p></div>
@@ -303,170 +435,153 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  
   setPersistence(auth, browserLocalPersistence);
 
   let userData = null;
-  let currentUser = null;
   let authChecked = false;
 
-  const retraitsSimules = [
-    { nom: "Samuel", montant: 65000 }, { nom: "Awa", montant: 12500 },
-    { nom: "Koffi", montant: 80700 }, { nom: "Fatou", montant: 23000 },
-    { nom: "Jean", montant: 62000 }, { nom: "Mariam", montant: 15400 },
-    { nom: "Sékou", montant: 92500 }, { nom: "Moussa", montant: 33100 }
+  // ============================================
+  // NOTIFICATIONS DE RETRAITS ULTRA RÉALISTES
+  // ============================================
+  
+  const users = [
+    { prenom: "Samuel", pays: "🇨🇮 CI" }, { prenom: "Awa", pays: "🇸🇳 Sénégal" },
+    { prenom: "Koffi", pays: "🇨🇮 CI" }, { prenom: "Fatou", pays: "🇸🇳 Sénégal" },
+    { prenom: "Jean", pays: "🇨🇮 CI" }, { prenom: "Mariam", pays: "🇲🇱 Mali" },
+    { prenom: "Sékou", pays: "🇬🇳 Guinée" }, { prenom: "Moussa", pays: "🇳🇪 Niger" },
+    { prenom: "Aminata", pays: "🇨🇮 CI" }, { prenom: "Bakary", pays: "🇲🇱 Mali" },
+    { prenom: "Coumba", pays: "🇸🇳 Sénégal" }, { prenom: "Djibril", pays: "🇨🇮 CI" },
+    { prenom: "Ibrahima", pays: "🇨🇮 CI" }, { prenom: "Kadiatou", pays: "🇳🇪 Niger" },
+    { prenom: "Lamine", pays: "🇸🇳 Sénégal" }, { prenom: "Rokia", pays: "🇳🇪 Niger" }
   ];
-  let withdrawIndex = 0;
-  let intervalTimer = null;
 
-  // Fonction qui met à jour l'UI à partir des données (cachée ou Firebase)
-  function updateUIFromData(data) {
-    if (!data) return;
+  const methodes = [
+    { nom: "Orange Money", icone: "📱" }, { nom: "Moov Money", icone: "📱" },
+    { nom: "Airtel Money", icone: "📱" }, { nom: "Wave", icone: "🌊" },
+    { nom: "My Nita", icone: "💜" }, { nom: "Amana", icone: "🏦" }
+  ];
+
+  const montants = [5000, 12500, 15000, 23000, 25000, 33100, 45200, 50000, 62000, 65000, 80700, 92500, 100000, 150000];
+
+  function getRandomTime() {
+    const times = ["⚡ à l'instant", "🕐 1min", "🕑 2min", "🕒 3min", "🕔 5min", "🕙 10min"];
+    return times[Math.floor(Math.random() * times.length)];
+  }
+
+  function getRandomWithdrawal() {
+    const user = users[Math.floor(Math.random() * users.length)];
+    const methode = methodes[Math.floor(Math.random() * methodes.length)];
+    const montant = montants[Math.floor(Math.random() * montants.length)];
+    return { nom: user.prenom, pays: user.pays, montant, methode: methode.nom, icone: methode.icone, temps: getRandomTime() };
+  }
+
+  let currentTimeout = null;
+  let notificationTimer = null;
+
+  function showNotification(data) {
+    const toast = document.getElementById('notifToast');
+    document.getElementById('notifName').innerHTML = data.nom;
+    document.getElementById('notifPays').innerHTML = data.pays;
+    document.getElementById('notifAmount').innerHTML = `-${data.montant.toLocaleString('fr-FR')} FCFA`;
+    document.getElementById('notifMethod').innerHTML = data.icone + ' ' + data.methode;
+    document.getElementById('notifTime').innerHTML = data.temps;
     
+    const progressFill = document.getElementById('progressFill');
+    progressFill.style.animation = 'none';
+    progressFill.offsetHeight;
+    progressFill.style.animation = 'shrink 5s linear forwards';
+    
+    toast.classList.add('flash');
+    setTimeout(() => toast.classList.remove('flash'), 200);
+    
+    if (navigator.vibrate) navigator.vibrate(50);
+    
+    toast.classList.add('show');
+    
+    if (currentTimeout) clearTimeout(currentTimeout);
+    currentTimeout = setTimeout(() => {
+      toast.classList.remove('show');
+      currentTimeout = null;
+    }, 5000);
+  }
+
+  function showRandomNotification() {
+    showNotification(getRandomWithdrawal());
+  }
+
+  function startNotificationTimer() {
+    if (notificationTimer) clearInterval(notificationTimer);
+    setTimeout(() => showRandomNotification(), 3000);
+    notificationTimer = setInterval(() => {
+      showRandomNotification();
+    }, 45000);
+  }
+
+  // ============================================
+  // AFFICHAGE DES DONNÉES UTILISATEUR
+  // ============================================
+
+  function updateUI(data) {
+    if (!data) return;
     const prenom = data.prenom || '';
     const nom = data.nom || '';
-    let displayName = 'Utilisateur';
-    if (prenom && nom) displayName = `${prenom} ${nom}`;
-    else if (prenom) displayName = prenom;
-    else if (nom) displayName = nom;
-    
+    let displayName = prenom ? (nom ? `${prenom} ${nom}` : prenom) : (nom || 'Utilisateur');
     document.getElementById('userName').innerHTML = displayName;
-    const avatarLettre = displayName.charAt(0).toUpperCase();
-    document.getElementById('userAvatar').innerHTML = avatarLettre;
-    
+    document.getElementById('userAvatar').innerHTML = displayName.charAt(0).toUpperCase();
     document.getElementById('statBalance').innerText = (data.balance || 0).toLocaleString('fr-FR') + ' FCFA';
-    const activeInvestments = (data.investments || []).filter(inv => inv.status === 'active').length;
-    document.getElementById('statInvestments').innerText = activeInvestments;
+    const activeCount = (data.investments || []).filter(i => i.status === 'active').length;
+    document.getElementById('statInvestments').innerText = activeCount;
     document.getElementById('statGains').innerText = (data.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
-    
     if (data.registrationDate) {
       const days = Math.floor((new Date() - new Date(data.registrationDate)) / 86400000);
       document.getElementById('statDays').innerText = days;
     }
-    
-    const depotBanner = document.getElementById('depotBanner');
-    if (depotBanner) {
-      if (data.hasDeposited === true) {
-        depotBanner.classList.add('hidden');
-      } else {
-        depotBanner.classList.remove('hidden');
-      }
-    }
+    const banner = document.getElementById('depotBanner');
+    if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
   }
 
-  // Mise en cache dans localStorage
   function cacheUserData(uid, data) {
     localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
   }
 
-  // Récupération depuis le cache localStorage
-  function getCachedUserData(uid) {
+  function getCached(uid) {
     const cached = localStorage.getItem(`earnzone_user_${uid}`);
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch(e) {
-        return null;
-      }
-    }
-    return null;
+    return cached ? JSON.parse(cached) : null;
   }
 
-  async function loadUserData(uid) {
-    // 1. AFFICHAGE IMMÉDIAT depuis le cache localStorage (0ms)
-    const cachedData = getCachedUserData(uid);
-    if (cachedData) {
-      updateUIFromData(cachedData);
-    }
-    
+  async function loadUser(uid) {
+    const cached = getCached(uid);
+    if (cached) updateUI(cached);
     try {
-      // 2. CHARGEMENT FIREBASE en arrière-plan
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        const freshData = userDoc.data();
-        freshData.balance = freshData.balance || 0;
-        freshData.investments = freshData.investments || [];
-        
-        // 3. MISE À JOUR du cache
-        cacheUserData(uid, freshData);
-        
-        // 4. MISE À JOUR de l'UI si différente du cache
-        updateUIFromData(freshData);
-        userData = freshData;
-        return true;
+      const docSnap = await getDoc(doc(db, "users", uid));
+      if (docSnap.exists()) {
+        const fresh = docSnap.data();
+        cacheUserData(uid, fresh);
+        updateUI(fresh);
+        userData = fresh;
       } else {
-        // Création auto du document utilisateur
-        const defaultData = {
-          uid: uid,
-          email: currentUser.email,
-          nom: '',
-          prenom: 'Utilisateur',
-          pays: 'Niger',
-          phone: '',
-          balance: 0,
-          status: 'active',
-          role: 'user',
-          hasDeposited: false,
-          registrationDate: new Date().toISOString(),
-          totalInvested: 0,
-          gainsTotal: 0,
-          investments: []
-        };
-        await setDoc(userRef, defaultData);
+        const defaultData = { uid, email: auth.currentUser?.email, nom: '', prenom: 'Utilisateur', balance: 0, status: 'active', role: 'user', hasDeposited: false, registrationDate: new Date().toISOString(), investments: [] };
+        await setDoc(doc(db, "users", uid), defaultData);
         cacheUserData(uid, defaultData);
-        updateUIFromData(defaultData);
+        updateUI(defaultData);
         userData = defaultData;
-        return true;
       }
-    } catch (error) {
-      console.error("Erreur Firebase:", error);
-      // En cas d'erreur réseau, on garde les données du cache
-      return cachedData !== null;
-    }
+    } catch(e) { console.error("Firestore error:", e); }
   }
 
-  function showWithdrawNotification() {
-    const retrait = retraitsSimules[withdrawIndex % retraitsSimules.length];
-    withdrawIndex++;
-    document.getElementById('withdrawName').innerHTML = retrait.nom;
-    document.getElementById('withdrawAmount').innerHTML = retrait.montant.toLocaleString('fr-FR') + ' FCFA';
-    const notif = document.getElementById('withdrawNotification');
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 5000);
-  }
-
-  function startNotificationTimer() {
-    if (intervalTimer) clearInterval(intervalTimer);
-    const hasDeposited = userData?.hasDeposited === true;
-    const intervalMs = hasDeposited ? 90000 : 10000;
-    intervalTimer = setInterval(showWithdrawNotification, intervalMs);
-  }
-
-  // AUTHENTIFICATION
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      currentUser = user;
       localStorage.setItem('earnzone_current_user', user.uid);
-      await loadUserData(user.uid);
+      await loadUser(user.uid);
       startNotificationTimer();
-      setTimeout(() => showWithdrawNotification(), 2000);
     } else {
-      const savedUid = localStorage.getItem('earnzone_current_user');
-      if (savedUid && !authChecked) {
-        setTimeout(async () => {
-          if (!auth.currentUser) {
-            localStorage.removeItem('earnzone_current_user');
-            window.location.href = 'login.html';
-          }
-        }, 2000);
-      } else if (!authChecked) {
-        window.location.href = 'login.html';
-      }
+      const saved = localStorage.getItem('earnzone_current_user');
+      if (saved && !authChecked) setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
+      else if (!authChecked) window.location.href = 'login.html';
     }
     authChecked = true;
   });
 </script>
 </body>
 </html>
+ 

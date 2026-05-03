@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Validation envoi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --bg-dark: #030305;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.85);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --success: #2EE89A;
+      --danger: #FF4D6D;
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
+                  linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
+    .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -20px) scale(1.05); }
+      66% { transform: translate(-15px, 15px) scale(0.95); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 5%;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.07);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .logo-text span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(183, 110, 255, 0.08);
+      border: 1px solid rgba(183, 110, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--text-dim);
+    }
+    .back-btn:active {
+      background: rgba(183, 110, 255, 0.2);
+      transform: scale(0.95);
+    }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    .page-header { text-align: center; margin-bottom: 32px; animation: fadeInDown 0.6s ease; }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .page-header h1 { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, var(--primary-light), var(--primary), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+    .page-header p { color: var(--text-dim); font-size: 13px; }
+
+    .info-card {
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.06));
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 32px;
+      border: 1px solid rgba(183, 110, 255, 0.2);
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.1);
+    }
+    .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .info-label { color: var(--text-dim); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .info-value { font-weight: 700; color: var(--primary-light); font-size: 15px; }
+
+    .message-preview {
+      background: rgba(20, 20, 35, 0.6);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
+      border-left: 3px solid var(--primary);
+    }
+    .message-preview p { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+    .message-preview .msg-content {
+      background: rgba(183, 110, 255, 0.1);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-family: monospace;
+      word-break: break-word;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .btn-valider {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-valider:active { transform: scale(0.97); }
+
+    .footer { text-align: center; padding: 24px 0 20px; border-top: 1px solid rgba(183, 110, 255, 0.06); margin-top: 20px; }
+    .footer p { color: var(--text-dim); font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<header class="header">
+  <a href="index.html" class="logo-text">EARN<span>ZONE</span></a>
+  <div class="back-btn" onclick="window.location.href='depot.html'"><i class="fas fa-arrow-left"></i></div>
+</header>
+
+<main class="container">
+  <div class="page-header">
+    <h1>Validation</h1>
+    <p>Vérifiez vos informations avant envoi</p>
+  </div>
+
+  <div class="info-card" id="rechargeInfo">
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-user"></i> Nom complet</span>
+      <span class="info-value" id="userName">Chargement...</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-phone"></i> Téléphone</span>
+      <span class="info-value" id="userPhone">Chargement...</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-credit-card"></i> Moyen de paiement</span>
+      <span class="info-value" id="paymentMethod">-</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-money-bill-wave"></i> Montant</span>
+      <span class="info-value" id="amount">- FCFA</span>
+    </div>
+  </div>
+
+  <div class="message-preview">
+    <p><i class="fas fa-comment-dots"></i> Message qui sera envoyé :</p>
+    <div class="msg-content" id="messagePreview">
+      Chargement...
+    </div>
+  </div>
+
+  <button class="btn-valider" id="sendWhatsappBtn">
+    <i class="fab fa-whatsapp"></i> Envoyer sur WhatsApp
+  </button>
+</main>
+
+<footer class="footer"><p>&copy; 2026 EarnZone. Tous droits réservés.</p></footer>
+
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import { getFirestore, doc, getDoc } from "firebase/firestore";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let userData = { fullName: "Client", phone: "Non renseigné" };
+  let rechargeData = null;
+
+  // 🔁 TON NUMÉRO WHATSAPP (celui qui reçoit les messages)
+  const WHATSAPP_NUMBER = "22780135699"; // Remplace par ton numéro (sans le +)
+
+  // Récupérer les infos de rechargement
+  try {
+    const saved = localStorage.getItem('pendingRecharge');
+    if (saved) {
+      rechargeData = JSON.parse(saved);
+    }
+  } catch(e) { console.error(e); }
+
+  async function loadUserData(uid) {
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        userData.fullName = data.fullName || data.name || data.displayName || data.email || "Utilisateur";
+        if (userData.fullName.includes('@')) userData.fullName = userData.fullName.split('@')[0];
+        
+        // Récupérer le numéro de téléphone
+        userData.phone = data.phone || data.telephone || data.mobile || "Non renseigné";
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    updateUI();
+  }
+
+  function updateUI() {
+    // Mettre à jour l'affichage
+    document.getElementById('userName').innerHTML = userData.fullName;
+    document.getElementById('userPhone').innerHTML = userData.phone;
+    
+    if (rechargeData) {
+      document.getElementById('paymentMethod').innerHTML = rechargeData.method;
+      document.getElementById('amount').innerHTML = `${rechargeData.amount.toLocaleString('fr-FR')} FCFA`;
+    } else {
+      document.getElementById('paymentMethod').innerHTML = "Non spécifié";
+      document.getElementById('amount').innerHTML = "0 FCFA";
+    }
+
+    // Générer le message pour WhatsApp
+    const montantStr = rechargeData ? `${rechargeData.amount.toLocaleString('fr-FR')} FCFA` : "montant non spécifié";
+    const methodeStr = rechargeData ? rechargeData.method : "moyen non spécifié";
+    const dateStr = new Date().toLocaleString('fr-FR');
+    
+    const message = `🏦 *NOUVEAU DEPOT EARNZONE* 🏦\n\n👤 *Nom:* ${userData.fullName}\n📞 *Téléphone:* ${userData.phone}\n💰 *Montant:* ${montantStr}\n💳 *Moyen:* ${methodeStr}\n📅 *Date:* ${dateStr}\n\n📷 *(Joindre la capture d'écran du paiement)*\n\n✅ J'ai effectué le paiement. Veuillez me donner mon code de rechargement.`;
+    
+    document.getElementById('messagePreview').innerText = message;
+    return message;
+  }
+
+  // Envoi vers WhatsApp
+  document.getElementById('sendWhatsappBtn').addEventListener('click', () => {
+    const message = updateUI();
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+    
+    setTimeout(() => {
+      window.location.href = 'depot.html';
+    }, 2000);
+  });
+
+  // Authentification
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadUserData(user.uid);
+    } else {
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid) {
+        currentUser = { uid: savedUid, email: null };
+        await loadUserData(savedUid);
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+  });
+</script>
+</body>
+</html>

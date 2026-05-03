@@ -185,6 +185,37 @@
     }
     .code-input input:focus { outline: none; border-color: var(--primary); }
 
+    /* NOUVEAU STYLE POUR LE CONTENEUR FLEX DU CHAMP + BOUTON */
+    .code-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .code-input-row input {
+      flex: 1;
+    }
+    .get-code-btn {
+      background: rgba(183, 110, 255, 0.12);
+      border: 1px solid rgba(183, 110, 255, 0.2);
+      border-radius: 16px;
+      padding: 0 16px;
+      height: 50px;
+      color: var(--primary-light);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: var(--transition);
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.1), rgba(139, 63, 232, 0.05));
+    }
+    .get-code-btn:active {
+      transform: scale(0.95);
+      background: rgba(183, 110, 255, 0.2);
+    }
+
     .btn-valider {
       width: 100%;
       padding: 18px;
@@ -243,7 +274,10 @@
 
   <div class="code-input">
     <label><i class="fas fa-key"></i> Code coupon</label>
-    <input type="text" id="couponCode" placeholder="Ex: ABC-1234" autocomplete="off">
+    <div class="code-input-row">
+      <input type="text" id="couponCode" placeholder="Ex: ABC-1234" autocomplete="off">
+      <button class="get-code-btn" id="getCodeBtn"><i class="fas fa-ticket-alt"></i> Avoir un code</button>
+    </div>
   </div>
 
   <button class="btn-valider" id="validerBtn"><i class="fas fa-check-circle"></i> Valider le rechargement</button>
@@ -410,7 +444,6 @@
       const currentBalance = userDoc.data().balance || 0;
       const newBalance = currentBalance + selectedPack.montant;
       
-      // 1. MISE À JOUR FIREBASE
       await updateDoc(userRef, {
         balance: newBalance,
         hasDeposited: true,
@@ -418,7 +451,6 @@
         totalInvested: (userDoc.data().totalInvested || 0) + selectedPack.montant
       });
 
-      // 2. ENREGISTREMENT DU DÉPÔT
       await addDoc(collection(db, "deposits"), {
         userId: currentUser.uid,
         amount: selectedPack.montant,
@@ -429,10 +461,7 @@
         pack: selectedPack.id
       });
 
-      // 3. MISE À JOUR DU CACHE LOCALSTORAGE (IMPORTANT !)
       updateLocalStorageCache(currentUser.uid);
-
-      // 4. MISE À JOUR DE L'UI
       updateSoldeFromFirebase(newBalance);
 
       messageDiv.className = 'message success';
@@ -457,13 +486,11 @@
   }
 
   async function loadUserData(uid) {
-    // 1. AFFICHAGE IMMÉDIAT depuis localStorage
     const cached = getCachedUserData(uid);
     if (cached && cached.balance !== undefined) {
       updateSoldeFromCache();
     }
     
-    // 2. CHARGEMENT FIREBASE en arrière-plan
     try {
       const userRef = doc(db, "users", uid);
       const userDoc = await getDoc(userRef);
@@ -471,7 +498,6 @@
         const freshData = userDoc.data();
         updateSoldeFromFirebase(freshData.balance || 0);
         userData = freshData;
-        // Mise à jour du cache
         localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(freshData));
       }
     } catch (error) {
@@ -504,6 +530,11 @@
   document.getElementById('validerBtn').addEventListener('click', processRechargement);
   document.getElementById('couponCode').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') processRechargement();
+  });
+  
+  // NOUVEAU BOUTON : Redirige vers la page obtenir-code.html
+  document.getElementById('getCodeBtn').addEventListener('click', () => {
+    window.location.href = 'obtenir-code.html';
   });
   
   renderPacks();

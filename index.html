@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== TOUT LE CSS EXISTANT (GARDÉ) ===== */
+    /* (tout votre CSS actuel, inchangé) */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -376,7 +376,7 @@
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div><div class="stat-value" id="statDays">0</div><div class="stat-label">Jours actifs</div></div>
   </div>
 
-  <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
+    <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
   <div class="features-grid">
     <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
     <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
@@ -429,7 +429,7 @@
 <script type="module">
   import { initializeApp } from "firebase/app";
   import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+  import { getFirestore, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -445,8 +445,9 @@
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
 
+  let currentUser = null;
   let userData = null;
-  let authChecked = false;
+  let unsubscribeUser = null;     // pour se désabonner de l'écoute Firestore
   let notificationTimer = null;
   let currentTimeout = null;
 
@@ -463,12 +464,73 @@
   }
 
   // ============================================
-  // FORCER VÉRIFICATION & CRÉDIT DES GAINS (AVEC MISE À JOUR IMMÉDIATE)
+  // AFFICHAGE DES DONNÉES UTILISATEUR (UI)
+  // ============================================
+  function updateUI(data) {
+    if (!data) return;
+    const prenom = data.prenom || '';
+    const nom = data.nom || '';
+    let displayName = prenom ? (nom ? `${prenom} ${nom}` : prenom) : (nom || 'Utilisateur');
+    document.getElementById('userName').innerHTML = displayName;
+    document.getElementById('userAvatar').innerHTML = displayName.charAt(0).toUpperCase();
+    document.getElementById('statBalance').innerText = (data.balance || 0).toLocaleString('fr-FR') + ' FCFA';
+    const activeCount = (data.investments || []).filter(i => i.status === 'active').length;
+    document.getElementById('statInvestments').innerText = activeCount;
+    document.getElementById('statGains').innerText = (data.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
+    if (data.registrationDate) {
+      const days = Math.floor((new Date() - new Date(data.registrationDate)) / 86400000);
+      document.getElementById('statDays').innerText = days;
+    }
+    const banner = document.getElementById('depotBanner');
+    if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
+  }
+
+  // Mise en cache localStorage (pour affichage instantané au chargement)
+  function cacheUserData(uid, data) {
+    localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
+  }
+
+  function getCached(uid) {
+    const cached = localStorage.getItem(`earnzone_user_${uid}`);
+    return cached ? JSON.parse(cached) : null;
+  }
+
+  // ============================================
+  // ÉCOUTE EN TEMPS RÉEL (Firestore onSnapshot)
+  // ============================================
+  function listenToUser(uid) {
+    if (unsubscribeUser) unsubscribeUser();
+    const userRef = doc(db, "users", uid);
+    unsubscribeUser = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const freshData = docSnap.data();
+        // Mise à jour locale et cache
+        userData = freshData;
+        cacheUserData(uid, freshData);
+        updateUI(freshData);
+        console.log("Mise à jour temps réel: solde =", freshData.balance);
+      } else {
+        // Création du document si inexistant
+        const defaultData = { uid, email: currentUser?.email, nom: '', prenom: 'Utilisateur', balance: 0, status: 'active', role: 'user', hasDeposited: false, registrationDate: new Date().toISOString(), investments: [] };
+        setDoc(userRef, defaultData).then(() => {
+          cacheUserData(uid, defaultData);
+          updateUI(defaultData);
+          userData = defaultData;
+        });
+      }
+    }, (error) => {
+      console.error("Erreur onSnapshot:", error);
+    });
+  }
+
+  // ============================================
+  // FONCTION DE CRÉDIT DES GAINS (appelée manuellement ou via timer)
   // ============================================
   async function forceCheckAndCreditGains() {
-    if (!auth.currentUser) return false;
+    if (!currentUser) return false;
     try {
-      const userRef = doc(db, "users", auth.currentUser.uid);
+      const userRef = doc(db, "users", currentUser.uid);
+      // On récupère le document actuel pour calcul
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) return false;
       const data = userDoc.data();
@@ -506,34 +568,14 @@
 
       if (updated && totalGain > 0) {
         const newBalance = (data.balance || 0) + totalGain;
-        // Mise à jour Firestore
+        // Mise à jour Firestore (déclenchera onSnapshot)
         await updateDoc(userRef, {
           balance: newBalance,
           gainsTotal: (data.gainsTotal || 0) + totalGain,
           investments: updatedInvests,
           lastGainDate: now.toISOString()
         });
-
-        // Mise à jour locale IMMÉDIATE
-        if (userData) {
-          userData.balance = newBalance;
-          userData.investments = updatedInvests;
-          userData.gainsTotal = (data.gainsTotal || 0) + totalGain;
-          userData.lastGainDate = now.toISOString();
-        } else {
-          userData = {
-            ...data,
-            balance: newBalance,
-            investments: updatedInvests,
-            gainsTotal: (data.gainsTotal || 0) + totalGain,
-            lastGainDate: now.toISOString()
-          };
-        }
-        // Mise à jour du cache localStorage
-        localStorage.setItem(`earnzone_user_${auth.currentUser.uid}`, JSON.stringify(userData));
-        // Rafraîchir l'UI immédiatement
-        updateUI(userData);
-
+        // La notification sera affichée via onSnapshot (ou on peut l'afficher maintenant)
         const detailText = gainDetails.map(d => `${d.pack}: +${d.gain.toLocaleString('fr-FR')} FCFA`).join(', ');
         showGainNotification('💰 Gains quotidiens', `${detailText || `+${totalGain.toLocaleString('fr-FR')} FCFA`} ajoutés à votre solde !`);
         return true;
@@ -622,64 +664,6 @@
   }
 
   // ============================================
-  // AFFICHAGE DES DONNÉES UTILISATEUR
-  // ============================================
-  function updateUI(data) {
-    if (!data) return;
-    const prenom = data.prenom || '';
-    const nom = data.nom || '';
-    let displayName = prenom ? (nom ? `${prenom} ${nom}` : prenom) : (nom || 'Utilisateur');
-    document.getElementById('userName').innerHTML = displayName;
-    document.getElementById('userAvatar').innerHTML = displayName.charAt(0).toUpperCase();
-    document.getElementById('statBalance').innerText = (data.balance || 0).toLocaleString('fr-FR') + ' FCFA';
-    const activeCount = (data.investments || []).filter(i => i.status === 'active').length;
-    document.getElementById('statInvestments').innerText = activeCount;
-    document.getElementById('statGains').innerText = (data.gainsTotal || 0).toLocaleString('fr-FR') + ' FCFA';
-    if (data.registrationDate) {
-      const days = Math.floor((new Date() - new Date(data.registrationDate)) / 86400000);
-      document.getElementById('statDays').innerText = days;
-    }
-    const banner = document.getElementById('depotBanner');
-    if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
-  }
-
-  function cacheUserData(uid, data) {
-    localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
-  }
-
-  function getCached(uid) {
-    const cached = localStorage.getItem(`earnzone_user_${uid}`);
-    return cached ? JSON.parse(cached) : null;
-  }
-
-  async function loadUserData(uid) {
-    try {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        userData = userDoc.data();
-        userData.balance = userData.balance || 0;
-        userData.investments = userData.investments || [];
-        cacheUserData(uid, userData);
-        updateUI(userData);
-      } else {
-        const defaultData = { uid, email: auth.currentUser?.email, nom: '', prenom: 'Utilisateur', balance: 0, status: 'active', role: 'user', hasDeposited: false, registrationDate: new Date().toISOString(), investments: [] };
-        await setDoc(doc(db, "users", uid), defaultData);
-        cacheUserData(uid, defaultData);
-        updateUI(defaultData);
-        userData = defaultData;
-      }
-    } catch(e) { console.error("Firestore error:", e); }
-  }
-
-  // AFFICHAGE INSTANTANÉ DEPUIS CACHE
-  const savedUid = localStorage.getItem('earnzone_current_user');
-  if (savedUid) {
-    const cached = getCached(savedUid);
-    if (cached) updateUI(cached);
-  }
-
-  // ============================================
   // BOUTON ADMIN
   // ============================================
   function checkAndShowAdminButton() {
@@ -700,10 +684,17 @@
   // ============================================
   onAuthStateChanged(auth, async (user) => {
     if (user) {
+      currentUser = user;
       localStorage.setItem('earnzone_current_user', user.uid);
-      await loadUserData(user.uid);
       
-      // ✅ Forcer la vérification des gains AU CHARGEMENT (mise à jour immédiate)
+      // Affichage instantané depuis le cache (pendant le temps que Firestore charge)
+      const cached = getCached(user.uid);
+      if (cached) updateUI(cached);
+      
+      // Écoute en temps réel
+      listenToUser(user.uid);
+      
+      // Forcer une vérification des gains une fois (le onSnapshot mettra à jour si nécessaire)
       await forceCheckAndCreditGains();
       
       startNotificationTimer();
@@ -711,10 +702,12 @@
       checkAndShowAdminButton();
     } else {
       const saved = localStorage.getItem('earnzone_current_user');
-      if (saved && !authChecked) setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
-      else if (!authChecked) window.location.href = 'login.html';
+      if (saved) {
+        setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
+      } else {
+        window.location.href = 'login.html';
+      }
     }
-    authChecked = true;
   });
 </script>
 </body>

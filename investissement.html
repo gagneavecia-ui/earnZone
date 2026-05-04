@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* ===== TOUT TON CSS EXISTANT GARDÉ ===== */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -38,6 +37,8 @@
       --silver-glow: rgba(192, 192, 192, 0.2);
       --gold: #ffd700;
       --gold-glow: rgba(255, 215, 0, 0.2);
+      --test: #ff44cc;
+      --test-glow: rgba(255, 68, 204, 0.2);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -271,6 +272,7 @@
     .pack-bronze { border-left: 4px solid var(--bronze); }
     .pack-silver { border-left: 4px solid var(--silver); }
     .pack-gold { border-left: 4px solid var(--gold); }
+    .pack-test { border-left: 4px solid var(--test); }
 
     .pack-header { padding: 16px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
     .pack-icon {
@@ -287,6 +289,7 @@
     .pack-bronze .pack-icon { background: linear-gradient(135deg, var(--bronze), #8b4513); box-shadow: 0 4px 15px var(--bronze-glow); }
     .pack-silver .pack-icon { background: linear-gradient(135deg, var(--silver), #696969); box-shadow: 0 4px 15px var(--silver-glow); }
     .pack-gold .pack-icon { background: linear-gradient(135deg, var(--gold), #b8860b); box-shadow: 0 4px 15px var(--gold-glow); }
+    .pack-test .pack-icon { background: linear-gradient(135deg, var(--test), #cc1199); box-shadow: 0 4px 15px var(--test-glow); }
     .pack-icon i { color: black; }
 
     .pack-info { flex: 1; }
@@ -345,6 +348,7 @@
     .bronze-icon { background: linear-gradient(135deg, var(--bronze), #8b4513); }
     .silver-icon { background: linear-gradient(135deg, var(--silver), #696969); }
     .gold-icon { background: linear-gradient(135deg, var(--gold), #b8860b); }
+    .test-icon { background: linear-gradient(135deg, var(--test), #cc1199); }
     .investment-pack-icon i { color: black; }
     .investment-pack-name { font-weight: 600; font-size: 14px; }
     .investment-day { font-size: 11px; color: var(--primary-light); font-weight: 600; }
@@ -456,6 +460,18 @@
     }
     .back-home:active { transform: scale(0.97); opacity: 0.9; }
 
+    /* Badge TEST */
+    .test-badge {
+      background: linear-gradient(135deg, #ff44cc, #cc1199);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+      display: inline-block;
+    }
+
     @media (max-width: 480px) {
       .container { padding: 16px 12px; }
       .hero-title { font-size: 24px; }
@@ -504,7 +520,7 @@
     <div class="hero-stats">
       <div class="hero-stat-item"><div class="hero-stat-value">+233%</div><div class="hero-stat-label">Rendement max</div></div>
       <div class="hero-stat-item"><div class="hero-stat-value">24h</div><div class="hero-stat-label">Gain quotidien</div></div>
-      <div class="hero-stat-item"><div class="hero-stat-value">5</div><div class="hero-stat-label">Packs</div></div>
+      <div class="hero-stat-item"><div class="hero-stat-value">6</div><div class="hero-stat-label">Packs</div></div>
     </div>
   </div>
 
@@ -516,7 +532,7 @@
     <a href="depot.html" class="balance-action"><i class="fas fa-plus-circle"></i> Recharger</a>
   </div>
 
-  <div class="section-title"><i class="fas fa-boxes"></i> Packs disponibles <span class="section-badge">5 packs premium</span></div>
+  <div class="section-title"><i class="fas fa-boxes"></i> Packs disponibles <span class="section-badge">6 packs premium</span></div>
   <div class="packs-grid" id="packsGrid"></div>
 
   <section class="investments-section">
@@ -567,21 +583,38 @@
   let investmentsData = { active: [], completed: [] };
   let gainCheckInterval = null;
 
+  // ============================================
+  // PACKS AVEC PACK TEST (10 MINUTES)
+  // ============================================
   const packs = {
-    start: { name: 'Start', price: 3000, dailyReturn: 200, totalDays: 50, totalReturn: 10000, netProfit: 7000, icon: 'fa-seedling', color: '#9ca3af', roi: '+233%' },
-    micro: { name: 'Micro', price: 5000, dailyReturn: 350, totalDays: 40, totalReturn: 14000, netProfit: 9000, icon: 'fa-chart-simple', color: '#cd7f32', roi: '+180%' },
-    bronze: { name: 'Bronze', price: 10000, dailyReturn: 700, totalDays: 30, totalReturn: 21000, netProfit: 11000, icon: 'fa-medal', color: '#b87333', roi: '+110%' },
-    silver: { name: 'Silver', price: 15000, dailyReturn: 1100, totalDays: 25, totalReturn: 27500, netProfit: 12500, icon: 'fa-gem', color: '#c0c0c0', roi: '+83%' },
-    gold: { name: 'Gold', price: 25000, dailyReturn: 2000, totalDays: 20, totalReturn: 40000, netProfit: 15000, icon: 'fa-crown', color: '#ffd700', roi: '+60%' }
+    test: { 
+      name: 'Test Express ⚡', 
+      price: 1000, 
+      dailyReturn: 1440,  // 1440 FCFA par jour (équivalent à 10 FCFA toutes les 10min)
+      totalDays: 2,       // 2 jours
+      totalReturn: 2880, 
+      netProfit: 1880, 
+      icon: 'fa-flask', 
+      color: '#ff44cc', 
+      roi: '+188%',
+      testMode: true,
+      payoutMinutes: 10,
+      perIntervalReturn: 10,
+      totalIntervals: 288  // 6 par heure × 24h × 2 jours
+    },
+    start: { name: 'Start', price: 3000, dailyReturn: 200, totalDays: 50, totalReturn: 10000, netProfit: 7000, icon: 'fa-seedling', color: '#9ca3af', roi: '+233%', testMode: false, payoutMinutes: 1440 },
+    micro: { name: 'Micro', price: 5000, dailyReturn: 350, totalDays: 40, totalReturn: 14000, netProfit: 9000, icon: 'fa-chart-simple', color: '#cd7f32', roi: '+180%', testMode: false, payoutMinutes: 1440 },
+    bronze: { name: 'Bronze', price: 10000, dailyReturn: 700, totalDays: 30, totalReturn: 21000, netProfit: 11000, icon: 'fa-medal', color: '#b87333', roi: '+110%', testMode: false, payoutMinutes: 1440 },
+    silver: { name: 'Silver', price: 15000, dailyReturn: 1100, totalDays: 25, totalReturn: 27500, netProfit: 12500, icon: 'fa-gem', color: '#c0c0c0', roi: '+83%', testMode: false, payoutMinutes: 1440 },
+    gold: { name: 'Gold', price: 25000, dailyReturn: 2000, totalDays: 20, totalReturn: 40000, netProfit: 15000, icon: 'fa-crown', color: '#ffd700', roi: '+60%', testMode: false, payoutMinutes: 1440 }
   };
 
-  // Mise à jour localStorage cache
+  // Cache localStorage
   function updateLocalStorageCache(uid) {
     if (!uid) return;
     getDoc(doc(db, "users", uid)).then(docSnap => {
       if (docSnap.exists()) {
         localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(docSnap.data()));
-        console.log("✅ Cache mis à jour");
       }
     }).catch(console.error);
   }
@@ -614,15 +647,9 @@
     }
   }
 
-  function saveInvestmentsToFirebase() {
-    if (!currentUser) return;
-    const allInvestments = [...investmentsData.active, ...investmentsData.completed];
-    const userRef = doc(db, "users", currentUser.uid);
-    updateDoc(userRef, { investments: allInvestments }).then(() => {
-      updateLocalStorageCache(currentUser.uid);
-    });
-  }
-
+  // ============================================
+  // VÉRIFICATION DES GAINS (SUPPORT 10min POUR TEST)
+  // ============================================
   async function checkDailyPayouts() {
     if (!currentUser || investmentsData.active.length === 0) return false;
     
@@ -640,31 +667,37 @@
         let updatedCompleted = [...investmentsData.completed];
         let investmentsChanged = false;
         let totalGain = 0;
+        let gainDetails = [];
         
         for (let i = 0; i < updatedActive.length; i++) {
           const inv = updatedActive[i];
-          const lastPayout = new Date(inv.lastPayout).getTime();
-          const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
+          const pack = packs[inv.pack];
+          const payoutMinutes = pack?.payoutMinutes || 1440;
+          const perIntervalReturn = pack?.perIntervalReturn || pack?.dailyReturn / 144;
+          const totalIntervals = pack?.totalIntervals || inv.totalDays * 144;
           
-          if (hoursSince >= 24) {
-            const daysToPay = Math.floor(hoursSince / 24);
-            const remainingDays = inv.totalDays - inv.currentDay + 1;
-            const actualDays = Math.min(daysToPay, remainingDays);
+          const lastPayout = new Date(inv.lastPayout).getTime();
+          const minutesSince = (now - lastPayout) / (1000 * 60);
+          
+          if (minutesSince >= payoutMinutes) {
+            const intervalsToPay = Math.floor(minutesSince / payoutMinutes);
+            const remainingIntervals = totalIntervals - (inv.currentInterval || inv.currentDay || 1);
+            const actualIntervals = Math.min(intervalsToPay, remainingIntervals + 1);
             
-            if (actualDays > 0) {
-              const gain = inv.dailyReturn * actualDays;
-              currentBalance += gain;
-              inv.totalEarned += gain;
-              inv.currentDay += actualDays;
-              inv.lastPayout = new Date().toISOString();
+            if (actualIntervals > 0) {
+              const gain = perIntervalReturn * actualIntervals;
               totalGain += gain;
+              inv.totalEarned = (inv.totalEarned || 0) + gain;
+              inv.currentInterval = (inv.currentInterval || inv.currentDay || 1) + actualIntervals;
+              inv.lastPayout = new Date().toISOString();
+              gainDetails.push({ pack: inv.packName, gain: gain, intervals: actualIntervals });
               investmentsChanged = true;
               
-              if (inv.currentDay > inv.totalDays) {
+              if (inv.currentInterval >= totalIntervals) {
                 inv.status = 'completed';
                 updatedCompleted.unshift(inv);
                 updatedActive.splice(i, 1);
-                i--;
+                i--; 
               }
               updated = true;
             }
@@ -673,18 +706,19 @@
         
         if (investmentsChanged) {
           transaction.update(userRef, { 
-            balance: currentBalance,
+            balance: currentBalance + totalGain,
             gainsTotal: (userDoc.data().gainsTotal || 0) + totalGain,
             investments: [...updatedActive, ...updatedCompleted]
           });
           investmentsData.active = updatedActive;
           investmentsData.completed = updatedCompleted;
-          userData.balance = currentBalance;
+          userData.balance = currentBalance + totalGain;
           userData.investments = [...updatedActive, ...updatedCompleted];
           userData.gainsTotal = (userData.gainsTotal || 0) + totalGain;
           
           if (totalGain > 0) {
-            showNotification('💰 Gains quotidiens !', `+${totalGain.toLocaleString('fr-FR')} FCFA ont été ajoutés à votre solde.`, 'success');
+            const detailText = gainDetails.map(d => `${d.pack}: +${d.gain.toLocaleString('fr-FR')} FCFA`).join(', ');
+            showNotification('💰 Gains reçus !', `${detailText || `+${totalGain.toLocaleString('fr-FR')} FCFA`}`, 'success');
             if (navigator.vibrate) navigator.vibrate(100);
           }
         }
@@ -704,6 +738,14 @@
     }
   }
 
+  // ============================================
+  // FORCER LA VÉRIFICATION DES GAINS AU CHARGEMENT
+  // ============================================
+  async function forceCheckAndCreditGains() {
+    if (!currentUser) return;
+    await checkDailyPayouts();
+  }
+
   async function buyPack(packKey) {
     const pack = packs[packKey];
     const balance = userData.balance || 0;
@@ -714,64 +756,77 @@
       return;
     }
     
-    showConfirmationDialog('Confirmer l\'investissement', 
-      `Pack ${pack.name}<br><br>💰 Prix: ${pack.price.toLocaleString('fr-FR')} FCFA<br>📈 Gain/jour: +${pack.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${pack.totalDays} jours<br>💵 Gain total: ${pack.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ ROI: ${pack.roi}`, 
-      async () => {
-        const userRef = doc(db, "users", currentUser.uid);
+    let confirmMessage = `Pack ${pack.name}<br><br>💰 Prix: ${pack.price.toLocaleString('fr-FR')} FCFA`;
+    
+    if (pack.testMode) {
+      confirmMessage += `<br><br>⚠️ <strong style="color:#ff44cc">PACK DE TEST</strong> ⚠️<br>📈 Gain: ${pack.perIntervalReturn} FCFA toutes les ${pack.payoutMinutes} minutes<br>⏱️ Durée: ${pack.totalDays} jours (${pack.totalIntervals} paiements)<br>💵 Gain total: ${pack.totalReturn.toLocaleString('fr-FR')} FCFA`;
+    } else {
+      confirmMessage += `<br>📈 Gain/jour: +${pack.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${pack.totalDays} jours<br>💵 Gain total: ${pack.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ ROI: ${pack.roi}`;
+    }
+    
+    showConfirmationDialog('Confirmer l\'investissement', confirmMessage, async () => {
+      const userRef = doc(db, "users", currentUser.uid);
+      
+      await runTransaction(db, async (transaction) => {
+        const userDoc = await transaction.get(userRef);
+        if (!userDoc.exists()) throw new Error("Utilisateur non trouvé");
         
-        await runTransaction(db, async (transaction) => {
-          const userDoc = await transaction.get(userRef);
-          if (!userDoc.exists()) throw new Error("Utilisateur non trouvé");
-          
-          const currentBalance = userDoc.data().balance || 0;
-          if (currentBalance < pack.price) throw new Error("Solde insuffisant");
-          
-          const now = new Date();
-          const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
-          const expiryDate = new Date(now);
-          expiryDate.setDate(expiryDate.getDate() + pack.totalDays);
-          
-          const investment = {
-            id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-            pack: packKey,
-            packName: pack.name,
-            amount: pack.price,
-            dailyReturn: pack.dailyReturn,
-            startDate: now.toISOString(),
-            endDate: endDate.toISOString(),
-            endTimestamp: endDate.getTime(),
-            currentDay: 1,
-            totalDays: pack.totalDays,
-            totalEarned: 0,
-            lastPayout: now.toISOString(),
-            status: 'active'
-          };
-          
-          const newBalance = currentBalance - pack.price;
-          const existingInvestments = userDoc.data().investments || [];
-          
-          transaction.update(userRef, {
-            balance: newBalance,
-            investments: [...existingInvestments, investment],
-            status: 'active',
-            subscriptionEnd: expiryDate.toISOString().split('T')[0],
-            totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
-            lastInvestment: now.toISOString()
-          });
-          
-          userData.balance = newBalance;
-          userData.investments = [...existingInvestments, investment];
-          userData.subscriptionEnd = expiryDate.toISOString().split('T')[0];
-          investmentsData.active.push(investment);
+        const currentBalance = userDoc.data().balance || 0;
+        if (currentBalance < pack.price) throw new Error("Solde insuffisant");
+        
+        const now = new Date();
+        const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
+        const expiryDate = new Date(now);
+        expiryDate.setDate(expiryDate.getDate() + pack.totalDays);
+        
+        const totalIntervals = pack.testMode ? pack.totalIntervals : pack.totalDays;
+        const perIntervalReturn = pack.testMode ? pack.perIntervalReturn : pack.dailyReturn;
+        
+        const investment = {
+          id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          pack: packKey,
+          packName: pack.name,
+          amount: pack.price,
+          dailyReturn: pack.dailyReturn,
+          perIntervalReturn: perIntervalReturn,
+          startDate: now.toISOString(),
+          endDate: endDate.toISOString(),
+          endTimestamp: endDate.getTime(),
+          currentDay: 1,
+          currentInterval: 1,
+          totalDays: pack.totalDays,
+          totalIntervals: totalIntervals,
+          totalEarned: 0,
+          lastPayout: now.toISOString(),
+          status: 'active',
+          testMode: pack.testMode || false
+        };
+        
+        const newBalance = currentBalance - pack.price;
+        const existingInvestments = userDoc.data().investments || [];
+        
+        transaction.update(userRef, {
+          balance: newBalance,
+          investments: [...existingInvestments, investment],
+          status: 'active',
+          subscriptionEnd: expiryDate.toISOString().split('T')[0],
+          totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
+          lastInvestment: now.toISOString()
         });
         
-        updateBalanceDisplay();
-        renderInvestments();
-        renderHistory();
-        updateLocalStorageCache(currentUser.uid);
-        showNotification('Investissement réussi !', `Pack ${pack.name} acheté avec succès`, 'success');
-        if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+        userData.balance = newBalance;
+        userData.investments = [...existingInvestments, investment];
+        userData.subscriptionEnd = expiryDate.toISOString().split('T')[0];
+        investmentsData.active.push(investment);
       });
+      
+      updateBalanceDisplay();
+      renderInvestments();
+      renderHistory();
+      updateLocalStorageCache(currentUser.uid);
+      showNotification('Investissement réussi !', `Pack ${pack.name} acheté avec succès`, 'success');
+      if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+    });
   }
 
   function renderInvestments() {
@@ -784,7 +839,7 @@
     let html = '';
     investmentsData.active.forEach(inv => {
       const pack = packs[inv.pack];
-      const progress = (inv.currentDay / inv.totalDays) * 100;
+      const progress = ((inv.currentInterval || inv.currentDay) / (inv.totalIntervals || inv.totalDays)) * 100;
       const endTime = inv.endTimestamp;
       const timeLeft = endTime - new Date().getTime();
       let timeDisplay = '';
@@ -795,13 +850,18 @@
       } else {
         timeDisplay = 'Terminé';
       }
+      
+      const intervalText = inv.testMode ? `toutes les ${pack.payoutMinutes}min` : 'par jour';
+      const currentVal = inv.currentInterval || inv.currentDay;
+      const totalVal = inv.totalIntervals || inv.totalDays;
+      
       html += `<div class="investment-item">
         <div class="investment-header">
           <div class="investment-pack">
             <div class="investment-pack-icon ${inv.pack}-icon"><i class="fas ${pack.icon}"></i></div>
-            <span class="investment-pack-name">Pack ${inv.packName}</span>
+            <span class="investment-pack-name">Pack ${inv.packName} ${inv.testMode ? '<span class="test-badge">TEST</span>' : ''}</span>
           </div>
-          <span class="investment-day">Jour ${inv.currentDay}/${inv.totalDays}</span>
+          <span class="investment-day">Paiement ${currentVal}/${totalVal}</span>
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%;"></div></div>
         <div class="investment-details">
@@ -809,7 +869,7 @@
           <span class="investment-earned">Gagné: ${inv.totalEarned.toLocaleString('fr-FR')} FCFA</span>
         </div>
         <div class="investment-details">
-          <span>Prochain gain: +${inv.dailyReturn.toLocaleString('fr-FR')} FCFA</span>
+          <span>Prochain gain: +${inv.perIntervalReturn || pack.dailyReturn} FCFA (${intervalText})</span>
           <span class="investment-timer"><i class="fas fa-hourglass-half"></i> ${timeDisplay}</span>
         </div>
       </div>`;
@@ -833,7 +893,7 @@
         <div class="history-info">
           <div class="history-icon ${inv.pack}-icon"><i class="fas ${pack.icon}"></i></div>
           <div class="history-details">
-            <h4>Pack ${inv.packName}</h4>
+            <h4>Pack ${inv.packName} ${inv.testMode ? '(TEST)' : ''}</h4>
             <p>${startDate} - ${endDate}</p>
           </div>
         </div>
@@ -845,29 +905,30 @@
 
   function renderPacks() {
     const grid = document.getElementById('packsGrid');
-    const packKeys = ['start', 'micro', 'bronze', 'silver', 'gold'];
+    const packKeys = ['test', 'start', 'micro', 'bronze', 'silver', 'gold'];
     grid.innerHTML = packKeys.map(key => {
       const p = packs[key];
+      const isTest = key === 'test';
       return `<div class="pack-card pack-${key}" onclick="window.showPackDetails('${key}')">
         <div class="pack-header">
           <div class="pack-icon"><i class="fas ${p.icon}"></i></div>
           <div class="pack-info">
-            <div class="pack-name">Pack ${p.name}</div>
+            <div class="pack-name">Pack ${p.name} ${isTest ? '<span class="test-badge">🧪 TEST 10min</span>' : ''}</div>
             <div class="pack-price">${p.price.toLocaleString('fr-FR')} FCFA</div>
           </div>
         </div>
         <div class="pack-body">
           <div class="pack-detail">
-            <div class="pack-detail-label">Gain/jour</div>
-            <div class="pack-detail-value pack-return">+${p.dailyReturn.toLocaleString('fr-FR')} FCFA</div>
+            <div class="pack-detail-label">${isTest ? 'Gain/10min' : 'Gain/jour'}</div>
+            <div class="pack-detail-value pack-return">+${(isTest ? p.perIntervalReturn : p.dailyReturn).toLocaleString('fr-FR')} FCFA</div>
           </div>
           <div class="pack-detail">
             <div class="pack-detail-label">Gain total</div>
             <div class="pack-detail-value pack-total">${p.totalReturn.toLocaleString('fr-FR')} FCFA</div>
           </div>
-          <div class="pack-roi">${p.roi} ROI • +${p.netProfit.toLocaleString('fr-FR')} FCFA net</div>
+          <div class="pack-roi">${p.roi} ROI • +${p.netProfit.toLocaleString('fr-FR')} FCFA net${isTest ? ' • 288 paiements' : ''}</div>
         </div>
-        <div class="pack-footer">
+         <div class="pack-footer">
           <button class="invest-btn" onclick="window.buyPack('${key}'); event.stopPropagation();">
             <i class="fas fa-shopping-cart"></i> INVESTIR ${p.price.toLocaleString('fr-FR')} FCFA
           </button>
@@ -878,9 +939,12 @@
 
   window.showPackDetails = function(packKey) {
     const p = packs[packKey];
-    showConfirmationDialog(`Pack ${p.name}`, 
-      `💰 Prix: ${p.price.toLocaleString('fr-FR')} FCFA<br>📈 Gain journalier: +${p.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${p.totalDays} jours<br>💵 Gain total: ${p.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ Bénéfice net: +${p.netProfit.toLocaleString('fr-FR')} FCFA<br>📈 ROI: ${p.roi}`, 
-      () => buyPack(packKey));
+    const isTest = packKey === 'test';
+    let details = `💰 Prix: ${p.price.toLocaleString('fr-FR')} FCFA<br>📈 ${isTest ? 'Gain/10min' : 'Gain journalier'}: +${(isTest ? p.perIntervalReturn : p.dailyReturn).toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${p.totalDays} jours<br>💵 Gain total: ${p.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ Bénéfice net: +${p.netProfit.toLocaleString('fr-FR')} FCFA<br>📈 ROI: ${p.roi}`;
+    if (isTest) {
+      details += `<br><br>⚠️ <strong style="color:#ff44cc">PACK DE TEST</strong><br>🕐 Paiement toutes les 10 minutes<br>📦 ${p.totalIntervals} paiements au total`;
+    }
+    showConfirmationDialog(`Pack ${p.name}`, details, () => buyPack(packKey));
   };
 
   window.buyPack = buyPack;
@@ -945,14 +1009,19 @@
     }
   }
 
-  // Auth State - Redirection si non connecté
+  // ============================================
+  // AUTHENTIFICATION AVEC VÉRIFICATION FORCÉE
+  // ============================================
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       await loadUserData(user.uid);
       
+      // Vérification forcée des gains au chargement
+      await forceCheckAndCreditGains();
+      
+      // Vérification périodique toutes les minutes
       if (gainCheckInterval) clearInterval(gainCheckInterval);
-      await checkDailyPayouts();
       gainCheckInterval = setInterval(() => checkDailyPayouts(), 60000);
     } else {
       window.location.href = 'login.html';

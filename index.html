@@ -200,7 +200,7 @@
     .social-link:active { background: rgba(183, 110, 255, 0.15); transform: scale(0.95); }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
 
-    /* ===== NOTIFICATION COMPACTE ===== */
+    /* NOTIFICATION COMPACTE POUR RETRAITS */
     .notif-toast {
       position: fixed;
       bottom: 20px;
@@ -216,18 +216,13 @@
       transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
       overflow: hidden;
     }
-
-    .notif-toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
-
+    .notif-toast.show { transform: translateX(-50%) translateY(0); }
     .notif-toast-content {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 8px 14px;
     }
-
     .notif-icon-circle {
       width: 38px;
       height: 38px;
@@ -240,11 +235,7 @@
       color: #030305;
       flex-shrink: 0;
     }
-
-    .notif-info {
-      flex: 1;
-    }
-
+    .notif-info { flex: 1; }
     .notif-user-line {
       display: flex;
       align-items: baseline;
@@ -252,25 +243,14 @@
       flex-wrap: wrap;
       margin-bottom: 3px;
     }
-
-    .notif-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: white;
-    }
-
-    .notif-pays {
-      font-size: 10px;
-      color: #8B90A8;
-    }
-
+    .notif-name { font-size: 13px; font-weight: 700; color: white; }
+    .notif-pays { font-size: 10px; color: #8B90A8; }
     .notif-details-line {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
     }
-
     .notif-amount {
       font-size: 14px;
       font-weight: 800;
@@ -278,48 +258,48 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+    .notif-method { font-size: 10px; color: #B76EFF; display: inline-flex; align-items: center; gap: 4px; }
+    .notif-time { font-size: 9px; color: #5a6070; display: inline-flex; align-items: center; gap: 3px; }
+    .notif-progress-line { height: 2px; background: rgba(183, 110, 255, 0.15); }
+    .notif-progress-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #B76EFF, #2EE89A); animation: shrink 5s linear forwards; }
+    @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+    .flash { animation: flash 0.2s ease; }
+    @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; transform: scale(0.98); } }
 
-    .notif-method {
-      font-size: 10px;
-      color: #B76EFF;
-      display: inline-flex;
+    /* NOTIFICATION GAINS (comme investissement) */
+    .gain-notification {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--primary);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 12px;
+      z-index: 10001;
+      transform: translateY(200px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 400px;
+      margin: 0 auto;
     }
-
-    .notif-time {
-      font-size: 9px;
-      color: #5a6070;
-      display: inline-flex;
+    .gain-notification.show { transform: translateY(0); }
+    .gain-notification .notif-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--success), #00cc44);
+      border-radius: 12px;
+      display: flex;
       align-items: center;
-      gap: 3px;
+      justify-content: center;
+      color: black;
+      font-size: 18px;
     }
-
-    .notif-progress-line {
-      height: 2px;
-      background: rgba(183, 110, 255, 0.15);
-    }
-
-    .notif-progress-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #B76EFF, #2EE89A);
-      animation: shrink 5s linear forwards;
-    }
-
-    @keyframes shrink {
-      from { width: 100%; }
-      to { width: 0%; }
-    }
-
-    .flash {
-      animation: flash 0.2s ease;
-    }
-
-    @keyframes flash {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; transform: scale(0.98); }
-    }
+    .gain-notification .notif-content h4 { font-size: 14px; margin-bottom: 4px; }
+    .gain-notification .notif-content p { font-size: 11px; color: var(--text-dim); }
   </style>
 </head>
 <body>
@@ -328,12 +308,19 @@
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<!-- NOTIFICATION COMPACTE -->
+<!-- NOTIFICATION GAINS -->
+<div class="gain-notification" id="gainNotification">
+  <div class="notif-icon"><i class="fas fa-gift"></i></div>
+  <div class="notif-content">
+    <h4 id="gainNotifTitle">💰 Gains quotidiens</h4>
+    <p id="gainNotifMessage">Message</p>
+  </div>
+</div>
+
+<!-- NOTIFICATION RETRAIT -->
 <div class="notif-toast" id="notifToast">
   <div class="notif-toast-content">
-    <div class="notif-icon-circle">
-      <i class="fas fa-arrow-down"></i>
-    </div>
+    <div class="notif-icon-circle"><i class="fas fa-arrow-down"></i></div>
     <div class="notif-info">
       <div class="notif-user-line">
         <span class="notif-name" id="notifName">Samuel</span>
@@ -388,7 +375,7 @@
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div><div class="stat-value" id="statDays">0</div><div class="stat-label">Jours actifs</div></div>
   </div>
 
-  <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
+    <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
   <div class="features-grid">
     <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
     <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
@@ -422,7 +409,6 @@
       <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
       <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
       <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-      <!-- BOUTON ADMIN CADENAS - Visible uniquement pour l'admin -->
       <a href="#" class="social-link" id="adminLockBtn" style="display: none;"><i class="fas fa-lock"></i></a>
     </div>
     <div class="footer-bottom"><p>&copy; 2026 EarnZone. Tous droits réservés.</p></div>
@@ -442,7 +428,7 @@
 <script type="module">
   import { initializeApp } from "firebase/app";
   import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -464,18 +450,102 @@
   let currentTimeout = null;
 
   // ============================================
+  // NOTIFICATION GAINS
+  // ============================================
+  function showGainNotification(title, message) {
+    const notif = document.getElementById('gainNotification');
+    document.getElementById('gainNotifTitle').innerText = title;
+    document.getElementById('gainNotifMessage').innerHTML = message;
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3500);
+    if (navigator.vibrate) navigator.vibrate(100);
+  }
+
+  // ============================================
+  // FORCER LA VÉRIFICATION DES GAINS AU CHARGEMENT
+  // ============================================
+  async function forceCheckAndCreditGains() {
+    if (!auth.currentUser) return;
+    
+    try {
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) return;
+      
+      const data = userDoc.data();
+      const activeInvests = (data.investments || []).filter(i => i.status === 'active');
+      if (activeInvests.length === 0) return;
+      
+      let totalGain = 0;
+      let gainDetails = [];
+      const now = new Date();
+      let updated = false;
+      const updatedInvests = [...data.investments];
+      
+      for (let i = 0; i < updatedInvests.length; i++) {
+        const inv = updatedInvests[i];
+        if (inv.status === 'active') {
+          const lastPayout = new Date(inv.lastPayout);
+          const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
+          
+          if (hoursSince >= 24) {
+            const daysToPay = Math.floor(hoursSince / 24);
+            const remainingDays = inv.totalDays - inv.currentDay + 1;
+            const actualDays = Math.min(daysToPay, remainingDays);
+            
+            if (actualDays > 0) {
+              const gain = inv.dailyReturn * actualDays;
+              totalGain += gain;
+              gainDetails.push({ pack: inv.packName, gain: gain, days: actualDays });
+              inv.totalEarned += gain;
+              inv.currentDay += actualDays;
+              inv.lastPayout = now.toISOString();
+              updatedInvests[i] = inv;
+              updated = true;
+            }
+          }
+        }
+      }
+      
+      if (updated && totalGain > 0) {
+        const newBalance = (data.balance || 0) + totalGain;
+        await updateDoc(userRef, {
+          balance: newBalance,
+          gainsTotal: (data.gainsTotal || 0) + totalGain,
+          investments: updatedInvests,
+          lastGainDate: now.toISOString()
+        });
+        
+        // Mettre à jour les données locales
+        if (userData) {
+          userData.balance = newBalance;
+          userData.investments = updatedInvests;
+          userData.gainsTotal = (data.gainsTotal || 0) + totalGain;
+        }
+        
+        // Afficher la notification
+        const detailText = gainDetails.map(d => `${d.pack}: +${d.gain.toLocaleString('fr-FR')} FCFA`).join(', ');
+        showGainNotification('💰 Gains quotidiens', `${detailText || `+${totalGain.toLocaleString('fr-FR')} FCFA`} ajoutés à votre solde !`);
+        
+        // Mettre à jour l'affichage
+        await loadUserData(auth.currentUser.uid);
+        
+        console.log(`✅ Gains crédités: +${totalGain.toLocaleString('fr-FR')} FCFA`);
+      }
+    } catch (error) {
+      console.error("Erreur vérification gains:", error);
+    }
+  }
+
+  // ============================================
   // NOTIFICATIONS DE RETRAITS
   // ============================================
-  
   const users = [
     { prenom: "Samuel", pays: "🇨🇮 CI" }, { prenom: "Awa", pays: "🇸🇳 Sénégal" },
     { prenom: "Koffi", pays: "🇨🇮 CI" }, { prenom: "Fatou", pays: "🇸🇳 Sénégal" },
     { prenom: "Jean", pays: "🇨🇮 CI" }, { prenom: "Mariam", pays: "🇲🇱 Mali" },
     { prenom: "Sékou", pays: "🇬🇳 Guinée" }, { prenom: "Moussa", pays: "🇳🇪 Niger" },
-    { prenom: "Aminata", pays: "🇨🇮 CI" }, { prenom: "Bakary", pays: "🇲🇱 Mali" },
-    { prenom: "Coumba", pays: "🇸🇳 Sénégal" }, { prenom: "Djibril", pays: "🇨🇮 CI" },
-    { prenom: "Ibrahima", pays: "🇨🇮 CI" }, { prenom: "Kadiatou", pays: "🇳🇪 Niger" },
-    { prenom: "Lamine", pays: "🇸🇳 Sénégal" }, { prenom: "Rokia", pays: "🇳🇪 Niger" }
+    { prenom: "Aminata", pays: "🇨🇮 CI" }, { prenom: "Bakary", pays: "🇲🇱 Mali" }
   ];
 
   const methodes = [
@@ -495,16 +565,31 @@
     const user = users[Math.floor(Math.random() * users.length)];
     const methode = methodes[Math.floor(Math.random() * methodes.length)];
     const montant = montants[Math.floor(Math.random() * montants.length)];
-    return { nom: user.prenom, pays: user.pays, montant, methode: methode.nom, icone: methode.icone, temps: getRandomTime() };
+    const temps = Math.random() > 0.7 ? "⚡ à l'instant" : getRandomTime();
+    return { nom: user.prenom, pays: user.pays, montant, methode: methode.nom, icone: methode.icone, temps: temps };
   }
 
-  function showNotification(data) {
+  let dernierRetrait = null;
+  let deuxiemeDernierRetrait = null;
+
+  function getUniqueWithdrawal() {
+    let nouveau;
+    do { nouveau = getRandomWithdrawal(); } 
+    while ((dernierRetrait && nouveau.nom === dernierRetrait.nom && nouveau.montant === dernierRetrait.montant) ||
+           (deuxiemeDernierRetrait && nouveau.nom === deuxiemeDernierRetrait.nom));
+    deuxiemeDernierRetrait = dernierRetrait;
+    dernierRetrait = nouveau;
+    return nouveau;
+  }
+
+  function showWithdrawNotification() {
+    const retrait = getUniqueWithdrawal();
     const toast = document.getElementById('notifToast');
-    document.getElementById('notifName').innerHTML = data.nom;
-    document.getElementById('notifPays').innerHTML = data.pays;
-    document.getElementById('notifAmount').innerHTML = `-${data.montant.toLocaleString('fr-FR')} FCFA`;
-    document.getElementById('notifMethod').innerHTML = data.icone + ' ' + data.methode;
-    document.getElementById('notifTime').innerHTML = data.temps;
+    document.getElementById('notifName').innerHTML = retrait.nom;
+    document.getElementById('notifPays').innerHTML = retrait.pays;
+    document.getElementById('notifAmount').innerHTML = `-${retrait.montant.toLocaleString('fr-FR')} FCFA`;
+    document.getElementById('notifMethod').innerHTML = retrait.icone + ' ' + retrait.methode;
+    document.getElementById('notifTime').innerHTML = retrait.temps;
     
     const progressFill = document.getElementById('progressFill');
     progressFill.style.animation = 'none';
@@ -513,64 +598,24 @@
     
     toast.classList.add('flash');
     setTimeout(() => toast.classList.remove('flash'), 200);
-    
     if (navigator.vibrate) navigator.vibrate(50);
-    
     toast.classList.add('show');
     
     if (currentTimeout) clearTimeout(currentTimeout);
-    currentTimeout = setTimeout(() => {
-      toast.classList.remove('show');
-      currentTimeout = null;
-    }, 5000);
-  }
-
-  function showRandomNotification() {
-    showNotification(getRandomWithdrawal());
+    currentTimeout = setTimeout(() => { toast.classList.remove('show'); currentTimeout = null; }, 5000);
   }
 
   function startNotificationTimer() {
     if (notificationTimer) clearInterval(notificationTimer);
-    
-    setTimeout(() => showRandomNotification(), 3000);
-    
+    setTimeout(() => showWithdrawNotification(), 3000);
     const hasDeposited = userData?.hasDeposited === true;
     const intervalTime = hasDeposited ? 120000 : 10000;
-    
-    notificationTimer = setInterval(() => {
-      showRandomNotification();
-    }, intervalTime);
+    notificationTimer = setInterval(() => showWithdrawNotification(), intervalTime);
   }
 
   // ============================================
   // AFFICHAGE DES DONNÉES UTILISATEUR
   // ============================================
-
-  // Vérifier et afficher le bouton admin (cadenas) uniquement pour l'admin
-  function checkAndShowAdminButton() {
-    const adminBtn = document.getElementById('adminLockBtn');
-    if (!adminBtn) return;
-    
-    const user = auth.currentUser;
-    
-    if (user && user.email === 'gagneavecia@gmail.com') {
-      adminBtn.style.display = 'flex';
-      adminBtn.href = 'admin/index.html';
-      adminBtn.style.background = 'rgba(183, 110, 255, 0.15)';
-      adminBtn.style.border = '1px solid rgba(183, 110, 255, 0.3)';
-      adminBtn.style.color = '#B76EFF';
-      adminBtn.onclick = (e) => {
-        e.preventDefault();
-        window.location.href = 'admin/index.html';
-      };
-    } else {
-      adminBtn.style.display = 'none';
-      adminBtn.onclick = (e) => {
-        e.preventDefault();
-        window.location.href = 'about:blank';
-      };
-    }
-  }
 
   function updateUI(data) {
     if (!data) return;
@@ -589,8 +634,6 @@
     }
     const banner = document.getElementById('depotBanner');
     if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
-    
-    checkAndShowAdminButton();
   }
 
   function cacheUserData(uid, data) {
@@ -602,32 +645,65 @@
     return cached ? JSON.parse(cached) : null;
   }
 
-  async function loadUser(uid) {
-    const cached = getCached(uid);
-    if (cached) updateUI(cached);
+  async function loadUserData(uid) {
     try {
-      const docSnap = await getDoc(doc(db, "users", uid));
-      if (docSnap.exists()) {
-        const fresh = docSnap.data();
-        cacheUserData(uid, fresh);
-        updateUI(fresh);
-        userData = fresh;
-        startNotificationTimer();
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        userData.balance = userData.balance || 0;
+        userData.investments = userData.investments || [];
+        cacheUserData(uid, userData);
+        updateUI(userData);
       } else {
         const defaultData = { uid, email: auth.currentUser?.email, nom: '', prenom: 'Utilisateur', balance: 0, status: 'active', role: 'user', hasDeposited: false, registrationDate: new Date().toISOString(), investments: [] };
         await setDoc(doc(db, "users", uid), defaultData);
         cacheUserData(uid, defaultData);
         updateUI(defaultData);
         userData = defaultData;
-        startNotificationTimer();
       }
     } catch(e) { console.error("Firestore error:", e); }
   }
 
+  // AFFICHAGE INSTANTANÉ DEPUIS CACHE
+  const savedUid = localStorage.getItem('earnzone_current_user');
+  if (savedUid) {
+    const cached = getCached(savedUid);
+    if (cached) updateUI(cached);
+  }
+
+  // ============================================
+  // BOUTON ADMIN
+  // ============================================
+  function checkAndShowAdminButton() {
+    const adminBtn = document.getElementById('adminLockBtn');
+    if (!adminBtn) return;
+    const user = auth.currentUser;
+    if (user && user.email === 'gagneavecia@gmail.com') {
+      adminBtn.style.display = 'flex';
+      adminBtn.href = 'admin/index.html';
+      adminBtn.onclick = (e) => { e.preventDefault(); window.location.href = 'admin/index.html'; };
+    } else {
+      adminBtn.style.display = 'none';
+      adminBtn.onclick = (e) => { e.preventDefault(); window.location.href = 'about:blank'; };
+    }
+  }
+
+  // ============================================
+  // AUTHENTIFICATION
+  // ============================================
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       localStorage.setItem('earnzone_current_user', user.uid);
-      await loadUser(user.uid);
+      await loadUserData(user.uid);
+      
+      // ✅ FORCER LA VÉRIFICATION DES GAINS AU CHARGEMENT
+      await forceCheckAndCreditGains();
+      
+      startNotificationTimer();
+      setTimeout(() => showWithdrawNotification(), 2000);
+      checkAndShowAdminButton();
     } else {
       const saved = localStorage.getItem('earnzone_current_user');
       if (saved && !authChecked) setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);

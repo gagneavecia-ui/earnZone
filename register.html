@@ -148,6 +148,32 @@
     .phone-prefix { width: 80px; flex-shrink: 0; }
     .phone-number { flex: 1; }
 
+    /* Champ parrainage */
+    .referral-code-group {
+      background: rgba(183, 110, 255, 0.05);
+      border: 1px solid rgba(183, 110, 255, 0.15);
+      border-radius: 16px;
+      padding: 8px 12px;
+      margin-bottom: 20px;
+    }
+    .referral-label {
+      font-size: 11px;
+      color: var(--primary-light);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .referral-info {
+      font-size: 10px;
+      color: var(--success);
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .referral-info i { font-size: 10px; }
+
     .btn-register {
       width: 100%;
       padding: 16px;
@@ -298,6 +324,17 @@
         <input type="password" id="confirmPassword" placeholder="Répétez le mot de passe" required>
       </div>
 
+      <!-- 🌟 NOUVEAU : CHAMP CODE DE PARRAINAGE (OPTIONNEL) 🌟 -->
+      <div class="referral-code-group">
+        <div class="referral-label">
+          <i class="fas fa-gift"></i> Code de parrainage (optionnel)
+        </div>
+        <input type="text" id="referralCode" placeholder="Code de votre parrain" style="background: rgba(20,20,35,0.8); border: none; color: white; width: 100%;">
+        <div class="referral-info" id="referralInfo" style="display: none;">
+          <i class="fas fa-check-circle"></i> <span id="referralMessage"></span>
+        </div>
+      </div>
+
       <button type="submit" class="btn-register" id="registerBtn">
         <i class="fas fa-user-plus"></i> S'inscrire
       </button>
@@ -326,7 +363,7 @@
 <script type="module">
   import { initializeApp } from "firebase/app";
   import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, setDoc } from "firebase/firestore";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -348,6 +385,71 @@
   const errorTextSpan = document.getElementById('errorText');
   const successMessageDiv = document.getElementById('successMessage');
   const registerBtn = document.getElementById('registerBtn');
+  const referralCodeInput = document.getElementById('referralCode');
+  const referralInfo = document.getElementById('referralInfo');
+  const referralMessage = document.getElementById('referralMessage');
+
+  // 🌟 LIRE LE CODE DE PARRAINAGE DANS L'URL (?ref=CODE)
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if (refCode) {
+    referralCodeInput.value = refCode;
+    // Vérifier si le code existe
+    checkReferralCode(refCode);
+  }
+
+  // 🌟 VÉRIFIER SI LE CODE DE PARRAINAGE EXISTE
+  async function checkReferralCode(code) {
+    if (!code) return;
+    try {
+      // Chercher l'utilisateur avec ce code de parrainage
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("referralCode", "==", code));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        const parrain = querySnapshot.docs[0].data();
+        referralInfo.style.display = 'flex';
+        referralMessage.innerHTML = `✅ Parrain valide ! Vous parrainez ${parrain.prenom || parrain.nom || 'un membre'}. Il recevra 500 FCFA.`;
+        referralInfo.style.color = 'var(--success)';
+      } else {
+        referralInfo.style.display = 'flex';
+        referralMessage.innerHTML = `⚠️ Code invalide. Vous pouvez vous inscrire sans parrain.`;
+        referralInfo.style.color = 'var(--warning)';
+      }
+    } catch (error) {
+      console.error("Erreur vérification code:", error);
+    }
+  }
+
+  // 🌟 GÉNÉRER UN CODE DE PARRAINAGE UNIQUE
+  function generateReferralCode(nom, prenom, email) {
+    const prefix = (prenom.substring(0, 3) + nom.substring(0, 3)).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `${prefix}${random}`;
+  }
+
+  // 🌟 CRÉDITER LA RÉCOMPENSE DU PARRAIN (500 FCFA)
+  async function creditReferralReward(parrainUid) {
+    try {
+      const parrainRef = doc(db, "users", parrainUid);
+      const parrainDoc = await getDoc(parrainRef);
+      if (parrainDoc.exists()) {
+        const newBalance = (parrainDoc.data().balance || 0) + 500;
+        const newReferralsCount = (parrainDoc.data().referralsCount || 0) + 1;
+        const newReferralEarnings = (parrainDoc.data().referralEarnings || 0) + 500;
+        
+        await updateDoc(parrainRef, {
+          balance: newBalance,
+          referralsCount: newReferralsCount,
+          referralEarnings: newReferralEarnings
+        });
+        console.log(`✅ 500 FCFA crédités au parrain ${parrainUid}`);
+      }
+    } catch (error) {
+      console.error("Erreur crédit récompense:", error);
+    }
+  }
 
   const indicatifMapping = {
     'Bénin': '+229',
@@ -372,6 +474,15 @@
   document.addEventListener('DOMContentLoaded', () => {
     paysSelect.value = 'Niger';
     updateIndicatif();
+  });
+
+  // Écouter les changements manuels du champ parrainage
+  referralCodeInput.addEventListener('input', (e) => {
+    if (e.target.value.length >= 4) {
+      checkReferralCode(e.target.value);
+    } else {
+      referralInfo.style.display = 'none';
+    }
   });
 
   function showError(message) {
@@ -405,6 +516,7 @@
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
+    const referralCode = document.getElementById('referralCode').value.trim();
 
     if (!nom || !prenom || !pays || !telephone || !email || !password) {
       showError('Tous les champs sont obligatoires.');
@@ -440,63 +552,81 @@
     registerBtn.innerHTML = '<span class="loader"></span> Inscription en cours...';
 
     try {
+      // Vérifier si le code de parrainage existe (si fourni)
+      let parrainUid = null;
+      if (referralCode) {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("referralCode", "==", referralCode));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          parrainUid = querySnapshot.docs[0].id;
+        } else if (referralCode) {
+          showError('Code de parrainage invalide.');
+          registerBtn.disabled = false;
+          registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> S\'inscrire';
+          return;
+        }
+      }
+
       // 1. Création du compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
       console.log("✅ Auth créé - UID:", user.uid);
 
-      // 2. Date actuelle pour les timestamps
-      const now = new Date();
-      const todayStr = now.toISOString().split('T')[0];
+      // 2. Générer le code de parrainage UNIQUE pour ce nouvel utilisateur
+      const generatedReferralCode = generateReferralCode(nom, prenom, email);
       
-      // 3. Création du document utilisateur avec TOUTES les colonnes nécessaires
+      // 3. Date actuelle
+      const now = new Date();
+      
+      // 4. Création du document utilisateur
       const userData = {
-        // Identité
         uid: user.uid,
         email: email,
         nom: nom,
         prenom: prenom,
         pays: pays,
         phone: `${indicatif} ${telephone}`,
-        
-        // Comptes financiers
         balance: 0,
         gainsTotal: 0,
         totalInvested: 0,
         totalWithdrawn: 0,
-        
-        // Statut
         status: "active",
         role: "user",
         hasDeposited: false,
-        
-        // Dates importantes
         registrationDate: now.toISOString(),
         lastGainDate: now.toISOString(),
         lastInvestment: null,
         lastWithdrawal: null,
         subscriptionEnd: null,
-        
-        // Investissements
         investments: [],
-        
-        // Historique des gains
         gainsHistory: [],
-        
-        // Cache des données utilisateur pour localStorage
-        createdAt: new Date().toISOString()
+        createdAt: now.toISOString(),
+        // 🌟 NOUVEAUX CHAMPS PARRAINAGE 🌟
+        referralCode: generatedReferralCode,
+        referredBy: referralCode || null,
+        referralsCount: 0,
+        referralEarnings: 0,
+        referralHistory: []
       };
 
       await setDoc(doc(db, "users", user.uid), userData);
-      
-      console.log("✅ Firestore document créé avec toutes les colonnes");
+      console.log("✅ Firestore document créé");
 
-      // 4. Stockage localStorage pour affichage instantané
+      // 5. Créditer la récompense au parrain (500 FCFA)
+      if (parrainUid) {
+        await creditReferralReward(parrainUid);
+        console.log("✅ Récompense de 500 FCFA créditée au parrain");
+      }
+
+      // 6. Stockage localStorage
       localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
       localStorage.setItem('earnzone_current_user', user.uid);
       
       console.log("✅ Cache localStorage mis à jour");
+      console.log("📎 Votre code de parrainage:", generatedReferralCode);
+      console.log("🔗 Lien de parrainage:", `https://gagneavecia-ui.github.io/earnZone/register.html?ref=${generatedReferralCode}`);
 
       showSuccess();
       
@@ -533,3 +663,4 @@
 </script>
 </body>
 </html>
+      

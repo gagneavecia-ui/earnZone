@@ -360,7 +360,7 @@
   }
 </script>
 
-<script type="module">
+  <script type="module">
   import { initializeApp } from "firebase/app";
   import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
   import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
@@ -377,59 +377,113 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  
   setPersistence(auth, browserLocalPersistence);
 
+  // ========== LECTURE DU CODE PARRAINAGE DANS L'URL ==========
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  
+  console.log("🔍 Code détecté dans l'URL:", refCode);
+
+  // ========== RÉFÉRENCES DOM ==========
   const registerForm = document.getElementById('registerForm');
   const errorMessageDiv = document.getElementById('errorMessage');
   const errorTextSpan = document.getElementById('errorText');
   const successMessageDiv = document.getElementById('successMessage');
   const registerBtn = document.getElementById('registerBtn');
-  const referralCodeInput = document.getElementById('referralCode');
-  const referralInfo = document.getElementById('referralInfo');
-  const referralMessage = document.getElementById('referralMessage');
-
-  // 🌟 LIRE LE CODE DE PARRAINAGE DANS L'URL (?ref=CODE)
-  const urlParams = new URLSearchParams(window.location.search);
-  const refCode = urlParams.get('ref');
-  if (refCode) {
+  
+  // Créer dynamiquement le champ de parrainage s'il n'existe pas
+  let referralCodeInput = document.getElementById('referralCode');
+  let referralMessageDiv = document.getElementById('referralMessage');
+  
+  if (!referralCodeInput) {
+    const formGroups = document.querySelectorAll('.form-group');
+    const lastFormGroup = formGroups[formGroups.length - 1];
+    const newDiv = document.createElement('div');
+    newDiv.className = 'form-group';
+    newDiv.innerHTML = `
+      <label><i class="fas fa-gift"></i> Code de parrainage (optionnel)</label>
+      <input type="text" id="referralCode" placeholder="Code de votre parrain">
+      <div id="referralMessage" style="font-size: 12px; margin-top: 5px;"></div>
+    `;
+    lastFormGroup.insertAdjacentElement('afterend', newDiv);
+    referralCodeInput = document.getElementById('referralCode');
+    referralMessageDiv = document.getElementById('referralMessage');
+  }
+  
+  if (refCode && referralCodeInput) {
     referralCodeInput.value = refCode;
-    // Vérifier si le code existe
     checkReferralCode(refCode);
   }
 
-  // 🌟 VÉRIFIER SI LE CODE DE PARRAINAGE EXISTE
+  // ========== VÉRIFIER LE CODE DE PARRAINAGE ==========
   async function checkReferralCode(code) {
-    if (!code) return;
+    if (!code || code.length < 4) return;
     try {
-      // Chercher l'utilisateur avec ce code de parrainage
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("referralCode", "==", code));
       const querySnapshot = await getDocs(q);
       
       if (!querySnapshot.empty) {
-        const parrain = querySnapshot.docs[0].data();
-        referralInfo.style.display = 'flex';
-        referralMessage.innerHTML = `✅ Parrain valide ! Vous parrainez ${parrain.prenom || parrain.nom || 'un membre'}. Il recevra 500 FCFA.`;
-        referralInfo.style.color = 'var(--success)';
+        if (referralMessageDiv) {
+          referralMessageDiv.innerHTML = `✅ Code valide ! Votre parrain recevra 500 FCFA après votre inscription.`;
+          referralMessageDiv.style.color = "#2EE89A";
+        }
       } else {
-        referralInfo.style.display = 'flex';
-        referralMessage.innerHTML = `⚠️ Code invalide. Vous pouvez vous inscrire sans parrain.`;
-        referralInfo.style.color = 'var(--warning)';
+        if (referralMessageDiv) {
+          referralMessageDiv.innerHTML = `⚠️ Code invalide. Vous pouvez vous inscrire sans parrain.`;
+          referralMessageDiv.style.color = "#FFD166";
+        }
       }
     } catch (error) {
-      console.error("Erreur vérification code:", error);
+      console.error("Erreur vérification:", error);
     }
   }
 
-  // 🌟 GÉNÉRER UN CODE DE PARRAINAGE UNIQUE
-  function generateReferralCode(nom, prenom, email) {
-    const prefix = (prenom.substring(0, 3) + nom.substring(0, 3)).toUpperCase();
-    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `${prefix}${random}`;
+  if (referralCodeInput) {
+    referralCodeInput.addEventListener('input', (e) => {
+      if (e.target.value.length >= 4) {
+        checkReferralCode(e.target.value);
+      } else if (referralMessageDiv) {
+        referralMessageDiv.innerHTML = '';
+      }
+    });
   }
 
-  // 🌟 CRÉDITER LA RÉCOMPENSE DU PARRAIN (500 FCFA)
+  // ========== GESTION INDICATIF TÉLÉPHONE ==========
+  const indicatifMapping = {
+    'Bénin': '+229', 'Niger': '+227', 'Mali': '+223',
+    'Burkina Faso': '+226', 'Sénégal': '+221', 'Côte d\'Ivoire': '+225'
+  };
+
+  const paysSelect = document.getElementById('pays');
+  const indicatifSelect = document.getElementById('indicatif');
+
+  function updateIndicatif() {
+    const selectedPays = paysSelect.value;
+    if (selectedPays && indicatifMapping[selectedPays]) {
+      indicatifSelect.value = indicatifMapping[selectedPays];
+    }
+  }
+
+  if (paysSelect) paysSelect.addEventListener('change', updateIndicatif);
+  document.addEventListener('DOMContentLoaded', () => {
+    if (paysSelect) {
+      paysSelect.value = 'Niger';
+      updateIndicatif();
+    }
+  });
+
+  // ========== GÉNÉRATION CODE PARRAINAGE ==========
+  function generateReferralCode(nom, prenom, email) {
+    const prefix = (prenom.substring(0, 3) + nom.substring(0, 3)).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    let code = `${prefix}${random}`;
+    code = code.replace(/[^A-Z0-9]/g, '');
+    return code.substring(0, 12);
+  }
+
+  // ========== 🌟 CRÉDITER LA RÉCOMPENSE DU PARRAIN (500 FCFA) 🌟 ==========
   async function creditReferralReward(parrainUid) {
     try {
       const parrainRef = doc(db, "users", parrainUid);
@@ -444,47 +498,18 @@
           referralsCount: newReferralsCount,
           referralEarnings: newReferralEarnings
         });
+        
         console.log(`✅ 500 FCFA crédités au parrain ${parrainUid}`);
+        console.log(`💰 Nouveau solde du parrain: ${newBalance} FCFA`);
+        return true;
       }
     } catch (error) {
-      console.error("Erreur crédit récompense:", error);
+      console.error("❌ Erreur crédit récompense:", error);
     }
+    return false;
   }
 
-  const indicatifMapping = {
-    'Bénin': '+229',
-    'Niger': '+227',
-    'Mali': '+223',
-    'Burkina Faso': '+226',
-    'Sénégal': '+221',
-    'Côte d\'Ivoire': '+225'
-  };
-
-  const paysSelect = document.getElementById('pays');
-  const indicatifSelect = document.getElementById('indicatif');
-
-  function updateIndicatif() {
-    const selectedPays = paysSelect.value;
-    if (selectedPays && indicatifMapping[selectedPays]) {
-      indicatifSelect.value = indicatifMapping[selectedPays];
-    }
-  }
-
-  paysSelect.addEventListener('change', updateIndicatif);
-  document.addEventListener('DOMContentLoaded', () => {
-    paysSelect.value = 'Niger';
-    updateIndicatif();
-  });
-
-  // Écouter les changements manuels du champ parrainage
-  referralCodeInput.addEventListener('input', (e) => {
-    if (e.target.value.length >= 4) {
-      checkReferralCode(e.target.value);
-    } else {
-      referralInfo.style.display = 'none';
-    }
-  });
-
+  // ========== VALIDATION INSCRIPTION ==========
   function showError(message) {
     errorTextSpan.textContent = message;
     errorMessageDiv.classList.remove('hidden');
@@ -505,44 +530,41 @@
     return /^[0-9]{6,10}$/.test(phone);
   }
 
+  // ========== SOUMISSION DU FORMULAIRE ==========
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const nom = document.getElementById('nom').value.trim();
     const prenom = document.getElementById('prenom').value.trim();
-    const pays = document.getElementById('pays').value;
-    const indicatif = document.getElementById('indicatif').value;
+    const pays = document.getElementById('pays')?.value;
+    const indicatif = document.getElementById('indicatif')?.value || '+227';
     const telephone = document.getElementById('telephone').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const referralCode = document.getElementById('referralCode').value.trim();
+    const referralCode = document.getElementById('referralCode')?.value.trim();
 
+    // Validations...
     if (!nom || !prenom || !pays || !telephone || !email || !password) {
       showError('Tous les champs sont obligatoires.');
       return;
     }
-
     if (nom.length < 2 || prenom.length < 2) {
       showError('Le nom et prénom doivent contenir au moins 2 caractères.');
       return;
     }
-
     if (!validatePhone(telephone)) {
       showError('Numéro de téléphone invalide (6 à 10 chiffres).');
       return;
     }
-
     if (!validateEmail(email)) {
       showError('Email invalide.');
       return;
     }
-
     if (password.length < 6) {
       showError('Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
-
     if (password !== confirmPassword) {
       showError('Les mots de passe ne correspondent pas.');
       return;
@@ -552,9 +574,9 @@
     registerBtn.innerHTML = '<span class="loader"></span> Inscription en cours...';
 
     try {
-      // Vérifier si le code de parrainage existe (si fourni)
+      // Vérifier le code de parrainage
       let parrainUid = null;
-      if (referralCode) {
+      if (referralCode && referralCode.length >= 4) {
         const usersRef = collection(db, "users");
         const q = query(usersRef, where("referralCode", "==", referralCode));
         const querySnapshot = await getDocs(q);
@@ -568,19 +590,15 @@
         }
       }
 
-      // 1. Création du compte Firebase Auth
+      // Création du compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      console.log("✅ Auth créé - UID:", user.uid);
-
-      // 2. Générer le code de parrainage UNIQUE pour ce nouvel utilisateur
+      // Génération du code de parrainage pour le nouvel utilisateur
       const generatedReferralCode = generateReferralCode(nom, prenom, email);
-      
-      // 3. Date actuelle
       const now = new Date();
       
-      // 4. Création du document utilisateur
+      // Création du document utilisateur
       const userData = {
         uid: user.uid,
         email: email,
@@ -603,7 +621,6 @@
         investments: [],
         gainsHistory: [],
         createdAt: now.toISOString(),
-        // 🌟 NOUVEAUX CHAMPS PARRAINAGE 🌟
         referralCode: generatedReferralCode,
         referredBy: referralCode || null,
         referralsCount: 0,
@@ -612,21 +629,19 @@
       };
 
       await setDoc(doc(db, "users", user.uid), userData);
-      console.log("✅ Firestore document créé");
 
-      // 5. Créditer la récompense au parrain (500 FCFA)
+      // 🌟 CRÉDITER LES 500 FCFA AU PARRAIN 🌟
       if (parrainUid) {
         await creditReferralReward(parrainUid);
-        console.log("✅ Récompense de 500 FCFA créditée au parrain");
       }
 
-      // 6. Stockage localStorage
+      // Stockage localStorage
       localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
       localStorage.setItem('earnzone_current_user', user.uid);
       
-      console.log("✅ Cache localStorage mis à jour");
-      console.log("📎 Votre code de parrainage:", generatedReferralCode);
-      console.log("🔗 Lien de parrainage:", `https://gagneavecia-ui.github.io/earnZone/register.html?ref=${generatedReferralCode}`);
+      console.log("✅ Inscription réussie");
+      console.log("🔗 Votre code de parrainage:", generatedReferralCode);
+      console.log("🔗 Lien:", `https://gagneavecia-ui.github.io/earnZone/register.html?ref=${generatedReferralCode}`);
 
       showSuccess();
       
@@ -647,9 +662,6 @@
           break;
         case 'auth/weak-password':
           errorMsg = 'Mot de passe trop faible (minimum 6 caractères).';
-          break;
-        case 'permission-denied':
-          errorMsg = 'Erreur de sécurité. Vérifiez les règles Firestore.';
           break;
         default:
           errorMsg = error.message || 'Erreur lors de l\'inscription. Réessayez.';

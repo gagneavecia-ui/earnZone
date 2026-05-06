@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Parrainage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --primary-glow: rgba(183, 110, 255, 0.3);
+      --bg-dark: #030305;
+      --bg-medium: #08080F;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.85);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --card-border-hover: rgba(183, 110, 255, 0.25);
+      --success: #2EE89A;
+      --warning: #FFD166;
+      --danger: #FF4D6D;
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-bg: rgba(183, 110, 255, 0.04);
+      --glass-border: rgba(183, 110, 255, 0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 90px;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 63, 232, 0.2) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.15) 0%, transparent 55%),
+                  linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+      animation: orbFloat 10s ease-in-out infinite;
+    }
+    .orb-1 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(139, 63, 232, 0.12), transparent 70%); top: -150px; left: -100px; }
+    .orb-2 { width: 280px; height: 280px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 10%; right: -80px; animation-delay: -5s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(25px, -25px) scale(1.08); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 5%;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.07);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .logo-text span {
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: var(--glass-bg);
+    }
+    .back-btn:active { 
+      background: rgba(183, 110, 255, 0.15);
+      color: var(--primary);
+      transform: scale(0.95);
+    }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
+
+    .hero-card {
+      background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.06));
+      border-radius: 28px;
+      padding: 25px 20px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(183, 110, 255, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary-light));
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-icon { font-size: 48px; color: var(--primary); margin-bottom: 15px; }
+    .hero-title { font-size: 28px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    .hero-title span { background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-description { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; font-size: 13px; }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50px;
+      padding: 12px 20px;
+    }
+    .hero-stat-value { font-size: 18px; font-weight: 700; color: var(--primary-light); margin-bottom: 3px; }
+    .hero-stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .code-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .code-label { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; }
+    .code-value {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      border-radius: 16px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--primary-light);
+      font-family: monospace;
+      margin-bottom: 15px;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: rgba(183, 110, 255, 0.15);
+      border: 1px solid rgba(183, 110, 255, 0.3);
+      color: var(--primary-light);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .copy-btn:active {
+      background: rgba(183, 110, 255, 0.3);
+      transform: scale(0.97);
+    }
+
+    .link-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+    .link-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-light);
+    }
+    .invite-link {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      word-break: break-all;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .share-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .share-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+    }
+    .share-wa { background: #25D366; color: white; }
+    .share-fb { background: #1877F2; color: white; }
+    .share-copy { background: rgba(183, 110, 255, 0.15); color: var(--primary-light); border: 1px solid rgba(183, 110, 255, 0.3); }
+    .share-btn:active { transform: scale(0.97); }
+
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      flex: 1;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 15px;
+      text-align: center;
+    }
+    .stat-card i {
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .filleuls-list {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+    }
+    .filleul-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .filleul-item:last-child { border-bottom: none; }
+    .filleul-name { font-weight: 500; }
+    .filleul-date { font-size: 11px; color: var(--text-dim); }
+    .filleul-gain { color: var(--success); font-weight: 600; }
+
+    .empty-state { text-align: center; padding: 30px 20px; color: var(--text-dim); }
+    .empty-state i { font-size: 48px; margin-bottom: 15px; opacity: 0.3; display: block; }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--primary);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      transform: translateY(200px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .notification.show { transform: translateY(0); }
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+    }
+    .notification-content h4 { font-size: 14px; margin-bottom: 4px; }
+    .notification-content p { font-size: 11px; color: var(--text-dim); }
+
+    .back-home {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      text-align: center;
+      box-shadow: 0 5px 25px var(--primary-glow);
+      z-index: 99;
+      transition: var(--transition);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .back-home:active { transform: scale(0.97); opacity: 0.9; }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px; }
+      .hero-title { font-size: 24px; }
+      .code-value { font-size: 18px; letter-spacing: 2px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="notification" id="notification">
+  <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+  <div class="notification-content">
+    <h4 id="notifTitle">Copié !</h4>
+    <p id="notifMessage">Lien copié dans le presse-papiers</p>
+  </div>
+</div>
+
+<header class="header">
+  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i><span>Retour</span></a>
+  <div class="logo-text">EARN<span>ZONE</span></div>
+  <div style="width: 40px;"></div>
+</header>
+
+<div class="container">
+  <div class="hero-card">
+    <div class="hero-icon"><i class="fas fa-users"></i></div>
+    <h1 class="hero-title">Parrainage</h1>
+    <p class="hero-description">Invitez vos amis et gagnez ensemble !</p>
+    <div class="hero-stats">
+      <div class="hero-stat-item"><div class="hero-stat-value">+500</div><div class="hero-stat-label">FCFA/filleul</div></div>
+      <div class="hero-stat-item"><div class="hero-stat-value">Illimité</div><div class="hero-stat-label">Personnes</div></div>
+    </div>
+  </div>
+
+  <div class="code-section">
+    <div class="code-label"><i class="fas fa-ticket-alt"></i> Votre code de parrainage</div>
+    <div class="code-value" id="parrainCode">CHARGEMENT...</div>
+    <button class="copy-btn" id="copyCodeBtn"><i class="fas fa-copy"></i> Copier le code</button>
+  </div>
+
+  <div class="link-section">
+    <div class="link-title"><i class="fas fa-link"></i> Lien d'invitation</div>
+    <div class="invite-link" id="inviteLink">Chargement...</div>
+    <div class="share-buttons">
+      <button class="share-btn share-wa" id="shareWA"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+      <button class="share-btn share-fb" id="shareFB"><i class="fab fa-facebook-f"></i> Facebook</button>
+      <button class="share-btn share-copy" id="copyLinkBtn"><i class="fas fa-copy"></i> Copier</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><i class="fas fa-user-friends"></i><div class="stat-value" id="totalFilleuls">0</div><div class="stat-label">Personnes invitées</div></div>
+    <div class="stat-card"><i class="fas fa-coins"></i><div class="stat-value" id="totalGainsParrainage">0 FCFA</div><div class="stat-label">Gagné via parrainage</div></div>
+  </div>
+
+  <div class="filleuls-list">
+    <div class="link-title"><i class="fas fa-history"></i> Mes filleuls</div>
+    <div id="filleulsContainer"><div class="empty-state"><i class="fas fa-user-plus"></i><p>Aucun filleul pour l'instant</p><p style="font-size: 11px;">Partagez votre code pour inviter des amis !</p></div></div>
+  </div>
+</div>
+
+<a href="index.html" class="back-home"><i class="fas fa-home"></i> Retour à l'accueil</a>
+
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let userData = null;
+
+  function showNotification(title, message) {
+    document.getElementById('notifTitle').innerText = title;
+    document.getElementById('notifMessage').innerHTML = message;
+    const notif = document.getElementById('notification');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3000);
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  async function loadUserData(uid) {
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      userData = userDoc.data();
+      
+      // Récupérer le code de parrainage (créé lors de l'inscription)
+      let parrainCode = userData.referralCode;
+      if (!parrainCode) {
+        // Fallback pour les anciens comptes
+        parrainCode = (userData.prenom?.substring(0,3) + userData.nom?.substring(0,3) + userData.uid?.substring(0,4)).toUpperCase();
+      }
+      
+      document.getElementById('parrainCode').innerHTML = parrainCode;
+      
+      const inviteLink = `https://gagneavecia-ui.github.io/earnZone/register.html?ref=${parrainCode}`;
+      document.getElementById('inviteLink').innerHTML = inviteLink;
+      
+      // Statistiques
+      document.getElementById('totalFilleuls').innerHTML = userData.referralsCount || 0;
+      document.getElementById('totalGainsParrainage').innerHTML = `${(userData.referralEarnings || 0).toLocaleString('fr-FR')} FCFA`;
+      
+      // Charger la liste des filleuls
+      await loadFilleuls(parrainCode);
+    }
+  }
+
+  async function loadFilleuls(parrainCode) {
+    try {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("referredBy", "==", parrainCode));
+      const querySnapshot = await getDocs(q);
+      
+      const container = document.getElementById('filleulsContainer');
+      
+      if (querySnapshot.empty) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-user-plus"></i><p>Aucun filleul pour l\'instant</p><p style="font-size: 11px;">Partagez votre code pour inviter des amis !</p></div>';
+        return;
+      }
+      
+      let html = '';
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const name = `${data.prenom || ''} ${data.nom || ''}`.trim() || data.email?.split('@')[0] || 'Utilisateur';
+        const date = data.registrationDate ? new Date(data.registrationDate).toLocaleDateString('fr-FR') : 'Date inconnue';
+        html += `
+          <div class="filleul-item">
+            <div>
+              <div class="filleul-name">${name}</div>
+              <div class="filleul-date">Inscrit le ${date}</div>
+            </div>
+            <div class="filleul-gain">+500 FCFA</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    } catch (error) {
+      console.error("Erreur chargement filleuls:", error);
+    }
+  }
+
+  // Copier code
+  document.getElementById('copyCodeBtn').addEventListener('click', () => {
+    const code = document.getElementById('parrainCode').innerHTML;
+    navigator.clipboard.writeText(code);
+    showNotification('Code copié !', 'Le code a été copié dans le presse-papiers');
+  });
+
+  // Copier lien
+  document.getElementById('copyLinkBtn').addEventListener('click', () => {
+    const link = document.getElementById('inviteLink').innerHTML;
+    navigator.clipboard.writeText(link);
+    showNotification('Lien copié !', 'Le lien a été copié dans le presse-papiers');
+  });
+
+  // Partager WhatsApp
+  document.getElementById('shareWA').addEventListener('click', () => {
+    const link = document.getElementById('inviteLink').innerHTML;
+    const text = `🎁 Rejoins EarnZone avec mon code de parrainage !\n\n💰 Gagne 500 FCFA dès ton inscription !\n\n🔗 ${link}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  });
+
+  // Partager Facebook
+  document.getElementById('shareFB').addEventListener('click', () => {
+    const link = document.getElementById('inviteLink').innerHTML;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadUserData(user.uid);
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+</script>
+</body>
+</html>

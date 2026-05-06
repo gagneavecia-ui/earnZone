@@ -519,13 +519,8 @@
         updateUI(freshData);
         console.log("Mise à jour temps réel: solde =", freshData.balance);
       } else {
-        // Création du document si inexistant
-        const defaultData = { uid, email: currentUser?.email, nom: '', prenom: 'Utilisateur', balance: 0, status: 'active', role: 'user', hasDeposited: false, registrationDate: new Date().toISOString(), investments: [] };
-        setDoc(userRef, defaultData).then(() => {
-          cacheUserData(uid, defaultData);
-          updateUI(defaultData);
-          userData = defaultData;
-        });
+        // ⚠️ NE PAS CRÉER LE DOCUMENT ICI !
+        console.error("❌ Document utilisateur non trouvé pour uid:", uid);
       }
     }, (error) => {
       console.error("Erreur onSnapshot:", error);

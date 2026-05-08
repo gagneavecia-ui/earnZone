@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* ===== TOUT VOTRE CSS EXISTANT (GARDÉ) ===== */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -427,7 +426,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Skeleton loader */
     .skeleton-text {
       height: 20px;
       background: linear-gradient(90deg, rgba(183, 110, 255, 0.1) 25%, rgba(183, 110, 255, 0.2) 50%, rgba(183, 110, 255, 0.1) 75%);
@@ -480,7 +478,6 @@
 </header>
 
 <main class="container">
-  <!-- Skeleton UI (affiché immédiatement) -->
   <div id="skeletonUI" style="display: block;">
     <div class="profile-header">
       <div class="skeleton-avatar"></div>
@@ -499,7 +496,6 @@
     </div>
   </div>
 
-  <!-- Contenu réel (caché au départ) -->
   <div id="realContent" style="display: none;">
     <div class="profile-header">
       <div class="profile-avatar" id="profileAvatar">U</div>
@@ -581,10 +577,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged, signOut, updatePassword, verifyBeforeUpdateEmail, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, updatePassword, verifyBeforeUpdateEmail, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -597,43 +594,69 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  
-  // Persistance locale
   setPersistence(auth, browserLocalPersistence);
 
+  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let userData = null;
-  let authReady = false;
+
+  // ========== FONCTIONS UTILITAIRES ==========
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
 
   function showRealContent() {
     document.getElementById('skeletonUI').style.display = 'none';
     document.getElementById('realContent').style.display = 'block';
   }
 
+  function showNotification(title, message, type = 'success') {
+    document.getElementById('notificationTitle').innerText = title;
+    document.getElementById('notificationMessage').innerText = message;
+    const notif = document.getElementById('notification');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3500);
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  // ========== CHARGEMENT DONNÉES UTILISATEUR ==========
   async function loadUserData(uid) {
-    const userRef = doc(db, "users", uid);
-    const userDoc = await getDoc(userRef);
-    
-    if (userDoc.exists()) {
-      userData = userDoc.data();
-      userData.balance = userData.balance || 0;
-      userData.investments = userData.investments || [];
-      updateUI();
-      showRealContent();
-    } else {
-      await signOut(auth);
-      window.location.href = 'login.html';
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        userData.balance = userData.balance || 0;
+        userData.investments = userData.investments || [];
+        updateUI();
+        showRealContent();
+      } else {
+        console.error("❌ Document utilisateur non trouvé");
+        await signOut(auth);
+        window.location.href = 'login.html';
+      }
+    } catch (error) {
+      console.error("❌ Erreur chargement:", error);
+      showNotification('Erreur', 'Impossible de charger vos données', 'error');
     }
   }
 
+  // ========== MISE À JOUR UI ==========
   async function updateUI() {
     if (!userData) return;
     
     const prenom = userData.prenom || '';
     const nom = userData.nom || '';
     const fullName = prenom && nom ? `${prenom} ${nom}` : (userData.fullName || 'Utilisateur');
-    document.getElementById('profileName').innerHTML = fullName;
-    document.getElementById('displayFullName').innerHTML = `${prenom || '-'} ${nom || '-'}`;
+    document.getElementById('profileName').innerHTML = escapeHtml(fullName);
+    document.getElementById('displayFullName').innerHTML = `${escapeHtml(prenom) || '-'} ${escapeHtml(nom) || '-'}`;
     document.getElementById('profileEmail').innerText = currentUser?.email || userData.email || 'email@non.renseigné';
     document.getElementById('displayEmail').innerText = currentUser?.email || userData.email || '-';
     document.getElementById('displayPhone').innerText = userData.phone || '-';
@@ -663,7 +686,7 @@
         totalWithdrawn += docSnap.data().amount || 0;
       });
     } catch (error) {
-      console.error("Erreur chargement retraits:", error);
+      console.error("❌ Erreur chargement retraits:", error);
     }
     document.getElementById('totalWithdrawn').innerHTML = totalWithdrawn.toLocaleString('fr-FR') + ' FCFA';
     
@@ -680,6 +703,7 @@
     document.getElementById('editPhone').value = userData.phone || '';
   }
 
+  // ========== GESTION DES FORMULAIRES ==========
   function hideAllForms() {
     document.querySelectorAll('.edit-form').forEach(form => form.classList.remove('show'));
   }
@@ -687,18 +711,11 @@
   window.showEditForm = function(type) {
     hideAllForms();
     const formId = type === 'name' ? 'editNameForm' : type === 'email' ? 'editEmailForm' : type === 'phone' ? 'editPhoneForm' : 'editPasswordForm';
-    document.getElementById(formId).classList.add('show');
+    const form = document.getElementById(formId);
+    if (form) form.classList.add('show');
   }
 
-  function showNotification(title, message, type = 'success') {
-    document.getElementById('notificationTitle').innerText = title;
-    document.getElementById('notificationMessage').innerText = message;
-    const notif = document.getElementById('notification');
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 3500);
-    if (navigator.vibrate) navigator.vibrate(50);
-  }
-
+  // ========== SAUVEGARDE NOM ==========
   window.saveName = async function() {
     const newPrenom = document.getElementById('editPrenom').value.trim();
     const newNom = document.getElementById('editNom').value.trim();
@@ -708,6 +725,7 @@
     }
     
     const btn = document.querySelector('#editNameForm .btn-save');
+    const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
     
@@ -727,14 +745,15 @@
       hideAllForms();
       showNotification('Succès', 'Nom mis à jour');
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("❌ Erreur:", error);
       showNotification('Erreur', "Impossible de mettre à jour", 'error');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      btn.innerHTML = originalText;
     }
   }
 
+  // ========== SAUVEGARDE EMAIL ==========
   window.saveEmail = async function() {
     const newEmail = document.getElementById('editEmail').value.trim();
     if (!newEmail) {
@@ -747,6 +766,7 @@
     }
     
     const btn = document.querySelector('#editEmailForm .btn-save');
+    const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
     
@@ -759,7 +779,7 @@
       showNotification('Succès', 'Email mis à jour. Vérifiez votre boîte mail pour confirmer', 'success');
       hideAllForms();
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("❌ Erreur:", error);
       if (error.code === 'auth/email-already-in-use') {
         showNotification('Erreur', 'Cet email est déjà utilisé', 'error');
       } else {
@@ -767,10 +787,11 @@
       }
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      btn.innerHTML = originalText;
     }
   }
 
+  // ========== SAUVEGARDE TÉLÉPHONE ==========
   window.savePhone = async function() {
     const newPhone = document.getElementById('editPhone').value.trim();
     if (!newPhone) {
@@ -779,6 +800,7 @@
     }
     
     const btn = document.querySelector('#editPhoneForm .btn-save');
+    const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
     
@@ -791,14 +813,15 @@
       hideAllForms();
       showNotification('Succès', 'Téléphone mis à jour');
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("❌ Erreur:", error);
       showNotification('Erreur', "Impossible de mettre à jour", 'error');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      btn.innerHTML = originalText;
     }
   }
 
+  // ========== SAUVEGARDE MOT DE PASSE ==========
   window.savePassword = async function() {
     const newPassword = document.getElementById('editPassword').value;
     const confirmPassword = document.getElementById('editPasswordConfirm').value;
@@ -817,6 +840,7 @@
     }
     
     const btn = document.querySelector('#editPasswordForm .btn-save');
+    const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
     
@@ -827,55 +851,40 @@
       document.getElementById('editPassword').value = '';
       document.getElementById('editPasswordConfirm').value = '';
     } catch (error) {
-      console.error("Erreur:", error);
+      console.error("❌ Erreur:", error);
       showNotification('Erreur', "Impossible de mettre à jour le mot de passe", 'error');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+      btn.innerHTML = originalText;
     }
   }
 
+  // ========== DÉCONNEXION ==========
   function showConfirmDialog(callback) {
     const overlay = document.getElementById('confirmOverlay');
     const dialog = document.getElementById('confirmDialog');
-    overlay.classList.add('show');
-    dialog.classList.add('show');
     
     const closeDialog = () => {
       overlay.classList.remove('show');
       dialog.classList.remove('show');
-      cancelBtn.removeEventListener('click', cancelHandler);
-      okBtn.removeEventListener('click', okHandler);
     };
     
-    const cancelHandler = () => closeDialog();
-    const okHandler = () => {
+    const onConfirm = () => {
       closeDialog();
       if (callback) callback();
     };
     
-    const cancelBtn = document.getElementById('confirmCancelBtn');
-    const okBtn = document.getElementById('confirmOkBtn');
-    cancelBtn.addEventListener('click', cancelHandler);
-    okBtn.addEventListener('click', okHandler);
+    const onCancel = () => closeDialog();
+    
+    overlay.classList.add('show');
+    dialog.classList.add('show');
+    
+    document.getElementById('confirmOkBtn').onclick = onConfirm;
+    document.getElementById('confirmCancelBtn').onclick = onCancel;
+    overlay.onclick = onCancel;
   }
 
-  document.getElementById('logoutBtn')?.addEventListener('click', () => {
-    showConfirmDialog(async () => {
-      try {
-        await signOut(auth);
-        localStorage.removeItem('earnzone_current_user');
-        window.location.href = 'login.html';
-      } catch (error) {
-        console.error("Erreur déconnexion:", error);
-        window.location.href = 'login.html';
-      }
-    });
-  });
-
-  // ============================================
-  // AUTHENTIFICATION CORRIGÉE
-  // ============================================
+  // ========== AUTHENTIFICATION ==========
   let firstCheckDone = false;
   
   onAuthStateChanged(auth, async (user) => {
@@ -884,15 +893,16 @@
       localStorage.setItem('earnzone_current_user', user.uid);
       await loadUserData(user.uid);
     } else {
-      // Vérifier si on a déjà un utilisateur dans localStorage (session persistante)
       const savedUid = localStorage.getItem('earnzone_current_user');
       if (savedUid && !firstCheckDone) {
-        // Attendre que Firebase restaure la session
         setTimeout(async () => {
           const restoredUser = auth.currentUser;
           if (!restoredUser) {
             localStorage.removeItem('earnzone_current_user');
             window.location.href = 'login.html';
+          } else {
+            currentUser = restoredUser;
+            await loadUserData(restoredUser.uid);
           }
         }, 2000);
       } else if (!firstCheckDone) {
@@ -900,6 +910,20 @@
       }
     }
     firstCheckDone = true;
+  });
+
+  // ========== INITIALISATION ==========
+  document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    showConfirmDialog(async () => {
+      try {
+        await signOut(auth);
+        localStorage.removeItem('earnzone_current_user');
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error("❌ Erreur déconnexion:", error);
+        window.location.href = 'login.html';
+      }
+    });
   });
 </script>
 </body>

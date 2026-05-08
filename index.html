@@ -12,7 +12,6 @@
   <meta name="theme-color" content="#000000">
   
   <style>
-    /* (tout votre CSS actuel, inchangé) */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -203,7 +202,6 @@
     .social-link:active { background: rgba(183, 110, 255, 0.15); transform: scale(0.95); }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
 
-    /* NOTIFICATION COMPACTE RETRAIT */
     .notif-toast {
       position: fixed;
       bottom: 20px;
@@ -269,7 +267,6 @@
     .flash { animation: flash 0.2s ease; }
     @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; transform: scale(0.98); } }
 
-    /* NOTIFICATION GAINS */
     .gain-notification {
       position: fixed;
       bottom: 20px;
@@ -311,7 +308,6 @@
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<!-- NOTIFICATION GAINS -->
 <div class="gain-notification" id="gainNotification">
   <div class="notif-icon"><i class="fas fa-gift"></i></div>
   <div class="notif-content">
@@ -320,7 +316,6 @@
   </div>
 </div>
 
-<!-- NOTIFICATION RETRAIT -->
 <div class="notif-toast" id="notifToast">
   <div class="notif-toast-content">
     <div class="notif-icon-circle"><i class="fas fa-arrow-down"></i></div>
@@ -378,17 +373,17 @@
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div><div class="stat-value" id="statDays">0</div><div class="stat-label">Jours actifs</div></div>
   </div>
 
-    <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
+  <div class="section-header"><div class="section-subtitle">Plateforme d'investissement</div><h2 class="section-title">Faites <span>grandir</span> votre capital</h2><p class="section-description">Des solutions puissantes pour générer des revenus passifs.</p></div>
   <div class="features-grid">
     <a href="investissement.html" class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3 class="feature-title">Capital Croissance</h3><p class="feature-description">Investissez et recevez des gains quotidiens avec un rendement exceptionnel.</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+40%</div></a>
     <a href="nex.html" class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3 class="feature-title">Bonus Quotidien Express</h3><p class="feature-description">Gagnez jusqu'à 400 FCFA par jour en quelques secondes !</p><span class="feature-link">Découvrir <i class="fas fa-arrow-right"></i></span><div class="feature-badge">+2000 FCFA/mois</div></a>
-     <a href="parrainage.html" class="feature-card">
-  <div class="feature-icon"><i class="fas fa-users"></i></div>
-  <h3 class="feature-title">Parrainage</h3>
-  <p class="feature-description">Invitez vos amis et gagnez jusqu'à 500 FCFA par personne !</p>
-  <span class="feature-link">Commencer <i class="fas fa-arrow-right"></i></span>
-  <div class="feature-badge">+500 FCFA</div>
-     </a>
+    <a href="parrainage.html" class="feature-card">
+      <div class="feature-icon"><i class="fas fa-users"></i></div>
+      <h3 class="feature-title">Parrainage</h3>
+      <p class="feature-description">Invitez vos amis et gagnez jusqu'à 500 FCFA par personne !</p>
+      <span class="feature-link">Commencer <i class="fas fa-arrow-right"></i></span>
+      <div class="feature-badge">+500 FCFA</div>
+    </a>
   </div>
 
   <div class="section-header"><div class="section-subtitle">Formations exclusives</div><h2 class="section-title">Développez vos <span>compétences</span></h2><p class="section-description">Apprenez à votre rythme avec nos cours pratiques.</p></div>
@@ -436,10 +431,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -454,15 +450,14 @@
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
 
+  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let userData = null;
-  let unsubscribeUser = null;     // pour se désabonner de l'écoute Firestore
+  let unsubscribeUser = null;
   let notificationTimer = null;
   let currentTimeout = null;
 
-  // ============================================
-  // NOTIFICATION GAINS
-  // ============================================
+  // ========== NOTIFICATION GAINS ==========
   function showGainNotification(title, message) {
     const notif = document.getElementById('gainNotification');
     document.getElementById('gainNotifTitle').innerText = title;
@@ -472,9 +467,7 @@
     if (navigator.vibrate) navigator.vibrate(100);
   }
 
-  // ============================================
-  // AFFICHAGE DES DONNÉES UTILISATEUR (UI)
-  // ============================================
+  // ========== AFFICHAGE DES DONNÉES UTILISATEUR ==========
   function updateUI(data) {
     if (!data) return;
     const prenom = data.prenom || '';
@@ -494,49 +487,43 @@
     if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
   }
 
-  // Mise en cache localStorage (pour affichage instantané au chargement)
+  // ========== CACHE LOCALSTORAGE ==========
   function cacheUserData(uid, data) {
     localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
   }
 
-  function getCached(uid) {
+  function getCachedUserData(uid) {
     const cached = localStorage.getItem(`earnzone_user_${uid}`);
     return cached ? JSON.parse(cached) : null;
   }
 
-  // ============================================
-  // ÉCOUTE EN TEMPS RÉEL (Firestore onSnapshot)
-  // ============================================
+  // ========== ÉCOUTE EN TEMPS RÉEL (FIRESTORE) ==========
   function listenToUser(uid) {
     if (unsubscribeUser) unsubscribeUser();
     const userRef = doc(db, "users", uid);
     unsubscribeUser = onSnapshot(userRef, (docSnap) => {
       if (docSnap.exists()) {
         const freshData = docSnap.data();
-        // Mise à jour locale et cache
         userData = freshData;
         cacheUserData(uid, freshData);
         updateUI(freshData);
-        console.log("Mise à jour temps réel: solde =", freshData.balance);
+        console.log("✅ Mise à jour temps réel - solde:", freshData.balance);
       } else {
-        // ⚠️ NE PAS CRÉER LE DOCUMENT ICI !
         console.error("❌ Document utilisateur non trouvé pour uid:", uid);
       }
     }, (error) => {
-      console.error("Erreur onSnapshot:", error);
+      console.error("❌ Erreur onSnapshot:", error);
     });
   }
 
-  // ============================================
-  // FONCTION DE CRÉDIT DES GAINS (appelée manuellement ou via timer)
-  // ============================================
+  // ========== CRÉDIT AUTOMATIQUE DES GAINS ==========
   async function forceCheckAndCreditGains() {
     if (!currentUser) return false;
     try {
       const userRef = doc(db, "users", currentUser.uid);
-      // On récupère le document actuel pour calcul
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) return false;
+      
       const data = userDoc.data();
       const activeInvests = (data.investments || []).filter(i => i.status === 'active');
       if (activeInvests.length === 0) return false;
@@ -572,28 +559,24 @@
 
       if (updated && totalGain > 0) {
         const newBalance = (data.balance || 0) + totalGain;
-        // Mise à jour Firestore (déclenchera onSnapshot)
         await updateDoc(userRef, {
           balance: newBalance,
           gainsTotal: (data.gainsTotal || 0) + totalGain,
           investments: updatedInvests,
           lastGainDate: now.toISOString()
         });
-        // La notification sera affichée via onSnapshot (ou on peut l'afficher maintenant)
         const detailText = gainDetails.map(d => `${d.pack}: +${d.gain.toLocaleString('fr-FR')} FCFA`).join(', ');
         showGainNotification('💰 Gains quotidiens', `${detailText || `+${totalGain.toLocaleString('fr-FR')} FCFA`} ajoutés à votre solde !`);
         return true;
       }
       return false;
     } catch (error) {
-      console.error("Erreur vérification gains:", error);
+      console.error("❌ Erreur vérification gains:", error);
       return false;
     }
   }
 
-  // ============================================
-  // NOTIFICATIONS DE RETRAITS (simulées)
-  // ============================================
+  // ========== SIMULATION RETRAITS (DÉMO) ==========
   const users = [
     { prenom: "Samuel", pays: "🇨🇮 CI" }, { prenom: "Awa", pays: "🇸🇳 Sénégal" },
     { prenom: "Koffi", pays: "🇨🇮 CI" }, { prenom: "Fatou", pays: "🇸🇳 Sénégal" },
@@ -667,9 +650,7 @@
     notificationTimer = setInterval(() => showWithdrawNotification(), intervalTime);
   }
 
-  // ============================================
-  // BOUTON ADMIN
-  // ============================================
+  // ========== BOUTON ADMIN ==========
   function checkAndShowAdminButton() {
     const adminBtn = document.getElementById('adminLockBtn');
     if (!adminBtn) return;
@@ -679,34 +660,32 @@
       adminBtn.onclick = (e) => { e.preventDefault(); window.location.href = 'admin/index.html'; };
     } else {
       adminBtn.style.display = 'none';
-      adminBtn.onclick = (e) => { e.preventDefault(); window.location.href = 'about:blank'; };
     }
   }
 
-  // ============================================
-  // AUTHENTIFICATION
-  // ============================================
+  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       localStorage.setItem('earnzone_current_user', user.uid);
       
-      // Affichage instantané depuis le cache (pendant le temps que Firestore charge)
-      const cached = getCached(user.uid);
+      // Affichage depuis cache pendant chargement
+      const cached = getCachedUserData(user.uid);
       if (cached) updateUI(cached);
       
-      // Écoute en temps réel
+      // Écoute temps réel
       listenToUser(user.uid);
       
-      // Forcer une vérification des gains une fois (le onSnapshot mettra à jour si nécessaire)
+      // Vérification gains
       await forceCheckAndCreditGains();
       
+      // Notifications
       startNotificationTimer();
       setTimeout(() => showWithdrawNotification(), 2000);
       checkAndShowAdminButton();
     } else {
-      const saved = localStorage.getItem('earnzone_current_user');
-      if (saved) {
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid) {
         setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
       } else {
         window.location.href = 'login.html';

@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* ===== VARIABLES ===== */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -41,7 +40,6 @@
       min-height: 100vh;
     }
 
-    /* ===== BACKGROUND ===== */
     .gradient-bg {
       position: fixed;
       top: 0; left: 0;
@@ -68,7 +66,6 @@
       66% { transform: translate(-15px, 15px) scale(0.95); }
     }
 
-    /* ===== HEADER ===== */
     .header {
       display: flex;
       justify-content: space-between;
@@ -123,7 +120,6 @@
       transform: scale(0.95);
     }
 
-    /* ===== MENU PRINCIPAL ===== */
     .container {
       max-width: 500px;
       margin: 0 auto;
@@ -152,7 +148,6 @@
       font-size: 13px;
     }
 
-    /* Infos utilisateur */
     .user-info {
       background: linear-gradient(135deg, rgba(183, 110, 255, 0.1), rgba(139, 63, 232, 0.05));
       border-radius: 24px;
@@ -187,7 +182,6 @@
       color: var(--text-dim);
     }
 
-    /* Grille menu */
     .menu-grid {
       display: flex;
       flex-direction: column;
@@ -264,7 +258,6 @@
       color: var(--primary);
     }
 
-    /* Badge spécial pour admin (optionnel) */
     .admin-badge {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       padding: 2px 8px;
@@ -276,7 +269,6 @@
       vertical-align: middle;
     }
 
-    /* Section déconnexion */
     .logout-section {
       margin-top: 20px;
       padding-top: 20px;
@@ -296,7 +288,6 @@
       border-color: rgba(255, 77, 109, 0.4);
     }
 
-    /* Footer */
     .footer {
       border-top: 1px solid rgba(183, 110, 255, 0.06);
       padding: 24px 0 16px;
@@ -308,7 +299,6 @@
       font-size: 11px;
     }
 
-    /* Loader */
     .skeleton {
       background: linear-gradient(90deg, var(--card-border) 25%, var(--glass-border) 50%, var(--card-border) 75%);
       background-size: 200% 100%;
@@ -356,7 +346,6 @@
     <p>Naviguez facilement sur EarnZone</p>
   </div>
 
-  <!-- Infos utilisateur (skeleton au chargement) -->
   <div class="user-info" id="userInfo">
     <div class="user-info-avatar" id="menuAvatar">U</div>
     <div class="user-info-text">
@@ -448,7 +437,6 @@
     </a>
   </div>
 
-  <!-- Déconnexion -->
   <div class="logout-section">
     <a href="#" class="menu-item logout-btn" id="logoutBtn">
       <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
@@ -476,10 +464,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -492,21 +481,20 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-
-  // Persistance locale pour garder la session
   setPersistence(auth, browserLocalPersistence);
 
-  // Vérification initiale via localStorage
-  const savedUid = localStorage.getItem('earnzone_current_user');
-  
+  // ========== VARIABLES GLOBALES ==========
   let authStateChecked = false;
 
+  // ========== CHARGEMENT DONNÉES UTILISATEUR ==========
   async function loadUserData(user) {
+    if (!user) return false;
+    
     try {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       
       if (!userDoc.exists()) {
-        // Document utilisateur inexistant -> déconnexion
+        console.error("❌ Document utilisateur non trouvé");
         await signOut(auth);
         localStorage.removeItem('earnzone_current_user');
         window.location.href = 'login.html';
@@ -528,30 +516,82 @@
       const nom = userData.nom || userData.fullName || 'Utilisateur';
       const nomComplet = prenom ? `${prenom} ${nom}` : nom;
       
-      document.getElementById('menuUserName').innerHTML = nomComplet;
+      document.getElementById('menuUserName').innerHTML = escapeHtml(nomComplet);
       document.getElementById('menuUserEmail').innerText = userData.email || 'email@non.renseigné';
       document.getElementById('menuAvatar').innerText = (prenom?.charAt(0) || nom?.charAt(0) || 'U').toUpperCase();
       
-      // Mettre à jour le localStorage
+      // Sauvegarder dans localStorage
       localStorage.setItem('earnzone_current_user', user.uid);
+      localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
       
       return true;
     } catch (error) {
-      console.error("Erreur chargement utilisateur:", error);
+      console.error("❌ Erreur chargement utilisateur:", error);
       document.getElementById('menuUserName').innerHTML = 'Utilisateur';
       document.getElementById('menuUserEmail').innerText = 'Erreur de chargement';
       return true;
     }
   }
 
-  // Gestionnaire d'état d'authentification
+  // ========== ÉCHAPPEMENT HTML ==========
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // ========== DÉCONNEXION ==========
+  async function handleLogout(e) {
+    e.preventDefault();
+    
+    const btn = e.currentTarget;
+    const originalContent = btn.innerHTML;
+    
+    try {
+      btn.style.opacity = '0.6';
+      btn.style.transform = 'scale(0.98)';
+      btn.querySelector('.menu-content h3').innerHTML = 'Déconnexion...';
+      
+      await signOut(auth);
+      localStorage.removeItem('earnzone_current_user');
+      
+      window.location.href = 'login.html';
+    } catch (error) {
+      console.error("❌ Erreur déconnexion:", error);
+      btn.style.opacity = '1';
+      btn.style.transform = '';
+      btn.querySelector('.menu-content h3').innerHTML = 'Déconnexion';
+      // Redirection forcée en cas d'erreur
+      localStorage.removeItem('earnzone_current_user');
+      window.location.href = 'login.html';
+    }
+  }
+
+  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     authStateChecked = true;
     
     if (!user) {
-      // Utilisateur non connecté -> redirection
-      localStorage.removeItem('earnzone_current_user');
-      window.location.href = 'login.html';
+      // Vérifier si un uid est stocké localement (session persistante)
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid) {
+        // Attendre que Firebase restaure la session
+        setTimeout(async () => {
+          const restoredUser = auth.currentUser;
+          if (!restoredUser) {
+            localStorage.removeItem('earnzone_current_user');
+            window.location.href = 'login.html';
+          } else {
+            await loadUserData(restoredUser);
+          }
+        }, 1500);
+      } else {
+        window.location.href = 'login.html';
+      }
       return;
     }
     
@@ -559,43 +599,24 @@
     await loadUserData(user);
   });
 
-  // Délai de sécurité : si après 3 secondes toujours pas d'état auth, rediriger
+  // Délai de sécurité : après 3 secondes sans état, rediriger
   setTimeout(() => {
     if (!authStateChecked) {
       const currentUser = auth.currentUser;
-      if (!currentUser && savedUid) {
-        // Attendre encore un peu
-        setTimeout(() => {
-          if (!auth.currentUser) {
-            window.location.href = 'login.html';
-          }
-        }, 2000);
+      if (!currentUser) {
+        const savedUid = localStorage.getItem('earnzone_current_user');
+        if (!savedUid) {
+          window.location.href = 'login.html';
+        }
       }
     }
   }, 3000);
 
-  // Déconnexion
-  document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-    e.preventDefault();
-    
-    try {
-      // Animation visuelle avant déconnexion
-      const btn = e.currentTarget;
-      btn.style.opacity = '0.6';
-      btn.style.transform = 'scale(0.98)';
-      
-      await signOut(auth);
-      localStorage.removeItem('earnzone_current_user');
-      
-      // Redirection
-      window.location.href = 'login.html';
-    } catch (error) {
-      console.error("Erreur déconnexion:", error);
-      // Redirection forcée en cas d'erreur
-      localStorage.removeItem('earnzone_current_user');
-      window.location.href = 'login.html';
-    }
-  });
+  // ========== INITIALISATION ==========
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
 </script>
 </body>
 </html>

@@ -430,10 +430,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged } from "firebase/auth";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -446,10 +447,14 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  setPersistence(auth, browserLocalPersistence);
 
+  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let userData = null;
+  let unsubscribeUser = null;
 
+  // ========== NOTIFICATION ==========
   function showNotification(title, message) {
     document.getElementById('notifTitle').innerText = title;
     document.getElementById('notifMessage').innerHTML = message;
@@ -459,33 +464,45 @@
     if (navigator.vibrate) navigator.vibrate(50);
   }
 
+  // ========== CHARGEMENT DES DONNÉES UTILISATEUR ==========
   async function loadUserData(uid) {
-    const userRef = doc(db, "users", uid);
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) {
-      userData = userDoc.data();
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
       
-      // Récupérer le code de parrainage (créé lors de l'inscription)
-      let parrainCode = userData.referralCode;
-      if (!parrainCode) {
-        // Fallback pour les anciens comptes
-        parrainCode = (userData.prenom?.substring(0,3) + userData.nom?.substring(0,3) + userData.uid?.substring(0,4)).toUpperCase();
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        
+        // Récupérer le code de parrainage
+        let parrainCode = userData.referralCode;
+        if (!parrainCode) {
+          // Fallback pour les anciens comptes
+          parrainCode = (userData.prenom?.substring(0,3) || '' + userData.nom?.substring(0,3) || '' + userData.uid?.substring(0,4)).toUpperCase();
+          if (parrainCode.length < 4) parrainCode = 'EARN' + userData.uid?.substring(0,4).toUpperCase();
+        }
+        
+        document.getElementById('parrainCode').innerHTML = parrainCode;
+        
+        const baseUrl = window.location.origin + window.location.pathname.replace('parrainage.html', '');
+        const inviteLink = `${baseUrl}register.html?ref=${parrainCode}`;
+        document.getElementById('inviteLink').innerHTML = inviteLink;
+        
+        // Statistiques
+        document.getElementById('totalFilleuls').innerHTML = userData.referralsCount || 0;
+        document.getElementById('totalGainsParrainage').innerHTML = `${(userData.referralEarnings || 0).toLocaleString('fr-FR')} FCFA`;
+        
+        // Charger la liste des filleuls
+        await loadFilleuls(parrainCode);
+      } else {
+        console.error("❌ Document utilisateur non trouvé");
       }
-      
-      document.getElementById('parrainCode').innerHTML = parrainCode;
-      
-      const inviteLink = `https://gagneavecia-ui.github.io/earnZone/register.html?ref=${parrainCode}`;
-      document.getElementById('inviteLink').innerHTML = inviteLink;
-      
-      // Statistiques
-      document.getElementById('totalFilleuls').innerHTML = userData.referralsCount || 0;
-      document.getElementById('totalGainsParrainage').innerHTML = `${(userData.referralEarnings || 0).toLocaleString('fr-FR')} FCFA`;
-      
-      // Charger la liste des filleuls
-      await loadFilleuls(parrainCode);
+    } catch (error) {
+      console.error("❌ Erreur chargement userData:", error);
+      showNotification('Erreur', 'Impossible de charger vos informations');
     }
   }
 
+  // ========== CHARGEMENT DES FILLEULS ==========
   async function loadFilleuls(parrainCode) {
     try {
       const usersRef = collection(db, "users");
@@ -507,7 +524,7 @@
         html += `
           <div class="filleul-item">
             <div>
-              <div class="filleul-name">${name}</div>
+              <div class="filleul-name">${escapeHtml(name)}</div>
               <div class="filleul-date">Inscrit le ${date}</div>
             </div>
             <div class="filleul-gain">+500 FCFA</div>
@@ -516,43 +533,94 @@
       });
       container.innerHTML = html;
     } catch (error) {
-      console.error("Erreur chargement filleuls:", error);
+      console.error("❌ Erreur chargement filleuls:", error);
     }
   }
 
-  // Copier code
+  // ========== ÉCHAPPEMENT HTML ==========
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // ========== ÉCOUTE EN TEMPS RÉEL ==========
+  function listenToUser(uid) {
+    if (unsubscribeUser) unsubscribeUser();
+    const userRef = doc(db, "users", uid);
+    unsubscribeUser = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        userData = docSnap.data();
+        document.getElementById('totalFilleuls').innerHTML = userData.referralsCount || 0;
+        document.getElementById('totalGainsParrainage').innerHTML = `${(userData.referralEarnings || 0).toLocaleString('fr-FR')} FCFA`;
+        
+        // Recharger les filleuls si le code a changé
+        if (userData.referralCode) {
+          loadFilleuls(userData.referralCode);
+        }
+      }
+    }, (error) => {
+      console.error("❌ Erreur onSnapshot:", error);
+    });
+  }
+
+  // ========== COPIER CODE ==========
   document.getElementById('copyCodeBtn').addEventListener('click', () => {
     const code = document.getElementById('parrainCode').innerHTML;
-    navigator.clipboard.writeText(code);
-    showNotification('Code copié !', 'Le code a été copié dans le presse-papiers');
+    if (code && code !== 'CHARGEMENT...') {
+      navigator.clipboard.writeText(code);
+      showNotification('Code copié !', 'Le code a été copié dans le presse-papiers');
+    } else {
+      showNotification('Erreur', 'Code non disponible');
+    }
   });
 
-  // Copier lien
+  // ========== COPIER LIEN ==========
   document.getElementById('copyLinkBtn').addEventListener('click', () => {
     const link = document.getElementById('inviteLink').innerHTML;
-    navigator.clipboard.writeText(link);
-    showNotification('Lien copié !', 'Le lien a été copié dans le presse-papiers');
+    if (link && link !== 'Chargement...') {
+      navigator.clipboard.writeText(link);
+      showNotification('Lien copié !', 'Le lien a été copié dans le presse-papiers');
+    } else {
+      showNotification('Erreur', 'Lien non disponible');
+    }
   });
 
-  // Partager WhatsApp
+  // ========== PARTAGER WHATSAPP ==========
   document.getElementById('shareWA').addEventListener('click', () => {
     const link = document.getElementById('inviteLink').innerHTML;
     const text = `🎁 Rejoins EarnZone avec mon code de parrainage !\n\n💰 Gagne 500 FCFA dès ton inscription !\n\n🔗 ${link}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   });
 
-  // Partager Facebook
+  // ========== PARTAGER FACEBOOK ==========
   document.getElementById('shareFB').addEventListener('click', () => {
     const link = document.getElementById('inviteLink').innerHTML;
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
   });
 
+  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
+      localStorage.setItem('earnzone_current_user', user.uid);
       await loadUserData(user.uid);
+      listenToUser(user.uid);
     } else {
-      window.location.href = 'login.html';
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid) {
+        setTimeout(() => {
+          if (!auth.currentUser) {
+            window.location.href = 'login.html';
+          }
+        }, 2000);
+      } else {
+        window.location.href = 'login.html';
+      }
     }
   });
 </script>

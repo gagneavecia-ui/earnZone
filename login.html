@@ -281,11 +281,22 @@
   <p>&copy; 2026 EarnZone. Tous droits réservés.</p>
 </footer>
 
-<!-- Firebase - CHARGÉ EN DERNIER -->
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
+  }
+</script>
+
 <script type="module">
-  // ============================================
-  // CONFIGURATION FIREBASE
-  // ============================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -295,37 +306,58 @@
     appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
   };
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
   
-  // Persistance locale
+  // Persistance locale pour garder la session
   setPersistence(auth, browserLocalPersistence).catch(console.error);
 
+  // ========== DOM ELEMENTS ==========
+  const loginForm = document.getElementById('loginForm');
+  const loginBtn = document.getElementById('loginBtn');
+  const messageDiv = document.getElementById('message');
+
+  // ========== AFFICHER MESSAGE ==========
   function showMessage(text, type) {
-    const msgDiv = document.getElementById('message');
-    msgDiv.className = `message ${type}`;
-    msgDiv.innerText = text;
-    msgDiv.style.display = 'block';
+    messageDiv.className = `message ${type}`;
+    messageDiv.innerText = text;
+    messageDiv.style.display = 'block';
     setTimeout(() => {
-      msgDiv.style.display = 'none';
-    }, 3000);
+      messageDiv.style.display = 'none';
+    }, 3500);
   }
 
-  // Redirection si déjà connecté (sans boucle infinie)
+  // ========== REDIRECTION SI DÉJÀ CONNECTÉ ==========
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // Déjà connecté, rediriger vers index
+      console.log("✅ Utilisateur déjà connecté:", user.email);
       window.location.href = 'index.html';
     }
   });
 
-  // Formulaire de connexion
-  const loginForm = document.getElementById('loginForm');
-  const loginBtn = document.getElementById('loginBtn');
+  // ========== VALIDATION EMAIL ==========
+  function isValidEmail(email) {
+    return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
+  }
 
+  // ========== VÉRIFIER SI COMPTE EST BLOQUÉ ==========
+  async function isAccountBlocked(uid) {
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return userData.status === 'blocked';
+      }
+      return false;
+    } catch (error) {
+      console.error("Erreur vérification statut:", error);
+      return false;
+    }
+  }
+
+  // ========== FORMULAIRE DE CONNEXION ==========
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -337,13 +369,38 @@
       return;
     }
 
-    // Désactiver bouton
+    if (!isValidEmail(email)) {
+      showMessage('Email invalide.', 'error');
+      return;
+    }
+
+    if (password.length < 6) {
+      showMessage('Mot de passe trop court (minimum 6 caractères).', 'error');
+      return;
+    }
+
+    // Désactiver bouton le temps de la connexion
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<span class="loader"></span> Connexion en cours...';
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      
+      console.log("✅ Connexion réussie:", user.email);
+      
+      // Vérifier si le compte est bloqué
+      const isBlocked = await isAccountBlocked(user.uid);
+      if (isBlocked) {
+        await auth.signOut();
+        showMessage('❌ Votre compte a été bloqué. Contactez le support.', 'error');
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
+        return;
+      }
+      
+      // Sauvegarder l'UID dans localStorage
+      localStorage.setItem('earnzone_current_user', user.uid);
       
       showMessage('Connexion réussie ! Redirection...', 'success');
       
@@ -352,24 +409,29 @@
       }, 1500);
       
     } catch (error) {
-      console.error("Erreur Firebase:", error);
+      console.error("❌ Erreur Firebase:", error);
       
+      let errorMsg = 'Erreur lors de la connexion.';
       switch (error.code) {
         case 'auth/invalid-credential':
         case 'auth/user-not-found':
         case 'auth/wrong-password':
-          showMessage('Email ou mot de passe incorrect.', 'error');
+          errorMsg = 'Email ou mot de passe incorrect.';
           break;
         case 'auth/invalid-email':
-          showMessage('Email invalide.', 'error');
+          errorMsg = 'Email invalide.';
           break;
         case 'auth/too-many-requests':
-          showMessage('Trop de tentatives. Réessayez plus tard.', 'error');
+          errorMsg = 'Trop de tentatives. Réessayez plus tard.';
+          break;
+        case 'auth/network-request-failed':
+          errorMsg = 'Problème de connexion internet. Vérifiez votre réseau.';
           break;
         default:
-          showMessage('Erreur lors de la connexion. Réessayez.', 'error');
+          errorMsg = error.message || 'Erreur lors de la connexion. Réessayez.';
       }
       
+      showMessage(errorMsg, 'error');
       loginBtn.disabled = false;
       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
     }

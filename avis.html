@@ -352,10 +352,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -368,52 +369,70 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  
-  // Persistance locale
   setPersistence(auth, browserLocalPersistence);
 
+  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let currentUserName = "Utilisateur";
   let userReviews = [];
   let displayCount = 10;
   let unsubscribeReviews = null;
 
-  // ============================================
-  // 30 TÉMOIGNAGES PRÉ-ENREGISTRÉS
-  // ============================================
+  // ========== 30 TÉMOIGNAGES PRÉ-ENREGISTRÉS ==========
   const defaultTestimonials = [
-    { id: 1, name: "Koffi A.", rating: 5, text: "Grâce à EarnZone, j'ai gagné plus de 50 000 FCFA en 2 mois. Les formations sont top !", date: "2026-03-15", isUser: false },
-    { id: 2, name: "Awa D.", rating: 5, text: "Les investissements sont rentables et les retraits rapides. Je recommande vivement.", date: "2026-03-10", isUser: false },
-    { id: 3, name: "Samuel K.", rating: 4, text: "Plateforme sérieuse, les gains sont crédités chaque jour sans souci.", date: "2026-03-05", isUser: false },
-    { id: 4, name: "Fatou B.", rating: 5, text: "J'ai commencé avec 3000 FCFA et aujourd'hui je gagne chaque jour. Merci EarnZone!", date: "2026-02-28", isUser: false },
-    { id: 5, name: "Mamadou S.", rating: 5, text: "Le service client est réactif et les retraits sont rapides.", date: "2026-02-20", isUser: false },
-    { id: 6, name: "Rokia C.", rating: 4, text: "Très bonne plateforme, les formations m'ont beaucoup aidé.", date: "2026-02-15", isUser: false },
-    { id: 7, name: "Ibrahim T.", rating: 5, text: "Je recommande EarnZone à tous mes proches. C'est fiable et rentable.", date: "2026-02-10", isUser: false },
-    { id: 8, name: "Aissata M.", rating: 5, text: "Les gains quotidiens sont automatiques, c'est vraiment pratique.", date: "2026-02-05", isUser: false },
-    { id: 9, name: "Oumar N.", rating: 4, text: "Très satisfait des investissements. Je vais bientôt investir plus.", date: "2026-01-30", isUser: false },
-    { id: 10, name: "Djeneba K.", rating: 5, text: "EarnZone a changé ma vie financière. Merci infiniment!", date: "2026-01-25", isUser: false },
-    { id: 11, name: "Bakary D.", rating: 5, text: "Retraits rapides et support réactif. Je suis très content.", date: "2026-01-20", isUser: false },
-    { id: 12, name: "Kadiatou F.", rating: 4, text: "Belle plateforme, les gains sont corrects.", date: "2026-01-15", isUser: false },
-    { id: 13, name: "Moussa S.", rating: 5, text: "J'ai investi 25000 FCFA et j'ai déjà récupéré mon capital.", date: "2026-01-10", isUser: false },
-    { id: 14, name: "Aminata K.", rating: 5, text: "Les packs sont bien conçus. Je gagne chaque jour.", date: "2026-01-05", isUser: false },
-    { id: 15, name: "Ousmane B.", rating: 4, text: "Très bonne expérience. Je vais continuer avec EarnZone.", date: "2025-12-28", isUser: false },
-    { id: 16, name: "Nadia S.", rating: 5, text: "Plateforme sérieuse et fiable. Je la recommande.", date: "2025-12-20", isUser: false },
-    { id: 17, name: "Christian A.", rating: 5, text: "Les gains sont réellement crédités. Merci EarnZone!", date: "2025-12-15", isUser: false },
-    { id: 18, name: "Esther K.", rating: 4, text: "Très contente des formations. J'ai appris beaucoup.", date: "2025-12-10", isUser: false },
-    { id: 19, name: "Franck D.", rating: 5, text: "EarnZone est une plateforme fiable pour investir.", date: "2025-12-05", isUser: false },
-    { id: 20, name: "Gisèle M.", rating: 5, text: "Je gagne chaque jour. C'est incroyable!", date: "2025-11-28", isUser: false },
-    { id: 21, name: "Hugues K.", rating: 4, text: "Très satisfait, je vais investir plus.", date: "2025-11-20", isUser: false },
-    { id: 22, name: "Inès S.", rating: 5, text: "Les retraits sont rapides et le support est top.", date: "2025-11-15", isUser: false },
-    { id: 23, name: "Jacques B.", rating: 5, text: "Je recommande EarnZone à tous ceux qui veulent gagner.", date: "2025-11-10", isUser: false },
-    { id: 24, name: "Karine D.", rating: 4, text: "Très bonne plateforme. Je suis ravie.", date: "2025-11-05", isUser: false },
-    { id: 25, name: "Léon M.", rating: 5, text: "Les gains quotidiens sont automatiques. Génial!", date: "2025-10-28", isUser: false },
-    { id: 26, name: "Martine K.", rating: 5, text: "EarnZone est une plateforme sérieuse et rentable.", date: "2025-10-20", isUser: false },
-    { id: 27, name: "Narcisse S.", rating: 4, text: "Très content des investissements. Merci.", date: "2025-10-15", isUser: false },
-    { id: 28, name: "Olivia B.", rating: 5, text: "Je gagne chaque jour sans rien faire. C'est magique!", date: "2025-10-10", isUser: false },
-    { id: 29, name: "Pascal D.", rating: 5, text: "Je recommande vivement EarnZone.", date: "2025-10-05", isUser: false },
-    { id: 30, name: "Rachel K.", rating: 5, text: "Merci EarnZone pour ces gains quotidiens!", date: "2025-09-28", isUser: false }
+    { id: "d1", name: "Koffi A.", rating: 5, text: "Grâce à EarnZone, j'ai gagné plus de 50 000 FCFA en 2 mois. Les formations sont top !", date: "2026-03-15", isUser: false },
+    { id: "d2", name: "Awa D.", rating: 5, text: "Les investissements sont rentables et les retraits rapides. Je recommande vivement.", date: "2026-03-10", isUser: false },
+    { id: "d3", name: "Samuel K.", rating: 4, text: "Plateforme sérieuse, les gains sont crédités chaque jour sans souci.", date: "2026-03-05", isUser: false },
+    { id: "d4", name: "Fatou B.", rating: 5, text: "J'ai commencé avec 3000 FCFA et aujourd'hui je gagne chaque jour. Merci EarnZone!", date: "2026-02-28", isUser: false },
+    { id: "d5", name: "Mamadou S.", rating: 5, text: "Le service client est réactif et les retraits sont rapides.", date: "2026-02-20", isUser: false },
+    { id: "d6", name: "Rokia C.", rating: 4, text: "Très bonne plateforme, les formations m'ont beaucoup aidé.", date: "2026-02-15", isUser: false },
+    { id: "d7", name: "Ibrahim T.", rating: 5, text: "Je recommande EarnZone à tous mes proches. C'est fiable et rentable.", date: "2026-02-10", isUser: false },
+    { id: "d8", name: "Aissata M.", rating: 5, text: "Les gains quotidiens sont automatiques, c'est vraiment pratique.", date: "2026-02-05", isUser: false },
+    { id: "d9", name: "Oumar N.", rating: 4, text: "Très satisfait des investissements. Je vais bientôt investir plus.", date: "2026-01-30", isUser: false },
+    { id: "d10", name: "Djeneba K.", rating: 5, text: "EarnZone a changé ma vie financière. Merci infiniment!", date: "2026-01-25", isUser: false },
+    { id: "d11", name: "Bakary D.", rating: 5, text: "Retraits rapides et support réactif. Je suis très content.", date: "2026-01-20", isUser: false },
+    { id: "d12", name: "Kadiatou F.", rating: 4, text: "Belle plateforme, les gains sont corrects.", date: "2026-01-15", isUser: false },
+    { id: "d13", name: "Moussa S.", rating: 5, text: "J'ai investi 25000 FCFA et j'ai déjà récupéré mon capital.", date: "2026-01-10", isUser: false },
+    { id: "d14", name: "Aminata K.", rating: 5, text: "Les packs sont bien conçus. Je gagne chaque jour.", date: "2026-01-05", isUser: false },
+    { id: "d15", name: "Ousmane B.", rating: 4, text: "Très bonne expérience. Je vais continuer avec EarnZone.", date: "2025-12-28", isUser: false },
+    { id: "d16", name: "Nadia S.", rating: 5, text: "Plateforme sérieuse et fiable. Je la recommande.", date: "2025-12-20", isUser: false },
+    { id: "d17", name: "Christian A.", rating: 5, text: "Les gains sont réellement crédités. Merci EarnZone!", date: "2025-12-15", isUser: false },
+    { id: "d18", name: "Esther K.", rating: 4, text: "Très contente des formations. J'ai appris beaucoup.", date: "2025-12-10", isUser: false },
+    { id: "d19", name: "Franck D.", rating: 5, text: "EarnZone est une plateforme fiable pour investir.", date: "2025-12-05", isUser: false },
+    { id: "d20", name: "Gisèle M.", rating: 5, text: "Je gagne chaque jour. C'est incroyable!", date: "2025-11-28", isUser: false },
+    { id: "d21", name: "Hugues K.", rating: 4, text: "Très satisfait, je vais investir plus.", date: "2025-11-20", isUser: false },
+    { id: "d22", name: "Inès S.", rating: 5, text: "Les retraits sont rapides et le support est top.", date: "2025-11-15", isUser: false },
+    { id: "d23", name: "Jacques B.", rating: 5, text: "Je recommande EarnZone à tous ceux qui veulent gagner.", date: "2025-11-10", isUser: false },
+    { id: "d24", name: "Karine D.", rating: 4, text: "Très bonne plateforme. Je suis ravie.", date: "2025-11-05", isUser: false },
+    { id: "d25", name: "Léon M.", rating: 5, text: "Les gains quotidiens sont automatiques. Génial!", date: "2025-10-28", isUser: false },
+    { id: "d26", name: "Martine K.", rating: 5, text: "EarnZone est une plateforme sérieuse et rentable.", date: "2025-10-20", isUser: false },
+    { id: "d27", name: "Narcisse S.", rating: 4, text: "Très content des investissements. Merci.", date: "2025-10-15", isUser: false },
+    { id: "d28", name: "Olivia B.", rating: 5, text: "Je gagne chaque jour sans rien faire. C'est magique!", date: "2025-10-10", isUser: false },
+    { id: "d29", name: "Pascal D.", rating: 5, text: "Je recommande vivement EarnZone.", date: "2025-10-05", isUser: false },
+    { id: "d30", name: "Rachel K.", rating: 5, text: "Merci EarnZone pour ces gains quotidiens!", date: "2025-09-28", isUser: false }
   ];
 
+  // ========== FONCTIONS UTILITAIRES ==========
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  function showNotification(title, message, type = 'success') {
+    document.getElementById('notificationTitle').innerText = title;
+    document.getElementById('notificationMessage').innerText = message;
+    const notif = document.getElementById('notification');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3500);
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  // ========== GESTION DES AVIS ==========
   function getAllReviews() {
     const all = [...defaultTestimonials, ...userReviews];
     all.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -446,7 +465,7 @@
         return `
           <div class="testimonial-card">
             <div class="testimonial-header">
-              <div class="testimonial-avatar">${t.name.charAt(0)}</div>
+              <div class="testimonial-avatar">${escapeHtml(t.name.charAt(0))}</div>
               <div class="testimonial-info">
                 <h4>${escapeHtml(t.name)} ${isNew ? '<span class="badge-new">Nouveau</span>' : ''}</h4>
                 <p>Membre EarnZone</p>
@@ -464,16 +483,7 @@
     loadMoreBtn.style.display = displayCount < all.length ? 'block' : 'none';
   }
 
-  function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-
-  // Écouter les avis Firestore
+  // ========== ÉCOUTE EN TEMPS RÉEL DES AVIS FIRESTORE ==========
   function listenToUserReviews() {
     if (unsubscribeReviews) unsubscribeReviews();
     
@@ -499,11 +509,12 @@
       updateStats();
       renderReviews();
     }, (error) => {
-      console.error("Firestore error:", error);
+      console.error("❌ Erreur Firestore:", error);
+      showNotification('Erreur', 'Impossible de charger les avis', 'error');
     });
   }
 
-  // Ajouter un avis
+  // ========== AJOUTER UN AVIS ==========
   async function addUserReview(name, rating, text) {
     const newReview = {
       name: name,
@@ -518,13 +529,31 @@
     try {
       await addDoc(collection(db, "user_reviews"), newReview);
       showNotification('Merci pour votre avis !', 'Votre témoignage a été ajouté', 'success');
+      return true;
     } catch (error) {
-      console.error("Erreur ajout:", error);
+      console.error("❌ Erreur ajout avis:", error);
       showNotification('Erreur', "Impossible d'ajouter votre avis", 'error');
+      return false;
     }
   }
 
-  // Interface d'ajout d'avis
+  // ========== CHARGEMENT DONNÉES UTILISATEUR ==========
+  async function loadUserData(uid) {
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        currentUserName = userData.prenom || userData.nom || userData.fullName || 'Utilisateur';
+        if (currentUserName.includes(' ')) currentUserName = currentUserName.split(' ')[0];
+      }
+    } catch (error) {
+      console.error("❌ Erreur chargement user:", error);
+    }
+    renderAddReviewSection();
+  }
+
+  // ========== INTERFACE D'AJOUT D'AVIS ==========
   function renderAddReviewSection() {
     const container = document.getElementById('addReviewSection');
     
@@ -591,38 +620,11 @@
     });
   }
 
-  async function loadUserData(uid) {
-    try {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        currentUserName = userData.prenom || userData.nom || userData.fullName || 'Utilisateur';
-        if (currentUserName.includes(' ')) currentUserName = currentUserName.split(' ')[0];
-      }
-    } catch (error) {
-      console.error("Erreur chargement user:", error);
-    }
-    renderAddReviewSection();
-  }
-
-  function showNotification(title, message, type = 'success') {
-    document.getElementById('notificationTitle').innerText = title;
-    document.getElementById('notificationMessage').innerText = message;
-    const notif = document.getElementById('notification');
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 3500);
-  }
-
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    displayCount += 10;
-    renderReviews();
-  });
-
-  // Auth state
+  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     if (user) {
+      localStorage.setItem('earnzone_current_user', user.uid);
       await loadUserData(user.uid);
     } else {
       currentUserName = "Utilisateur";
@@ -630,8 +632,13 @@
     }
   });
 
-  // Initialisation
+  // ========== INITIALISATION ==========
   listenToUserReviews();
+  
+  document.getElementById('loadMoreBtn').addEventListener('click', () => {
+    displayCount += 10;
+    renderReviews();
+  });
 </script>
 </body>
 </html>

@@ -185,7 +185,6 @@
     }
     .code-input input:focus { outline: none; border-color: var(--primary); }
 
-    /* NOUVEAU STYLE POUR LE CONTENEUR FLEX DU CHAMP + BOUTON */
     .code-input-row {
       display: flex;
       gap: 10px;
@@ -297,10 +296,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -315,10 +315,12 @@
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
 
+  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let userData = { balance: 0 };
   let selectedPack = null;
 
+  // ========== PACKS DISPONIBLES ==========
   const packs = [
     { id: "start", montant: 3000, label: "Start", icon: "🌱", badge: "POPULAIRE" },
     { id: "micro", montant: 5000, label: "Micro", icon: "⚡", badge: null },
@@ -327,7 +329,7 @@
     { id: "gold", montant: 25000, label: "Gold", icon: "🥇", badge: "BEST VALUE" }
   ];
 
-  // ========== FONCTIONS CACHE LOCALSTORAGE ==========
+  // ========== CACHE LOCALSTORAGE ==========
   function updateLocalStorageCache(uid) {
     getDoc(doc(db, "users", uid)).then(docSnap => {
       if (docSnap.exists()) {
@@ -358,6 +360,7 @@
     userData.balance = balance;
   }
 
+  // ========== RENDU DES PACKS ==========
   function renderPacks() {
     const grid = document.getElementById('packsGrid');
     grid.innerHTML = packs.map(pack => `
@@ -385,61 +388,81 @@
     });
   }
 
-  async function validateCoupon(code, montantAttendu) {
-    const codesRef = collection(db, "recharge_codes");
-    const q = query(codesRef, where("code", "==", code), where("used", "==", false), where("montant", "==", montantAttendu));
-    const snapshot = await getDocs(q);
-    
-    if (!snapshot.empty) {
-      const codeDoc = snapshot.docs[0];
-      await updateDoc(doc(db, "recharge_codes", codeDoc.id), {
-        used: true,
-        utilisePar: currentUser.uid,
-        dateUtilisation: new Date().toISOString()
-      });
-      return true;
-    }
-    return false;
+  // ========== AFFICHER MESSAGE ==========
+  function showMessage(text, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.className = `message ${type}`;
+    messageDiv.innerText = text;
+    messageDiv.style.display = 'block';
+    setTimeout(() => {
+      messageDiv.style.display = 'none';
+    }, 4000);
   }
 
+  // ========== VALIDER LE CODE COUPON ==========
+  async function validateCoupon(code, montantAttendu) {
+    try {
+      const codesRef = collection(db, "recharge_codes");
+      const q = query(codesRef, where("code", "==", code), where("used", "==", false), where("montant", "==", montantAttendu));
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        const codeDoc = snapshot.docs[0];
+        await updateDoc(doc(db, "recharge_codes", codeDoc.id), {
+          used: true,
+          utilisePar: currentUser.uid,
+          dateUtilisation: new Date().toISOString()
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("❌ Erreur validation coupon:", error);
+      return false;
+    }
+  }
+
+  // ========== PROCESSUS DE RECHARGEMENT ==========
   async function processRechargement() {
     const code = document.getElementById('couponCode').value.trim().toUpperCase();
-    const messageDiv = document.getElementById('message');
     const btn = document.getElementById('validerBtn');
 
-    messageDiv.className = 'message';
-    messageDiv.innerText = '';
-
     if (!selectedPack) {
-      messageDiv.className = 'message error';
-      messageDiv.innerText = '✨ Veuillez sélectionner un montant de rechargement.';
-      setTimeout(() => messageDiv.className = 'message', 3000);
+      showMessage('✨ Veuillez sélectionner un montant de rechargement.', 'error');
       return;
     }
 
     if (!code) {
-      messageDiv.className = 'message error';
-      messageDiv.innerText = '🔑 Veuillez entrer un code coupon.';
-      setTimeout(() => messageDiv.className = 'message', 3000);
+      showMessage('🔑 Veuillez entrer un code coupon.', 'error');
       return;
     }
 
-    const isValid = await validateCoupon(code, selectedPack.montant);
-    if (!isValid) {
-      messageDiv.className = 'message error';
-      messageDiv.innerText = '❌ Code invalide, déjà utilisé ou montant incorrect.';
-      setTimeout(() => messageDiv.className = 'message', 3500);
+    if (code.length < 4) {
+      showMessage('📝 Code invalide (minimum 4 caractères).', 'error');
       return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> Traitement en cours...';
+    btn.innerHTML = '<span class="loader"></span> Vérification en cours...';
 
     try {
+      const isValid = await validateCoupon(code, selectedPack.montant);
+      
+      if (!isValid) {
+        showMessage('❌ Code invalide, déjà utilisé ou montant incorrect.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> Valider le rechargement';
+        return;
+      }
+
+      btn.innerHTML = '<span class="loader"></span> Traitement en cours...';
+
       const userRef = doc(db, "users", currentUser.uid);
       const userDoc = await getDoc(userRef);
       
-      if (!userDoc.exists()) throw new Error("Utilisateur non trouvé");
+      if (!userDoc.exists()) {
+        throw new Error("Utilisateur non trouvé");
+      }
       
       const currentBalance = userDoc.data().balance || 0;
       const newBalance = currentBalance + selectedPack.montant;
@@ -464,8 +487,7 @@
       updateLocalStorageCache(currentUser.uid);
       updateSoldeFromFirebase(newBalance);
 
-      messageDiv.className = 'message success';
-      messageDiv.innerHTML = `✅ <strong>Rechargement réussi !</strong><br>${selectedPack.montant.toLocaleString('fr-FR')} FCFA ajoutés à votre solde.`;
+      showMessage(`✅ <strong>Rechargement réussi !</strong><br>${selectedPack.montant.toLocaleString('fr-FR')} FCFA ajoutés à votre solde.`, 'success');
       
       document.getElementById('couponCode').value = '';
       selectedPack = null;
@@ -473,18 +495,16 @@
       
       if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
       
-      setTimeout(() => messageDiv.className = 'message', 4000);
     } catch (error) {
-      console.error("Erreur:", error);
-      messageDiv.className = 'message error';
-      messageDiv.innerText = '⚠️ Une erreur est survenue. Veuillez réessayer.';
-      setTimeout(() => messageDiv.className = 'message', 3500);
+      console.error("❌ Erreur rechargement:", error);
+      showMessage('⚠️ Une erreur est survenue. Veuillez réessayer.', 'error');
     } finally {
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-check-circle"></i> Valider le rechargement';
     }
   }
 
+  // ========== CHARGEMENT DONNÉES UTILISATEUR ==========
   async function loadUserData(uid) {
     const cached = getCachedUserData(uid);
     if (cached && cached.balance !== undefined) {
@@ -501,11 +521,11 @@
         localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(freshData));
       }
     } catch (error) {
-      console.error("Erreur Firebase:", error);
+      console.error("❌ Erreur chargement Firebase:", error);
     }
   }
 
-  // AUTHENTIFICATION
+  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -526,13 +546,12 @@
     }
   });
 
-  // Événements
+  // ========== INITIALISATION ==========
   document.getElementById('validerBtn').addEventListener('click', processRechargement);
   document.getElementById('couponCode').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') processRechargement();
   });
   
-  // NOUVEAU BOUTON : Redirige vers la page obtenir-code.html
   document.getElementById('getCodeBtn').addEventListener('click', () => {
     window.location.href = 'obtenir-code.html';
   });

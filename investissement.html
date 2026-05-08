@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* === TOUT LE CSS (identique à la version précédente) === */
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -38,7 +37,7 @@
       --gold: #ffd700;
       --gold-glow: rgba(255, 215, 0, 0.2);
     }
-    /* (tout le CSS existant, je ne le répète pas pour économiser, mais garde bien l'intégralité) */
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
@@ -522,10 +521,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, getDoc, updateDoc, runTransaction, onSnapshot } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, runTransaction, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -540,12 +540,14 @@
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
 
+  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let userData = { balance: 0, investments: [] };
   let investmentsData = { active: [], completed: [] };
   let unsubscribeUser = null;
+  let pendingConfirm = null;
 
-  // === DÉFINITION DES PACKS ===
+  // ========== DÉFINITION DES PACKS ==========
   const packs = {
     start: { name: 'Start', price: 3000, dailyReturn: 200, totalDays: 50, totalReturn: 10000, netProfit: 7000, icon: 'fa-seedling', roi: '+233%' },
     micro: { name: 'Micro', price: 5000, dailyReturn: 350, totalDays: 40, totalReturn: 14000, netProfit: 9000, icon: 'fa-chart-simple', roi: '+180%' },
@@ -554,16 +556,45 @@
     gold: { name: 'Gold', price: 25000, dailyReturn: 2000, totalDays: 20, totalReturn: 40000, netProfit: 15000, icon: 'fa-crown', roi: '+60%' }
   };
 
-  // === CACHE LOCALSTORAGE ===
+  // ========== CACHE LOCALSTORAGE ==========
   function cacheUserData(uid, data) {
     localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
   }
+
   function getCachedUserData(uid) {
     const cached = localStorage.getItem(`earnzone_user_${uid}`);
     return cached ? JSON.parse(cached) : null;
   }
 
-  // === MISE À JOUR UI ===
+  // ========== NOTIFICATIONS ==========
+  function showNotification(title, message, type = 'success') {
+    document.getElementById('notificationTitle').innerText = title;
+    document.getElementById('notificationMessage').innerHTML = message;
+    const notif = document.getElementById('notification');
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3500);
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  function showConfirmationDialog(title, message, onConfirm) {
+    document.getElementById('confirmTitle').innerText = title;
+    document.getElementById('confirmMessage').innerHTML = message;
+    document.getElementById('confirmOverlay').classList.add('show');
+    document.getElementById('confirmDialog').classList.add('show');
+    pendingConfirm = onConfirm;
+  }
+
+  function closeModal() {
+    document.getElementById('confirmOverlay').classList.remove('show');
+    document.getElementById('confirmDialog').classList.remove('show');
+    pendingConfirm = null;
+  }
+
+  document.getElementById('confirmOkBtn').onclick = () => { if (pendingConfirm) pendingConfirm(); closeModal(); };
+  document.getElementById('confirmCancelBtn').onclick = closeModal;
+  document.getElementById('confirmOverlay').onclick = closeModal;
+
+  // ========== MISE À JOUR UI ==========
   function updateBalanceDisplay() {
     const balance = userData.balance || 0;
     document.getElementById('currentBalance').innerText = balance.toLocaleString('fr-FR') + ' FCFA';
@@ -590,8 +621,6 @@
     } else {
       investmentsData = { active: [], completed: [] };
     }
-    console.log("Investissements actifs :", investmentsData.active.length);
-    console.log("Investissements terminés :", investmentsData.completed.length);
   }
 
   function renderInvestments() {
@@ -670,7 +699,7 @@
     renderHistory();
   }
 
-  // === ÉCOUTE EN TEMPS RÉEL ===
+  // ========== ÉCOUTE EN TEMPS RÉEL ==========
   function listenToUser(uid) {
     if (unsubscribeUser) unsubscribeUser();
     const userRef = doc(db, "users", uid);
@@ -681,105 +710,104 @@
         userData.investments = userData.investments || [];
         cacheUserData(uid, userData);
         refreshAllUI();
-        console.log("Mise à jour temps réel - solde:", userData.balance, "investissements:", userData.investments.length);
+        console.log("✅ Mise à jour temps réel - solde:", userData.balance, "investissements:", userData.investments.length);
       } else {
-        console.warn("Document utilisateur inexistant");
+        console.warn("⚠️ Document utilisateur inexistant");
       }
     }, (error) => {
-      console.error("Erreur onSnapshot:", error);
+      console.error("❌ Erreur onSnapshot:", error);
     });
   }
 
-  // === ACHAT ===
+  // ========== ACHAT DE PACK ==========
   async function buyPack(packKey) {
     const pack = packs[packKey];
+    if (!pack) {
+      showNotification('Erreur', 'Pack invalide', 'error');
+      return;
+    }
+    
     const balance = userData.balance || 0;
     if (balance < pack.price) {
       showNotification('Solde insuffisant', `Il vous manque ${(pack.price - balance).toLocaleString('fr-FR')} FCFA`, 'error');
       return;
     }
+    
     showConfirmationDialog('Confirmer l\'investissement', 
       `Pack ${pack.name}<br><br>💰 Prix: ${pack.price.toLocaleString('fr-FR')} FCFA<br>📈 Gain/jour: +${pack.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${pack.totalDays} jours<br>💵 Gain total: ${pack.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ ROI: ${pack.roi}`, 
       async () => {
         const userRef = doc(db, "users", currentUser.uid);
-        await runTransaction(db, async (transaction) => {
-          const userDoc = await transaction.get(userRef);
-          if (!userDoc.exists()) throw new Error("Utilisateur non trouvé");
-          const currentBalance = userDoc.data().balance || 0;
-          if (currentBalance < pack.price) throw new Error("Solde insuffisant");
-          const now = new Date();
-          const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
-          const expiryDate = new Date(now);
-          expiryDate.setDate(expiryDate.getDate() + pack.totalDays);
-          const investment = {
-            id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-            pack: packKey,
-            packName: pack.name,
-            amount: pack.price,
-            dailyReturn: pack.dailyReturn,
-            startDate: now.toISOString(),
-            endDate: endDate.toISOString(),
-            endTimestamp: endDate.getTime(),
-            currentDay: 1,
-            totalDays: pack.totalDays,
-            totalEarned: 0,
-            lastPayout: now.toISOString(),
-            status: 'active'
-          };
-          const newBalance = currentBalance - pack.price;
-          const existingInvestments = userDoc.data().investments || [];
-          transaction.update(userRef, {
-            balance: newBalance,
-            investments: [...existingInvestments, investment],
-            subscriptionEnd: expiryDate.toISOString().split('T')[0],
-            totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
-            lastInvestment: now.toISOString()
+        try {
+          await runTransaction(db, async (transaction) => {
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists()) throw new Error("Utilisateur non trouvé");
+            
+            const currentBalance = userDoc.data().balance || 0;
+            if (currentBalance < pack.price) throw new Error("Solde insuffisant");
+            
+            const now = new Date();
+            const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
+            const expiryDate = new Date(now);
+            expiryDate.setDate(expiryDate.getDate() + pack.totalDays);
+            
+            const investment = {
+              id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+              pack: packKey,
+              packName: pack.name,
+              amount: pack.price,
+              dailyReturn: pack.dailyReturn,
+              startDate: now.toISOString(),
+              endDate: endDate.toISOString(),
+              endTimestamp: endDate.getTime(),
+              currentDay: 1,
+              totalDays: pack.totalDays,
+              totalEarned: 0,
+              lastPayout: now.toISOString(),
+              status: 'active'
+            };
+            
+            const newBalance = currentBalance - pack.price;
+            const existingInvestments = userDoc.data().investments || [];
+            
+            transaction.update(userRef, {
+              balance: newBalance,
+              investments: [...existingInvestments, investment],
+              subscriptionEnd: expiryDate.toISOString().split('T')[0],
+              totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
+              lastInvestment: now.toISOString()
+            });
           });
-        });
-        showNotification('Investissement réussi !', `Pack ${pack.name} acheté`, 'success');
-        if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+          
+          showNotification('Investissement réussi !', `Pack ${pack.name} acheté avec succès`, 'success');
+          if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+        } catch (error) {
+          console.error("❌ Erreur transaction:", error);
+          showNotification('Erreur', error.message || 'Impossible de réaliser l\'investissement', 'error');
+        }
       });
   }
 
-  // === AUTRES FONCTIONS (modale, historique, etc.) ===
-  function showNotification(title, message, type = 'success') {
-    document.getElementById('notificationTitle').innerText = title;
-    document.getElementById('notificationMessage').innerHTML = message;
-    const notif = document.getElementById('notification');
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 3500);
-  }
-
-  let pendingConfirm = null;
-  function closeModal() {
-    document.getElementById('confirmOverlay').classList.remove('show');
-    document.getElementById('confirmDialog').classList.remove('show');
-    pendingConfirm = null;
-  }
-  function showConfirmationDialog(title, message, onConfirm) {
-    document.getElementById('confirmTitle').innerText = title;
-    document.getElementById('confirmMessage').innerHTML = message;
-    document.getElementById('confirmOverlay').classList.add('show');
-    document.getElementById('confirmDialog').classList.add('show');
-    pendingConfirm = onConfirm;
-  }
-  document.getElementById('confirmOkBtn').onclick = () => { if (pendingConfirm) pendingConfirm(); closeModal(); };
-  document.getElementById('confirmCancelBtn').onclick = closeModal;
-  document.getElementById('confirmOverlay').onclick = closeModal;
-
+  // ========== EFFACER HISTORIQUE ==========
   async function clearInvestmentHistory() {
     if (investmentsData.completed.length === 0) {
       showNotification('Aucun historique', 'Rien à effacer', 'warning');
       return;
     }
-    showConfirmationDialog('Effacer l\'historique ?', 'Action irréversible', async () => {
+    
+    showConfirmationDialog('Effacer l\'historique ?', 'Cette action est irréversible', async () => {
       const userRef = doc(db, "users", currentUser.uid);
       const allInvestments = [...investmentsData.active];
-      await updateDoc(userRef, { investments: allInvestments });
-      showNotification('Historique effacé', 'Historique supprimé', 'success');
+      try {
+        await updateDoc(userRef, { investments: allInvestments });
+        showNotification('Historique effacé', 'Historique supprimé avec succès', 'success');
+      } catch (error) {
+        console.error("❌ Erreur effacement:", error);
+        showNotification('Erreur', 'Impossible d\'effacer l\'historique', 'error');
+      }
     });
   }
 
+  // ========== RENDU DES PACKS ==========
   function renderPacks() {
     const grid = document.getElementById('packsGrid');
     const packKeys = ['start', 'micro', 'bronze', 'silver', 'gold'];
@@ -815,30 +843,35 @@
 
   window.showPackDetails = function(packKey) {
     const p = packs[packKey];
+    if (!p) return;
     showConfirmationDialog(`Pack ${p.name}`, 
       `💰 Prix: ${p.price.toLocaleString('fr-FR')} FCFA<br>📈 Gain/jour: +${p.dailyReturn.toLocaleString('fr-FR')} FCFA<br>📊 Durée: ${p.totalDays} jours<br>💵 Gain total: ${p.totalReturn.toLocaleString('fr-FR')} FCFA<br>✨ Bénéfice net: +${p.netProfit.toLocaleString('fr-FR')} FCFA<br>📈 ROI: ${p.roi}`, 
       () => buyPack(packKey));
   };
   window.buyPack = buyPack;
 
+  // ========== CRÉDIT AUTOMATIQUE DES GAINS ==========
   async function forceCheckAndCreditGains() {
-    if (!currentUser) return;
+    if (!currentUser) return false;
     try {
       const userRef = doc(db, "users", currentUser.uid);
       const userDoc = await getDoc(userRef);
-      if (!userDoc.exists()) return;
+      if (!userDoc.exists()) return false;
+      
       const data = userDoc.data();
       const active = (data.investments || []).filter(i => i.status === 'active');
-      if (active.length === 0) return;
+      if (active.length === 0) return false;
+      
       let totalGain = 0;
       let updated = false;
-      const now = new Date();
       const updatedInvests = [...data.investments];
+      const now = new Date();
+      
       for (let i = 0; i < updatedInvests.length; i++) {
         const inv = updatedInvests[i];
         if (inv.status === 'active') {
           const last = new Date(inv.lastPayout);
-          const hours = (now - last) / (1000*3600);
+          const hours = (now - last) / (1000 * 3600);
           if (hours >= 24) {
             const days = Math.floor(hours / 24);
             const remaining = inv.totalDays - inv.currentDay + 1;
@@ -855,6 +888,7 @@
           }
         }
       }
+      
       if (updated && totalGain > 0) {
         const newBalance = (data.balance || 0) + totalGain;
         await updateDoc(userRef, {
@@ -863,30 +897,41 @@
           investments: updatedInvests,
           lastGainDate: now.toISOString()
         });
-        showNotification('💰 Gains quotidiens', `+${totalGain.toLocaleString('fr-FR')} FCFA ajoutés`, 'success');
+        showNotification('💰 Gains quotidiens', `+${totalGain.toLocaleString('fr-FR')} FCFA ajoutés à votre solde`, 'success');
+        return true;
       }
-    } catch(e) { console.error(e); }
+      return false;
+    } catch (error) {
+      console.error("❌ Erreur vérification gains:", error);
+      return false;
+    }
   }
 
-  // === AUTH ===
+  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       localStorage.setItem('earnzone_current_user', user.uid);
+      
       const cached = getCachedUserData(user.uid);
       if (cached) {
         userData = cached;
         refreshAllUI();
       }
+      
       listenToUser(user.uid);
       await forceCheckAndCreditGains();
     } else {
       const saved = localStorage.getItem('earnzone_current_user');
-      if (saved) setTimeout(() => { if (!auth.currentUser) window.location.href='login.html'; }, 2000);
-      else window.location.href = 'login.html';
+      if (saved) {
+        setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
+      } else {
+        window.location.href = 'login.html';
+      }
     }
   });
 
+  // ========== INITIALISATION ==========
   document.getElementById('clearHistoryBtn').addEventListener('click', clearInvestmentHistory);
   renderPacks();
 </script>

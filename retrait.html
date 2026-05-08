@@ -471,7 +471,7 @@
     <div class="method-card amana" data-method="amana"><div class="method-icon amana"><i class="fas fa-building-columns"></i></div><div class="method-name">Amana</div><div class="method-fee">Frais: 50 FCFA</div></div>
   </div>
 
-    <label class="amount-label"><i class="fas fa-phone-alt"></i> Numéro de téléphone</label>
+      <label class="amount-label"><i class="fas fa-phone-alt"></i> Numéro de téléphone</label>
     <div class="phone-input-wrapper"><i class="fas fa-phone phone-icon"></i><input type="tel" id="phoneNumber" class="phone-input" placeholder="Ex: 90 12 34 56" value=""></div>
     <div class="phone-info"><i class="fas fa-info-circle"></i> Entrez le numéro ou identifiant de réception</div>
   </div>
@@ -511,7 +511,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
   import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   // ========== CONFIGURATION FIREBASE ==========
@@ -527,10 +527,11 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  setPersistence(auth, browserLocalPersistence);
 
   // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
-  let userData = { balance: 0, investments: [] };
+  let userData = { balance: 0, investments: [], hasInvested: false, activeInvestmentsCount: 0, referralBalance: 0 };
   let withdrawalHistory = [];
   let unsubscribeHistory = null;
   
@@ -580,12 +581,32 @@
     document.getElementById('netAmount').innerHTML = net.toLocaleString('fr-FR') + ' FCFA';
   }
 
+  // ========== VÉRIFICATION BOUTON RETRAIT ==========
   function checkWithdrawButton() {
     const withdrawBtn = document.getElementById('withdrawBtn');
     const amount = parseInt(document.getElementById('amountInput').value) || 0;
     const balance = userData?.balance || 0;
     const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const hasInvested = userData?.hasInvested === true;
+    const activeCount = userData?.activeInvestmentsCount || 0;
     
+    // Vérification 1 : A déjà investi ?
+    if (!hasInvested) {
+      withdrawBtn.disabled = true;
+      withdrawBtn.classList.add('blocked');
+      withdrawBtn.innerHTML = '<i class="fas fa-lock"></i> INVESTISSEMENT REQUIS';
+      return;
+    }
+    
+    // Vérification 2 : Aucun investissement en cours ?
+    if (activeCount > 0) {
+      withdrawBtn.disabled = true;
+      withdrawBtn.classList.add('blocked');
+      withdrawBtn.innerHTML = `<i class="fas fa-hourglass-half"></i> ${activeCount} INVESTISSEMENT(S) EN COURS`;
+      return;
+    }
+    
+    // Vérifications normales
     if (amount >= 5000 && amount <= balance && phoneNumber.length >= 4) {
       withdrawBtn.disabled = false;
       withdrawBtn.classList.remove('blocked');
@@ -607,64 +628,100 @@
 
   // ========== VÉRIFICATION BLOCAGE RETRAIT ==========
   function checkWithdrawBlock() {
-    const investments = userData?.investments || [];
-    const activeInvestments = investments.filter(inv => inv.status === 'active');
+    const hasInvested = userData?.hasInvested === true;
+    const activeInvestments = (userData?.investments || []).filter(inv => inv.status === 'active');
     const blockSection = document.getElementById('blockSection');
     const activeList = document.getElementById('activeInvestmentsList');
     const withdrawBtn = document.getElementById('withdrawBtn');
     const methodsGrid = document.getElementById('methodsGrid');
     const amountInput = document.getElementById('amountInput');
     const phoneInput = document.getElementById('phoneNumber');
+    const referralBalance = userData?.referralBalance || 0;
     
-    if (activeInvestments.length === 0) {
-      blockSection.innerHTML = '';
+    // CAS 1 : Jamais investi
+    if (!hasInvested) {
+      methodsGrid.style.opacity = '0.5';
+      amountInput.disabled = true;
+      phoneInput.disabled = true;
+      withdrawBtn.disabled = true;
+      withdrawBtn.classList.add('blocked');
+      withdrawBtn.innerHTML = '<i class="fas fa-lock"></i> INVESTISSEMENT REQUIS';
+      
+      blockSection.innerHTML = `<div class="block-card">
+        <div class="block-icon"><i class="fas fa-gift"></i></div>
+        <div class="block-content">
+          <div class="block-title">🔒 RETRAIT BLOQUÉ</div>
+          <div class="block-text">
+            Vous n'avez encore jamais investi sur EarnZone.<br><br>
+            Pour débloquer les retraits, vous devez :<br>
+            1️⃣ Effectuer un dépôt réel via coupon<br>
+            2️⃣ Investir dans un pack (à partir de 3 000 FCFA)<br>
+          </div>
+          <a href="investissement.html" style="display:inline-block;margin-top:12px;background:linear-gradient(135deg, var(--primary), var(--primary-dark));color:white;padding:10px 20px;border-radius:30px;text-decoration:none;">
+            <i class="fas fa-chart-line"></i> Investir maintenant
+          </a>
+        </div>
+      </div>`;
       activeList.innerHTML = '';
-      methodsGrid.style.opacity = '1';
-      amountInput.disabled = false;
-      phoneInput.disabled = false;
-      checkWithdrawButton();
       return;
     }
     
-    methodsGrid.style.opacity = '0.5';
-    amountInput.disabled = true;
-    phoneInput.disabled = true;
-    
-    const now = Date.now();
-    const endDates = activeInvestments.map(inv => new Date(inv.endDate).getTime());
-    const longestEndDate = Math.max(...endDates);
-    const daysLeft = Math.ceil((longestEndDate - now) / (86400000));
-    const totalDays = activeInvestments.reduce((sum, inv) => sum + inv.totalDays, 0);
-    const progress = Math.min(100, ((totalDays - daysLeft) / totalDays) * 100);
-    
-    blockSection.innerHTML = `<div class="block-card">
-      <div class="block-icon"><i class="fas fa-lock"></i></div>
-      <div class="block-content">
-        <div class="block-title">⛔ RETRAIT BLOQUÉ</div>
-        <div class="block-text">Vous avez ${activeInvestments.length} investissement(s) en cours. Le retrait sera possible après la fin de tous vos investissements.</div>
-        <div class="progress-bar-small"><div class="progress-fill-small" style="width: ${progress}%;"></div></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-top:5px;"><span>En cours</span><span>${daysLeft} jours restants</span></div>
-      </div>
-    </div>`;
-    
-    let html = '<div class="investments-preview"><div class="section-title"><i class="fas fa-chart-line"></i> Investissements en cours</div>';
-    activeInvestments.forEach(inv => {
-      const endDate = new Date(inv.endDate);
-      const daysRemaining = Math.ceil((endDate - now) / 86400000);
-      html += `<div class="investment-item-mini">
-        <div class="investment-info">
-          <h4>Pack ${escapeHtml(inv.packName)}</h4>
-          <p>Fin le ${endDate.toLocaleDateString('fr-FR')}</p>
+    // CAS 2 : Investissements en cours
+    if (activeInvestments.length > 0) {
+      methodsGrid.style.opacity = '0.5';
+      amountInput.disabled = true;
+      phoneInput.disabled = true;
+      withdrawBtn.disabled = true;
+      withdrawBtn.classList.add('blocked');
+      withdrawBtn.innerHTML = `<i class="fas fa-hourglass-half"></i> ${activeInvestments.length} INVESTISSEMENT(S) EN COURS`;
+      
+      const now = Date.now();
+      const endDates = activeInvestments.map(inv => new Date(inv.endDate).getTime());
+      const longestEndDate = Math.max(...endDates);
+      const daysLeft = Math.ceil((longestEndDate - now) / 86400000);
+      const totalDays = activeInvestments[0]?.totalDays || 1;
+      const progress = Math.min(100, ((totalDays - daysLeft) / totalDays) * 100);
+      
+      blockSection.innerHTML = `<div class="block-card">
+        <div class="block-icon"><i class="fas fa-hourglass-half"></i></div>
+        <div class="block-content">
+          <div class="block-title">⏳ RETRAIT BLOQUÉ</div>
+          <div class="block-text">
+            Vous avez actuellement ${activeInvestments.length} investissement(s) en cours.<br><br>
+            Le retrait sera automatiquement disponible après la fin de tous vos investissements.
+          </div>
+          <div class="progress-bar-small"><div class="progress-fill-small" style="width: ${progress}%;"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:5px;">
+            <span>📊 En cours</span>
+            <span>⏰ ${daysLeft} jours restants</span>
+          </div>
         </div>
-        <div class="investment-days">${daysRemaining}j</div>
       </div>`;
-    });
-    html += '</div>';
-    activeList.innerHTML = html;
+      
+      let html = '<div class="investments-preview"><div class="section-title"><i class="fas fa-chart-line"></i> Investissements en cours</div>';
+      activeInvestments.forEach(inv => {
+        const endDate = new Date(inv.endDate);
+        const daysRemaining = Math.ceil((endDate - now) / 86400000);
+        html += `<div class="investment-item-mini">
+          <div class="investment-info">
+            <h4>Pack ${escapeHtml(inv.packName)}</h4>
+            <p>Fin le ${endDate.toLocaleDateString('fr-FR')}</p>
+          </div>
+          <div class="investment-days">${daysRemaining}j</div>
+        </div>`;
+      });
+      html += '</div>';
+      activeList.innerHTML = html;
+      return;
+    }
     
-    withdrawBtn.disabled = true;
-    withdrawBtn.classList.add('blocked');
-    withdrawBtn.innerHTML = '<i class="fas fa-lock"></i> RETRAIT BLOQUÉ';
+    // CAS 3 : Tout est OK
+    blockSection.innerHTML = '';
+    activeList.innerHTML = '';
+    methodsGrid.style.opacity = '1';
+    amountInput.disabled = false;
+    phoneInput.disabled = false;
+    checkWithdrawButton();
   }
 
   // ========== PROCESSUS DE RETRAIT ==========
@@ -677,6 +734,13 @@
     
     const investments = userData?.investments || [];
     const activeInvestments = investments.filter(inv => inv.status === 'active');
+    const hasInvested = userData?.hasInvested === true;
+    
+    if (!hasInvested) {
+      showNotification('Blocage', 'Vous devez d\'abord investir une fois avant de pouvoir retirer', 'error');
+      closeModal();
+      return;
+    }
     
     if (activeInvestments.length > 0) {
       showNotification('Blocage', 'Vous avez encore des investissements actifs', 'error');
@@ -781,7 +845,7 @@
       let updated = false;
       for (const docSnap of snapshot.docs) {
         const item = docSnap.data();
-        if (Date.now() - item.timestamp > 300000) { // 5 minutes
+        if (Date.now() - item.timestamp > 300000) {
           await updateDoc(doc(db, "withdrawals", docSnap.id), { status: 'completed' });
           updated = true;
         }
@@ -852,6 +916,10 @@
       if (userDoc.exists()) {
         userData = userDoc.data();
         userData.balance = userData.balance || 0;
+        userData.realBalance = userData.realBalance || 0;
+        userData.referralBalance = userData.referralBalance || 0;
+        userData.hasInvested = userData.hasInvested || false;
+        userData.activeInvestmentsCount = userData.activeInvestmentsCount || 0;
         userData.investments = userData.investments || [];
         updateBalanceDisplay();
         checkWithdrawBlock();
@@ -867,7 +935,7 @@
     }
   }
 
-  // ========== CONFIRMATION MODALE ==========
+    // ========== CONFIRMATION MODALE ==========
   function openConfirmDialog(title, message, onConfirm) {
     document.getElementById('modalDetails').innerHTML = `<p>${escapeHtml(message)}</p><p style="color:var(--danger);">Cette action est irréversible !</p>`;
     document.getElementById('modalOverlay').classList.add('show');
@@ -898,6 +966,18 @@
     const net = amount - fee;
     const methodName = methods[selectedMethod].name;
     const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const hasInvested = userData?.hasInvested === true;
+    const activeCount = userData?.activeInvestmentsCount || 0;
+    
+    if (!hasInvested) {
+      showNotification('Erreur', 'Vous devez d\'abord investir une fois avant de pouvoir retirer', 'error');
+      return;
+    }
+    
+    if (activeCount > 0) {
+      showNotification('Erreur', 'Vous avez encore des investissements en cours', 'error');
+      return;
+    }
     
     if (!phoneNumber) {
       showNotification('Erreur', 'Veuillez entrer votre numéro ou identifiant', 'error');

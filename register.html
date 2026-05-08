@@ -286,7 +286,6 @@
           <option value="Burkina Faso">🇧🇫 Burkina Faso</option>
           <option value="Sénégal">🇸🇳 Sénégal</option>
           <option value="Côte d'Ivoire">🇨🇮 Côte d'Ivoire</option>
-          <option value="Togo">🇹🇬 Togo</option>
         </select>
       </div>
 
@@ -301,7 +300,6 @@
               <option value="+226">+226</option>
               <option value="+221">+221</option>
               <option value="+225">+225</option>
-              <option value="+228">+228</option>
             </select>
           </div>
           <div class="phone-number">
@@ -361,9 +359,9 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -402,7 +400,7 @@
   // ========== MAPPING INDICATIFS ==========
   const indicatifMapping = {
     'Bénin': '+229', 'Niger': '+227', 'Mali': '+223',
-    'Burkina Faso': '+226', 'Sénégal': '+221', 'Côte d\'Ivoire': '+225', 'Togo': '+228'
+    'Burkina Faso': '+226', 'Sénégal': '+221', 'Côte d\'Ivoire': '+225'
   };
 
   function updateIndicatif() {
@@ -466,27 +464,37 @@
 
   // ========== CRÉDITER LE PARRAIN ==========
   async function creditReferralReward(parrainUid) {
-    try {
-      const parrainRef = doc(db, "users", parrainUid);
-      const parrainDoc = await getDoc(parrainRef);
-      if (parrainDoc.exists()) {
-        const currentBalance = parrainDoc.data().balance || 0;
-        const currentReferrals = parrainDoc.data().referralsCount || 0;
-        const currentEarnings = parrainDoc.data().referralEarnings || 0;
-        
-        await updateDoc(parrainRef, {
-          balance: currentBalance + 500,
-          referralsCount: currentReferrals + 1,
-          referralEarnings: currentEarnings + 500
-        });
-        console.log("✅ 500 FCFA crédités au parrain");
-        return true;
-      }
-    } catch (error) {
-      console.error("❌ Erreur crédit parrain:", error);
+  console.log("🔍 Tentative de crédit pour le parrain:", parrainUid);
+  try {
+    const parrainRef = doc(db, "users", parrainUid);
+    const parrainDoc = await getDoc(parrainRef);
+    
+    if (parrainDoc.exists()) {
+      const parrainData = parrainDoc.data();
+      const currentBalance = parrainData.balance || 0;
+      const currentReferralBalance = parrainData.referralBalance || 0;
+      const currentReferralsCount = parrainData.referralsCount || 0;
+      const currentReferralEarnings = parrainData.referralEarnings || 0;
+      
+      await updateDoc(parrainRef, {
+        balance: currentBalance + 500,
+        referralBalance: currentReferralBalance + 500,
+        referralsCount: currentReferralsCount + 1,
+        referralEarnings: currentReferralEarnings + 500
+      });
+      
+      console.log("✅ 500 FCFA crédités au parrain:", parrainUid);
+      console.log("📊 Nouveau total filleuls:", currentReferralsCount + 1);
+      return true;
+    } else {
+      console.error("❌ Parrain non trouvé:", parrainUid);
+      return false;
     }
+  } catch (error) {
+    console.error("❌ Erreur crédit parrain:", error);
     return false;
   }
+}
 
   // ========== VALIDATIONS ==========
   function showError(message) {
@@ -559,7 +567,7 @@
         const q = query(usersRef, where("referralCode", "==", referralCode));
         const querySnapshot = await getDocs(q);
         
-        if (!querySnapshot.empty) {
+       if (!querySnapshot.empty) {
           parrainUid = querySnapshot.docs[0].id;
           console.log("✅ Code parrainage valide, parrain trouvé:", parrainUid);
         } else {
@@ -586,12 +594,16 @@
         pays: pays,
         phone: fullPhone,
         balance: 0,
+        realBalance: 0,
+        referralBalance: 0,
         gainsTotal: 0,
         totalInvested: 0,
         totalWithdrawn: 0,
         status: "active",
         role: "user",
         hasDeposited: false,
+        hasInvested: false,
+        activeInvestmentsCount: 0,
         registrationDate: now.toISOString(),
         lastGainDate: now.toISOString(),
         lastInvestment: null,

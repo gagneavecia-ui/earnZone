@@ -542,7 +542,7 @@
 
   // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
-  let userData = { balance: 0, investments: [] };
+  let userData = { balance: 0, realBalance: 0, referralBalance: 0, hasInvested: false, activeInvestmentsCount: 0, investments: [] };
   let investmentsData = { active: [], completed: [] };
   let unsubscribeUser = null;
   let pendingConfirm = null;
@@ -605,6 +605,8 @@
     if (userData.investments && userData.investments.length > 0) {
       const now = new Date().getTime();
       investmentsData = { active: [], completed: [] };
+      let activeCount = 0;
+      
       userData.investments.forEach(inv => {
         if (inv.status === 'active') {
           const endTime = new Date(inv.endDate).getTime();
@@ -613,13 +615,24 @@
             investmentsData.completed.unshift(inv);
           } else {
             investmentsData.active.push(inv);
+            activeCount++;
           }
         } else {
           investmentsData.completed.unshift(inv);
         }
       });
+      
+      // Mettre à jour activeInvestmentsCount si différent
+      if (userData.activeInvestmentsCount !== activeCount) {
+        updateDoc(doc(db, "users", currentUser.uid), { activeInvestmentsCount: activeCount }).catch(console.error);
+        userData.activeInvestmentsCount = activeCount;
+      }
     } else {
       investmentsData = { active: [], completed: [] };
+      if (userData.activeInvestmentsCount !== 0) {
+        updateDoc(doc(db, "users", currentUser.uid), { activeInvestmentsCount: 0 }).catch(console.error);
+        userData.activeInvestmentsCount = 0;
+      }
     }
   }
 
@@ -707,10 +720,14 @@
       if (docSnap.exists()) {
         userData = docSnap.data();
         userData.balance = userData.balance || 0;
+        userData.realBalance = userData.realBalance || 0;
+        userData.referralBalance = userData.referralBalance || 0;
+        userData.hasInvested = userData.hasInvested || false;
+        userData.activeInvestmentsCount = userData.activeInvestmentsCount || 0;
         userData.investments = userData.investments || [];
         cacheUserData(uid, userData);
         refreshAllUI();
-        console.log("✅ Mise à jour temps réel - solde:", userData.balance, "investissements:", userData.investments.length);
+        console.log("✅ Mise à jour temps réel - realBalance:", userData.realBalance, "activeCount:", userData.activeInvestmentsCount);
       } else {
         console.warn("⚠️ Document utilisateur inexistant");
       }
@@ -727,9 +744,17 @@
       return;
     }
     
-    const balance = userData.balance || 0;
-    if (balance < pack.price) {
-      showNotification('Solde insuffisant', `Il vous manque ${(pack.price - balance).toLocaleString('fr-FR')} FCFA`, 'error');
+    const realBalance = userData.realBalance || 0;
+    const referralBalance = userData.referralBalance || 0;
+    
+    if (realBalance < pack.price) {
+      showNotification(
+        '❌ Investissement impossible', 
+        `L'argent du parrainage (${referralBalance.toLocaleString('fr-FR')} FCFA) ne peut pas être utilisé pour investir.<br><br>
+        Pour investir, vous devez effectuer un dépôt réel via coupon.<br><br>
+        👉 Il vous manque ${(pack.price - realBalance).toLocaleString('fr-FR')} FCFA en dépôt réel.`,
+        'error'
+      );
       return;
     }
     
@@ -742,8 +767,12 @@
             const userDoc = await transaction.get(userRef);
             if (!userDoc.exists()) throw new Error("Utilisateur non trouvé");
             
+            const currentRealBalance = userDoc.data().realBalance || 0;
             const currentBalance = userDoc.data().balance || 0;
-            if (currentBalance < pack.price) throw new Error("Solde insuffisant");
+            const currentHasInvested = userDoc.data().hasInvested || false;
+            const currentActiveCount = userDoc.data().activeInvestmentsCount || 0;
+            
+            if (currentRealBalance < pack.price) throw new Error("Solde réel insuffisant");
             
             const now = new Date();
             const endDate = new Date(now.getTime() + pack.totalDays * 24 * 60 * 60 * 1000);
@@ -766,11 +795,16 @@
               status: 'active'
             };
             
+            const newRealBalance = currentRealBalance - pack.price;
             const newBalance = currentBalance - pack.price;
+            const newActiveCount = currentActiveCount + 1;
             const existingInvestments = userDoc.data().investments || [];
             
             transaction.update(userRef, {
+              realBalance: newRealBalance,
               balance: newBalance,
+              hasInvested: true,
+              activeInvestmentsCount: newActiveCount,
               investments: [...existingInvestments, investment],
               subscriptionEnd: expiryDate.toISOString().split('T')[0],
               totalInvested: (userDoc.data().totalInvested || 0) + pack.price,
@@ -891,13 +925,15 @@
       
       if (updated && totalGain > 0) {
         const newBalance = (data.balance || 0) + totalGain;
+        const newRealBalance = (data.realBalance || 0) + totalGain;
         await updateDoc(userRef, {
           balance: newBalance,
+          realBalance: newRealBalance,
           gainsTotal: (data.gainsTotal || 0) + totalGain,
           investments: updatedInvests,
           lastGainDate: now.toISOString()
         });
-        showNotification('💰 Gains quotidiens', `+${totalGain.toLocaleString('fr-FR')} FCFA ajoutés à votre solde`, 'success');
+        showNotification('💰 Gains quotidiens', `+${totalGain.toLocaleString('fr-FR')} FCFA ajoutés à votre solde réel`, 'success');
         return true;
       }
       return false;
@@ -908,6 +944,8 @@
   }
 
   // ========== AUTHENTIFICATION ==========
+  let authChecked = false;
+  
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -923,12 +961,22 @@
       await forceCheckAndCreditGains();
     } else {
       const saved = localStorage.getItem('earnzone_current_user');
-      if (saved) {
-        setTimeout(() => { if (!auth.currentUser) window.location.href = 'login.html'; }, 2000);
-      } else {
+      if (saved && !authChecked) {
+        setTimeout(async () => {
+          const restoredUser = auth.currentUser;
+          if (!restoredUser) {
+            localStorage.removeItem('earnzone_current_user');
+            window.location.href = 'login.html';
+          } else {
+            currentUser = restoredUser;
+            await forceCheckAndCreditGains();
+          }
+        }, 2000);
+      } else if (!authChecked) {
         window.location.href = 'login.html';
       }
     }
+    authChecked = true;
   });
 
   // ========== INITIALISATION ==========

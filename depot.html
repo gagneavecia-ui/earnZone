@@ -465,10 +465,13 @@
       }
       
       const currentBalance = userDoc.data().balance || 0;
+      const currentRealBalance = userDoc.data().realBalance || 0;
       const newBalance = currentBalance + selectedPack.montant;
+      const newRealBalance = currentRealBalance + selectedPack.montant;
       
       await updateDoc(userRef, {
         balance: newBalance,
+        realBalance: newRealBalance,
         hasDeposited: true,
         lastRecharge: new Date().toISOString(),
         totalInvested: (userDoc.data().totalInvested || 0) + selectedPack.montant
@@ -487,7 +490,7 @@
       updateLocalStorageCache(currentUser.uid);
       updateSoldeFromFirebase(newBalance);
 
-      showMessage(`✅ <strong>Rechargement réussi !</strong><br>${selectedPack.montant.toLocaleString('fr-FR')} FCFA ajoutés à votre solde.`, 'success');
+      showMessage(`✅ <strong>Rechargement réussi !</strong><br>${selectedPack.montant.toLocaleString('fr-FR')} FCFA ajoutés à votre solde réel.`, 'success');
       
       document.getElementById('couponCode').value = '';
       selectedPack = null;
@@ -511,7 +514,7 @@
       updateSoldeFromCache();
     }
     
-    try {
+     try {
       const userRef = doc(db, "users", uid);
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
@@ -526,6 +529,8 @@
   }
 
   // ========== AUTHENTIFICATION ==========
+  let authChecked = false;
+  
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -533,17 +538,22 @@
       await loadUserData(user.uid);
     } else {
       const savedUid = localStorage.getItem('earnzone_current_user');
-      if (savedUid) {
+      if (savedUid && !authChecked) {
         setTimeout(async () => {
-          if (!auth.currentUser) {
+          const restoredUser = auth.currentUser;
+          if (!restoredUser) {
             localStorage.removeItem('earnzone_current_user');
             window.location.href = 'login.html';
+          } else {
+            currentUser = restoredUser;
+            await loadUserData(restoredUser.uid);
           }
         }, 2000);
-      } else {
+      } else if (!authChecked) {
         window.location.href = 'login.html';
       }
     }
+    authChecked = true;
   });
 
   // ========== INITIALISATION ==========

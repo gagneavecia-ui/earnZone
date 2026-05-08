@@ -473,10 +473,8 @@
       if (userDoc.exists()) {
         userData = userDoc.data();
         
-        // Récupérer le code de parrainage
         let parrainCode = userData.referralCode;
         if (!parrainCode) {
-          // Fallback pour les anciens comptes
           parrainCode = (userData.prenom?.substring(0,3) || '' + userData.nom?.substring(0,3) || '' + userData.uid?.substring(0,4)).toUpperCase();
           if (parrainCode.length < 4) parrainCode = 'EARN' + userData.uid?.substring(0,4).toUpperCase();
         }
@@ -487,11 +485,9 @@
         const inviteLink = `${baseUrl}register.html?ref=${parrainCode}`;
         document.getElementById('inviteLink').innerHTML = inviteLink;
         
-        // Statistiques
         document.getElementById('totalFilleuls').innerHTML = userData.referralsCount || 0;
         document.getElementById('totalGainsParrainage').innerHTML = `${(userData.referralEarnings || 0).toLocaleString('fr-FR')} FCFA`;
         
-        // Charger la liste des filleuls
         await loadFilleuls(parrainCode);
       } else {
         console.error("❌ Document utilisateur non trouvé");
@@ -504,38 +500,46 @@
 
   // ========== CHARGEMENT DES FILLEULS ==========
   async function loadFilleuls(parrainCode) {
-    try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("referredBy", "==", parrainCode));
-      const querySnapshot = await getDocs(q);
-      
-      const container = document.getElementById('filleulsContainer');
-      
-      if (querySnapshot.empty) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-user-plus"></i><p>Aucun filleul pour l\'instant</p><p style="font-size: 11px;">Partagez votre code pour inviter des amis !</p></div>';
-        return;
-      }
-      
-      let html = '';
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const name = `${data.prenom || ''} ${data.nom || ''}`.trim() || data.email?.split('@')[0] || 'Utilisateur';
-        const date = data.registrationDate ? new Date(data.registrationDate).toLocaleDateString('fr-FR') : 'Date inconnue';
-        html += `
-          <div class="filleul-item">
-            <div>
-              <div class="filleul-name">${escapeHtml(name)}</div>
-              <div class="filleul-date">Inscrit le ${date}</div>
-            </div>
-            <div class="filleul-gain">+500 FCFA</div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    } catch (error) {
-      console.error("❌ Erreur chargement filleuls:", error);
+  console.log("🔍 Recherche des filleuls avec code:", parrainCode);
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("referredBy", "==", parrainCode));
+    const querySnapshot = await getDocs(q);
+    
+    console.log("📊 Nombre de filleuls trouvés:", querySnapshot.size);
+    
+    const container = document.getElementById('filleulsContainer');
+    
+    if (querySnapshot.empty) {
+      container.innerHTML = '<div class="empty-state"><i class="fas fa-user-plus"></i><p>Aucun filleul pour l\'instant</p><p style="font-size: 11px;">Partagez votre code pour inviter des amis !</p></div>';
+      return;
     }
+    
+    let html = '';
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const name = `${data.prenom || ''} ${data.nom || ''}`.trim() || data.email?.split('@')[0] || 'Utilisateur';
+      const date = data.registrationDate ? new Date(data.registrationDate).toLocaleDateString('fr-FR') : 'Date inconnue';
+      html += `
+        <div class="filleul-item">
+          <div>
+            <div class="filleul-name">${escapeHtml(name)}</div>
+            <div class="filleul-date">Inscrit le ${date}</div>
+          </div>
+          <div class="filleul-gain">+500 FCFA</div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+    
+    // Mettre à jour le compteur
+    document.getElementById('totalFilleuls').innerHTML = querySnapshot.size;
+    
+  } catch (error) {
+    console.error("❌ Erreur chargement filleuls:", error);
+    showNotification('Erreur', 'Impossible de charger la liste des filleuls');
   }
+}
 
   // ========== ÉCHAPPEMENT HTML ==========
   function escapeHtml(str) {
@@ -558,7 +562,6 @@
         document.getElementById('totalFilleuls').innerHTML = userData.referralsCount || 0;
         document.getElementById('totalGainsParrainage').innerHTML = `${(userData.referralEarnings || 0).toLocaleString('fr-FR')} FCFA`;
         
-        // Recharger les filleuls si le code a changé
         if (userData.referralCode) {
           loadFilleuls(userData.referralCode);
         }
@@ -604,6 +607,8 @@
   });
 
   // ========== AUTHENTIFICATION ==========
+  let authChecked = false;
+  
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -612,16 +617,23 @@
       listenToUser(user.uid);
     } else {
       const savedUid = localStorage.getItem('earnzone_current_user');
-      if (savedUid) {
-        setTimeout(() => {
-          if (!auth.currentUser) {
+      if (savedUid && !authChecked) {
+        setTimeout(async () => {
+          const restoredUser = auth.currentUser;
+          if (!restoredUser) {
+            localStorage.removeItem('earnzone_current_user');
             window.location.href = 'login.html';
+          } else {
+            currentUser = restoredUser;
+            await loadUserData(restoredUser.uid);
+            listenToUser(restoredUser.uid);
           }
         }, 2000);
-      } else {
+      } else if (!authChecked) {
         window.location.href = 'login.html';
       }
     }
+    authChecked = true;
   });
 </script>
 </body>

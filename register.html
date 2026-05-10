@@ -124,7 +124,7 @@
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
     .form-group label i { color: var(--primary); margin-right: 6px; }
-    .form-group input, .form-group select {
+    .form-group input {
       width: 100%;
       padding: 14px 16px;
       background: rgba(20, 20, 35, 0.8);
@@ -135,7 +135,7 @@
       font-family: 'Inter', sans-serif;
       transition: var(--transition);
     }
-    .form-group input:focus, .form-group select:focus {
+    .form-group input:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(183, 110, 255, 0.2);
@@ -147,6 +147,234 @@
     .phone-wrapper { display: flex; gap: 12px; align-items: center; }
     .phone-prefix { width: 80px; flex-shrink: 0; }
     .phone-number { flex: 1; }
+
+    /* ========================= */
+    /* SELECTEUR PAYS PERSONNALISÉ */
+    /* ========================= */
+
+    .country-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .country-selector:active {
+      transform: scale(0.98);
+      border-color: var(--primary);
+    }
+
+    .country-selector-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .country-selector-display span:first-child {
+      font-size: 20px;
+    }
+
+    .country-selector-display span:last-child {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    .country-selector i {
+      color: var(--primary-light);
+      font-size: 11px;
+    }
+
+    /* ========================= */
+    /* MODALE PAYS */
+    /* ========================= */
+
+    .country-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(3, 3, 5, 0.96);
+      backdrop-filter: blur(16px);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .country-modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .country-modal {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(183, 110, 255, 0.2);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 380px;
+      max-height: 80vh;
+      overflow: hidden;
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .country-modal-overlay.show .country-modal {
+      transform: scale(1);
+    }
+
+    .country-modal-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(183, 110, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .country-modal-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .country-modal-close {
+      width: 36px;
+      height: 36px;
+      background: rgba(183, 110, 255, 0.1);
+      border: 1px solid rgba(183, 110, 255, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--text-dim);
+    }
+
+    .country-modal-close:active {
+      background: rgba(183, 110, 255, 0.2);
+      transform: scale(0.95);
+    }
+
+    .country-modal-search {
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .country-modal-search input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: var(--text-light);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .country-modal-search input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .country-modal-list {
+      padding: 12px 8px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .country-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 4px;
+    }
+
+    .country-option:active {
+      background: rgba(183, 110, 255, 0.1);
+      transform: scale(0.98);
+    }
+
+    .country-option.selected {
+      background: rgba(183, 110, 255, 0.15);
+      border: 1px solid rgba(183, 110, 255, 0.25);
+    }
+
+    .country-option-flag {
+      font-size: 24px;
+    }
+
+    .country-option-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    .country-option-code {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--primary-light);
+      font-family: monospace;
+    }
+
+    .country-modal-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .country-modal-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    .country-modal-list::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    /* ========================= */
+    /* INDICATIF TELEPHONE */
+    /* ========================= */
+
+    .indicatif-select {
+      width: 100%;
+      padding: 14px 12px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      font-size: 14px;
+      color: var(--text-light);
+      font-family: 'Inter', sans-serif;
+      transition: var(--transition);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B76EFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+    }
+
+    .indicatif-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
 
     .referral-code-group {
       background: rgba(183, 110, 255, 0.05);
@@ -276,30 +504,36 @@
         </div>
       </div>
 
+      <!-- SELECTEUR PAYS PERSONNALISE -->
       <div class="form-group">
         <label><i class="fas fa-globe-africa"></i> Pays</label>
-        <select id="pays" required>
-          <option value="">Sélectionnez votre pays</option>
-          <option value="Bénin">🇧🇯 Bénin</option>
-          <option value="Niger" selected>🇳🇪 Niger</option>
-          <option value="Mali">🇲🇱 Mali</option>
-          <option value="Burkina Faso">🇧🇫 Burkina Faso</option>
-          <option value="Sénégal">🇸🇳 Sénégal</option>
-          <option value="Côte d'Ivoire">🇨🇮 Côte d'Ivoire</option>
-        </select>
+        <div class="country-selector" id="countrySelector" onclick="openCountryModal()">
+          <div class="country-selector-display">
+            <span id="selectedCountryFlag">🇳🇪</span>
+            <span id="selectedCountryName">Niger</span>
+          </div>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <input type="hidden" id="pays" value="Niger" required>
       </div>
 
       <div class="form-group">
         <label><i class="fas fa-phone-alt"></i> Téléphone</label>
         <div class="phone-wrapper">
           <div class="phone-prefix">
-            <select id="indicatif" required>
+            <select id="indicatif" class="indicatif-select" required>
               <option value="+227">+227</option>
               <option value="+229">+229</option>
               <option value="+223">+223</option>
               <option value="+226">+226</option>
               <option value="+221">+221</option>
               <option value="+225">+225</option>
+              <option value="+228">+228</option>
+              <option value="+224">+224</option>
+              <option value="+233">+233</option>
+              <option value="+237">+237</option>
+              <option value="+234">+234</option>
+              <option value="+235">+235</option>
             </select>
           </div>
           <div class="phone-number">
@@ -348,6 +582,22 @@
   </footer>
 </main>
 
+<!-- MODALE PAYS -->
+<div class="country-modal-overlay" id="countryModal">
+  <div class="country-modal">
+    <div class="country-modal-header">
+      <h3><i class="fas fa-globe-africa"></i> Sélectionnez votre pays</h3>
+      <div class="country-modal-close" onclick="closeCountryModal()">
+        <i class="fas fa-times"></i>
+      </div>
+    </div>
+    <div class="country-modal-search">
+      <input type="text" id="countrySearch" placeholder="🔍 Rechercher un pays..." autocomplete="off">
+    </div>
+    <div class="country-modal-list" id="countryList"></div>
+  </div>
+</div>
+
 <script type="importmap">
   {
     "imports": {
@@ -359,9 +609,9 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { initializeApp } from "firebase/app";
+  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
+  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
@@ -376,6 +626,84 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
+
+  // ========== LISTE DES PAYS ==========
+  const countries = [
+    { name: "Niger", flag: "🇳🇪", code: "+227" },
+    { name: "Bénin", flag: "🇧🇯", code: "+229" },
+    { name: "Mali", flag: "🇲🇱", code: "+223" },
+    { name: "Burkina Faso", flag: "🇧🇫", code: "+226" },
+    { name: "Sénégal", flag: "🇸🇳", code: "+221" },
+    { name: "Côte d'Ivoire", flag: "🇨🇮", code: "+225" },
+    { name: "Togo", flag: "🇹🇬", code: "+228" },
+    { name: "Guinée", flag: "🇬🇳", code: "+224" },
+     { name: "Ghana", flag: "🇬🇭", code: "+233" },
+    { name: "Cameroun", flag: "🇨🇲", code: "+237" },
+    { name: "Nigéria", flag: "🇳🇬", code: "+234" },
+    { name: "Tchad", flag: "🇹🇩", code: "+235" }
+  ];
+
+  let selectedCountry = "Niger";
+  let selectedFlag = "🇳🇪";
+
+  // ========== MODALE PAYS ==========
+  function renderCountryList(filter = "") {
+    const container = document.getElementById('countryList');
+    const filtered = countries.filter(c => 
+      c.name.toLowerCase().includes(filter.toLowerCase())
+    );
+    
+    container.innerHTML = filtered.map(c => `
+      <div class="country-option ${c.name === selectedCountry ? 'selected' : ''}" 
+           data-name="${c.name}" 
+           data-flag="${c.flag}" 
+           data-code="${c.code}"
+           onclick="selectCountry('${c.name}', '${c.flag}', '${c.code}')">
+        <span class="country-option-flag">${c.flag}</span>
+        <span class="country-option-name">${c.name}</span>
+        <span class="country-option-code">${c.code}</span>
+      </div>
+    `).join('');
+  }
+
+  window.openCountryModal = function() {
+    document.getElementById('countryModal').classList.add('show');
+    document.getElementById('countrySearch').value = '';
+    renderCountryList();
+  }
+
+  window.closeCountryModal = function() {
+    document.getElementById('countryModal').classList.remove('show');
+  }
+
+  window.selectCountry = function(name, flag, code) {
+    selectedCountry = name;
+    selectedFlag = flag;
+    
+    document.getElementById('selectedCountryFlag').innerHTML = flag;
+    document.getElementById('selectedCountryName').innerHTML = name;
+    document.getElementById('pays').value = name;
+    
+    const indicatifSelect = document.getElementById('indicatif');
+    if (indicatifSelect && code) {
+      for(let i = 0; i < indicatifSelect.options.length; i++) {
+        if(indicatifSelect.options[i].value === code) {
+          indicatifSelect.selectedIndex = i;
+          break;
+        }
+      }
+    }
+    
+    closeCountryModal();
+  }
+
+  document.getElementById('countrySearch')?.addEventListener('input', (e) => {
+    renderCountryList(e.target.value);
+  });
+
+  document.getElementById('countryModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'countryModal') closeCountryModal();
+  });
 
   // ========== DOM ELEMENTS ==========
   const registerForm = document.getElementById('registerForm');
@@ -396,24 +724,6 @@
     referralCodeInput.value = refCode;
     checkReferralCode(refCode);
   }
-
-  // ========== MAPPING INDICATIFS ==========
-  const indicatifMapping = {
-    'Bénin': '+229', 'Niger': '+227', 'Mali': '+223',
-    'Burkina Faso': '+226', 'Sénégal': '+221', 'Côte d\'Ivoire': '+225'
-  };
-
-  function updateIndicatif() {
-    const selectedPays = paysSelect.value;
-    if (selectedPays && indicatifMapping[selectedPays]) {
-      indicatifSelect.value = indicatifMapping[selectedPays];
-    }
-  }
-  paysSelect.addEventListener('change', updateIndicatif);
-  document.addEventListener('DOMContentLoaded', () => {
-    if (paysSelect.value === '') paysSelect.value = 'Niger';
-    updateIndicatif();
-  });
 
   // ========== VÉRIFIER CODE PARRAINAGE ==========
   async function checkReferralCode(code) {
@@ -464,37 +774,49 @@
 
   // ========== CRÉDITER LE PARRAIN ==========
   async function creditReferralReward(parrainUid) {
-  console.log("🔍 Tentative de crédit pour le parrain:", parrainUid);
-  try {
-    const parrainRef = doc(db, "users", parrainUid);
-    const parrainDoc = await getDoc(parrainRef);
+    console.log("🔍 [CREDIT] Début - parrain UID:", parrainUid);
     
-    if (parrainDoc.exists()) {
-      const parrainData = parrainDoc.data();
-      const currentBalance = parrainData.balance || 0;
-      const currentReferralBalance = parrainData.referralBalance || 0;
-      const currentReferralsCount = parrainData.referralsCount || 0;
-      const currentReferralEarnings = parrainData.referralEarnings || 0;
-      
-      await updateDoc(parrainRef, {
-        balance: currentBalance + 500,
-        referralBalance: currentReferralBalance + 500,
-        referralsCount: currentReferralsCount + 1,
-        referralEarnings: currentReferralEarnings + 500
-      });
-      
-      console.log("✅ 500 FCFA crédités au parrain:", parrainUid);
-      console.log("📊 Nouveau total filleuls:", currentReferralsCount + 1);
-      return true;
-    } else {
-      console.error("❌ Parrain non trouvé:", parrainUid);
+    if (!parrainUid) {
+      console.error("❌ [CREDIT] Pas d'UID");
       return false;
     }
-  } catch (error) {
-    console.error("❌ Erreur crédit parrain:", error);
-    return false;
+    
+    try {
+      const parrainRef = doc(db, "users", parrainUid);
+      const parrainDoc = await getDoc(parrainRef);
+      
+      if (!parrainDoc.exists()) {
+        console.error("❌ [CREDIT] Document parrain inexistant");
+        return false;
+      }
+      
+      const anciennesDonnees = parrainDoc.data();
+      console.log("📊 [CREDIT] Anciennes données:", {
+        balance: anciennesDonnees.balance,
+        referralBalance: anciennesDonnees.referralBalance,
+        referralsCount: anciennesDonnees.referralsCount
+      });
+      
+      const miseAJour = {
+        balance: (anciennesDonnees.balance || 0) + 500,
+        referralBalance: (anciennesDonnees.referralBalance || 0) + 500,
+        referralsCount: (anciennesDonnees.referralsCount || 0) + 1,
+        referralEarnings: (anciennesDonnees.referralEarnings || 0) + 500,
+        lastReferral: new Date().toISOString()
+      };
+      
+      await updateDoc(parrainRef, miseAJour);
+      
+      console.log("✅ [CREDIT] Mise à jour réussie !");
+      console.log("📊 [CREDIT] Nouvelles valeurs:", miseAJour);
+      
+      return true;
+      
+    } catch (error) {
+      console.error("❌ [CREDIT] Erreur complète:", error);
+      return false;
+    }
   }
-}
 
   // ========== VALIDATIONS ==========
   function showError(message) {
@@ -567,7 +889,7 @@
         const q = query(usersRef, where("referralCode", "==", referralCode));
         const querySnapshot = await getDocs(q);
         
-       if (!querySnapshot.empty) {
+        if (!querySnapshot.empty) {
           parrainUid = querySnapshot.docs[0].id;
           console.log("✅ Code parrainage valide, parrain trouvé:", parrainUid);
         } else {
@@ -624,7 +946,11 @@
       console.log("🔗 Code parrainage généré:", generatedReferralCode);
 
       if (parrainUid) {
-        await creditReferralReward(parrainUid);
+        console.log("🎯 Parrain trouvé, crédit des 500 FCFA...");
+        const resultat = await creditReferralReward(parrainUid);
+        console.log("📊 Résultat crédit:", resultat ? "RÉUSSI ✅" : "ÉCHEC ❌");
+      } else {
+        console.log("ℹ️ Aucun code parrainage fourni");
       }
 
       localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
@@ -632,8 +958,11 @@
 
       showSuccess();
 
+      const prenomValue = document.getElementById('prenom').value.trim();
+      const encodedName = encodeURIComponent(prenomValue);
+
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = `g.html?name=${encodedName}`;
       }, 1500);
 
     } catch (error) {

@@ -1,0 +1,1006 @@
+<!-- ========================= -->
+<!-- VERSION OPTIMISÉE EARNZONE -->
+<!-- PAGE DE BIENVENUE APRÈS INSCRIPTION -->
+<!-- AVEC NOTIFICATIONS AUTOMATIQUES -->
+<!-- ========================= -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Bienvenue</title>
+
+  <meta name="viewport"
+        content="width=device-width,
+        initial-scale=1.0,
+        maximum-scale=1.0,
+        user-scalable=no,
+        viewport-fit=cover">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+  <style>
+
+    :root{
+      --primary:#B76EFF;
+      --primary-dark:#8B3FE8;
+      --primary-light:#D4A1FF;
+
+      --bg-dark:#030305;
+
+      --text-light:#FFFFFF;
+      --text-dim:#8B90A8;
+
+      --card-bg:rgba(15,15,26,0.88);
+      --card-border:rgba(183,110,255,0.08);
+
+      --success:#2EE89A;
+      --danger:#FF4D6D;
+      --warning:#FFD166;
+
+      --transition:all .3s ease;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg-dark);
+      color:var(--text-light);
+      min-height:100vh;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+
+    .gradient-bg{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+
+      background:
+      radial-gradient(circle at 20% 20%,
+      rgba(183,110,255,.18),
+      transparent 35%),
+
+      radial-gradient(circle at 80% 70%,
+      rgba(139,63,232,.15),
+      transparent 35%),
+
+      linear-gradient(180deg,
+      #030305 0%,
+      #050510 45%,
+      #030305 100%);
+    }
+
+    .container{
+      max-width:680px;
+      margin:auto;
+      padding:32px 18px 50px;
+    }
+
+    /* ========================= */
+    /* HEADER */
+    /* ========================= */
+
+    .header{
+      text-align:center;
+      margin-bottom:26px;
+    }
+
+    .logo{
+      font-size:26px;
+      font-weight:800;
+      letter-spacing:2px;
+      margin-bottom:14px;
+    }
+
+    .logo span{
+      background:linear-gradient(
+      135deg,
+      var(--primary-light),
+      var(--primary));
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .welcome-title{
+      font-size:32px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .welcome-subtitle{
+      color:var(--text-dim);
+      font-size:14px;
+    }
+
+    /* ========================= */
+    /* HOOK */
+    /* ========================= */
+
+    .hook-box{
+      background:
+      linear-gradient(
+      135deg,
+      rgba(183,110,255,.15),
+      rgba(139,63,232,.08));
+
+      border:1px solid rgba(183,110,255,.12);
+
+      border-radius:24px;
+
+      padding:28px 22px;
+
+      margin-bottom:24px;
+
+      position:relative;
+
+      overflow:hidden;
+
+      backdrop-filter:blur(12px);
+    }
+
+    .hook-box::before{
+      content:'';
+      position:absolute;
+      width:250px;
+      height:250px;
+      background:
+      radial-gradient(circle,
+      rgba(183,110,255,.24),
+      transparent 70%);
+
+      top:-120px;
+      right:-120px;
+    }
+
+    .hook-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+
+      padding:8px 16px;
+
+      border-radius:50px;
+
+      background:rgba(183,110,255,.12);
+
+      color:var(--primary-light);
+
+      font-size:12px;
+      font-weight:700;
+
+      margin-bottom:18px;
+    }
+
+    .hook-title{
+      font-size:30px;
+      line-height:1.2;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+
+    .hook-text{
+      color:var(--text-dim);
+      margin-bottom:22px;
+      font-size:15px;
+    }
+
+    .hook-features{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:24px;
+    }
+
+    .hook-feature{
+      display:flex;
+      align-items:center;
+      gap:14px;
+
+      padding:14px;
+
+      border-radius:18px;
+
+      background:rgba(255,255,255,.03);
+
+      border:1px solid rgba(255,255,255,.04);
+    }
+
+    .hook-feature i{
+      width:44px;
+      height:44px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      border-radius:14px;
+
+      background:rgba(183,110,255,.12);
+
+      color:var(--primary-light);
+
+      font-size:18px;
+    }
+
+    .hook-feature span{
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .hook-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+
+    .stat-card{
+      padding:16px 10px;
+
+      border-radius:18px;
+
+      text-align:center;
+
+      background:rgba(255,255,255,.03);
+
+      border:1px solid rgba(255,255,255,.04);
+    }
+
+    .stat-card strong{
+      display:block;
+      font-size:18px;
+      margin-bottom:6px;
+    }
+
+    .stat-card span{
+      color:var(--text-dim);
+      font-size:12px;
+    }
+
+    /* ========================= */
+    /* SECTION */
+    /* ========================= */
+
+    .section{
+      background:var(--card-bg);
+
+      border:1px solid var(--card-border);
+
+      border-radius:22px;
+
+      padding:22px;
+
+      margin-bottom:18px;
+
+      backdrop-filter:blur(14px);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+
+      margin-bottom:14px;
+
+      font-size:18px;
+      font-weight:700;
+
+      color:var(--primary-light);
+    }
+
+    .section p{
+      color:var(--text-dim);
+      margin-bottom:12px;
+      font-size:14px;
+    }
+
+    .section strong{
+      color:white;
+    }
+
+    /* ========================= */
+    /* RULE BOX */
+    /* ========================= */
+
+    .rule-box{
+      background:rgba(255,209,102,.08);
+
+      border-left:3px solid var(--warning);
+
+      padding:14px;
+
+      border-radius:12px;
+
+      margin-top:16px;
+    }
+
+    .rule-box p{
+      margin:0;
+      font-size:13px;
+    }
+
+    /* ========================= */
+    /* METHODS */
+    /* ========================= */
+
+    .methods{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .method-badge{
+      background:rgba(183,110,255,.1);
+
+      color:var(--primary-light);
+
+      padding:6px 14px;
+
+      border-radius:30px;
+
+      font-size:12px;
+      font-weight:600;
+    }
+
+    /* ========================= */
+    /* LIVE FEED (supprimé car remplacé par notifications) */
+    /* ========================= */
+
+    /* ========================= */
+    /* WHATSAPP BUTTON */
+    /* ========================= */
+
+    .btn-whatsapp{
+      width:100%;
+
+      border:none;
+
+      padding:16px;
+
+      border-radius:50px;
+
+      background:#25D366;
+
+      color:white;
+
+      font-size:16px;
+      font-weight:700;
+
+      cursor:pointer;
+
+      transition:var(--transition);
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+
+      margin-bottom:16px;
+    }
+
+    .btn-whatsapp:active{
+      transform:scale(.98);
+    }
+
+    .btn-whatsapp i{
+      font-size:20px;
+    }
+
+    /* ========================= */
+    /* CONDITIONS */
+    /* ========================= */
+
+    .conditions{
+      margin:26px 0 20px;
+    }
+
+    .checkbox-wrapper{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+
+    .checkbox-wrapper input{
+      width:20px;
+      height:20px;
+      accent-color:var(--primary);
+      margin-top:2px;
+    }
+
+    .checkbox-wrapper span{
+      font-size:13px;
+      color:var(--text-dim);
+    }
+
+    /* ========================= */
+    /* BUTTON */
+    /* ========================= */
+
+    .btn-continue{
+      width:100%;
+
+      border:none;
+
+      padding:16px;
+
+      border-radius:50px;
+
+      background:
+      linear-gradient(
+      135deg,
+      var(--primary),
+      var(--primary-dark));
+
+      color:white;
+
+      font-size:16px;
+      font-weight:700;
+
+      cursor:pointer;
+
+      transition:var(--transition);
+    }
+
+    .btn-continue:active{
+      transform:scale(.98);
+    }
+
+    .btn-continue:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    /* ========================= */
+    /* NOTIFICATION TOAST */
+    /* ========================= */
+
+    .notification-toast{
+      position:fixed;
+      bottom:20px;
+      left:16px;
+      right:16px;
+      background:rgba(0,0,0,0.95);
+      backdrop-filter:blur(12px);
+      border:1px solid var(--primary);
+      border-radius:16px;
+      padding:12px 16px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      z-index:1000;
+      transform:translateY(200px);
+      transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      max-width:400px;
+      margin:0 auto;
+    }
+
+    .notification-toast.show{
+      transform:translateY(0);
+    }
+
+    .notification-icon{
+      width:40px;
+      height:40px;
+      background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:black;
+      font-size:18px;
+    }
+
+    .notification-content h4{
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .notification-content p{
+      font-size:11px;
+      color:var(--text-dim);
+    }
+
+    /* ========================= */
+    /* FOOTER */
+    /* ========================= */
+
+    .footer{
+      text-align:center;
+      margin-top:28px;
+      font-size:11px;
+      color:var(--text-dim);
+    }
+
+    /* ========================= */
+    /* MOBILE */
+    /* ========================= */
+
+    @media(max-width:600px){
+
+      .hook-title{
+        font-size:24px;
+      }
+
+      .hook-stats{
+        grid-template-columns:1fr;
+      }
+
+      .welcome-title{
+        font-size:26px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="gradient-bg"></div>
+
+<!-- NOTIFICATION TOAST -->
+<div class="notification-toast" id="notificationToast">
+  <div class="notification-icon"><i class="fas fa-gift"></i></div>
+  <div class="notification-content">
+    <h4 id="notifTitle">Activité récente</h4>
+    <p id="notifMessage">Message</p>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- ========================= -->
+  <!-- HEADER -->
+  <!-- ========================= -->
+
+  <div class="header">
+
+    <div class="logo">
+      EARN<span>ZONE</span>
+    </div>
+
+    <h1 class="welcome-title" id="welcomeTitle">
+      Bienvenue
+    </h1>
+
+    <p class="welcome-subtitle">
+      Découvrez comment commencer intelligemment 🚀
+    </p>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- HOOK -->
+  <!-- ========================= -->
+
+  <div class="hook-box">
+
+    <div class="hook-badge">
+      🚀 Plus de 2 000 membres utilisent déjà EarnZone
+    </div>
+
+    <h2 class="hook-title">
+      Transformez votre téléphone en source de revenus 📱💸
+    </h2>
+
+    <p class="hook-text">
+      EarnZone aide les utilisateurs africains à générer des revenus grâce à des systèmes automatisés, au parrainage et à la revente digitale.
+    </p>
+
+    <div class="hook-features">
+
+      <div class="hook-feature">
+        <i class="fas fa-chart-line"></i>
+        <span>Revenus automatisés</span>
+      </div>
+
+      <div class="hook-feature">
+        <i class="fas fa-users"></i>
+        <span>Parrainage rémunéré</span>
+      </div>
+
+      <div class="hook-feature">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Revente de formations digitales</span>
+      </div>
+
+    </div>
+
+    <div class="hook-stats">
+
+      <div class="stat-card">
+        <strong>24h - 48h</strong>
+        <span>Délai de retrait</span>
+      </div>
+
+      <div class="stat-card">
+        <strong>500 FCFA</strong>
+        <span>Bonus par invitation</span>
+      </div>
+
+      <div class="stat-card">
+        <strong>24/7</strong>
+        <span>Support WhatsApp</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- QUI SOMMES-NOUS -->
+  <!-- ========================= -->
+
+  <div class="section">
+
+    <div class="section-title">
+      <i class="fas fa-info-circle"></i>
+      Qui sommes-nous ?
+    </div>
+
+    <p>
+      EarnZone est une plateforme digitale créée en 2023 qui aide les utilisateurs à développer des revenus grâce à des solutions simples et accessibles.
+    </p>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- COMMENT GAGNER -->
+  <!-- ========================= -->
+
+  <div class="section">
+
+    <div class="section-title">
+      <i class="fas fa-chart-line"></i>
+      Comment gagner de l'argent ?
+    </div>
+
+    <p>
+      <strong>📈 Capital Maxim</strong><br>
+      Activez un pack et recevez des revenus automatiques de manière progressive.
+    </p>
+
+    <div class="rule-box">
+      <p>
+        ⚠️ Les investissements se font uniquement avec les dépôts personnels.
+      </p>
+    </div>
+
+    <br>
+
+    <p>
+      <strong>👥 Parrainage</strong><br>
+      Gagnez 500 FCFA pour chaque membre actif invité.
+    </p>
+
+    <br>
+
+    <p>
+      <strong>🎓 NexFormation</strong><br>
+      Revendez des formations digitales et gardez vos bénéfices.
+    </p>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- DEPOTS -->
+  <!-- ========================= -->
+
+  <div class="section">
+
+    <div class="section-title">
+      <i class="fas fa-money-bill-wave"></i>
+      Dépôts & Retraits
+    </div>
+
+    <p>
+      <strong>💸 Dépôts minimum :</strong> 3 000 FCFA
+    </p>
+
+    <div class="methods">
+      <span class="method-badge">🌊 Wave</span>
+      <span class="method-badge">💜 My Nita</span>
+      <span class="method-badge">🏦 Amana</span>
+    </div>
+
+    <br>
+
+    <p>
+      <strong>💰 Retraits minimum :</strong> 5 000 FCFA
+    </p>
+
+    <div class="methods">
+      <span class="method-badge">Orange Money</span>
+      <span class="method-badge">Moov Money</span>
+      <span class="method-badge">Wave</span>
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- SUPPORT -->
+  <!-- ========================= -->
+
+  <div class="section">
+
+    <div class="section-title">
+      <i class="fas fa-shield-alt"></i>
+      Sécurité & Support
+    </div>
+
+    <p>
+      🔒 Toutes les transactions sont enregistrées et suivies.
+    </p>
+
+    <p>
+      📞 Support WhatsApp disponible 7j/7.
+    </p>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- CONSEILS -->
+  <!-- ========================= -->
+
+  <div class="section">
+
+    <div class="section-title">
+      <i class="fas fa-lightbulb"></i>
+      Conseils pour bien commencer
+    </div>
+
+    <p>
+      ✅ Commencez avec le Pack Start.<br>
+      ✅ Activez votre code de parrainage rapidement.<br>
+      ✅ Consultez les formations gratuites.<br>
+      ✅ Réinvestissez vos gains intelligemment.
+    </p>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- WHATSAPP BUTTON -->
+  <!-- ========================= -->
+
+  <button class="btn-whatsapp" id="whatsappBtn">
+    <i class="fab fa-whatsapp"></i>
+    Contacter le support WhatsApp
+  </button>
+
+  <!-- ========================= -->
+  <!-- CONDITIONS -->
+  <!-- ========================= -->
+
+  <div class="conditions">
+
+    <label class="checkbox-wrapper">
+
+      <input type="checkbox"
+             id="acceptConditions">
+
+      <span>
+        J'accepte les conditions générales d'utilisation d'EarnZone.
+      </span>
+
+    </label>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- BUTTON -->
+  <!-- ========================= -->
+
+  <button class="btn-continue"
+          id="continueBtn"
+          disabled>
+
+    🚀 Accéder à mon espace
+
+  </button>
+
+  <!-- ========================= -->
+  <!-- FOOTER -->
+  <!-- ========================= -->
+
+  <div class="footer">
+    © 2026 EarnZone - Tous droits réservés.
+  </div>
+
+</main>
+
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import { getFirestore, doc, getDoc } from "firebase/firestore";
+
+  // ========== CONFIGURATION FIREBASE ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ========== NUMÉRO WHATSAPP SUPPORT ==========
+  const WHATSAPP_NUMBER = "22780135299";
+
+  // ========== NOTIFICATION TOAST ==========
+  function showToast(title, message, duration = 4000) {
+    const toast = document.getElementById('notificationToast');
+    document.getElementById('notifTitle').innerText = title;
+    document.getElementById('notifMessage').innerHTML = message;
+    
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, duration);
+    
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  // ========== LISTE DES NOTIFICATIONS À AFFICHER ==========
+  const notifications = [
+    {
+      title: "💰 Retrait récent",
+      message: "Moussa (Côte d'Ivoire) vient de retirer 12 500 FCFA",
+      delay: 3000
+    },
+    {
+      title: "📈 Investissement",
+      message: "Amina (Sénégal) a activé le Pack Bronze",
+      delay: 8000
+    },
+    {
+      title: "👥 Parrainage",
+      message: "Idriss (Niger) a gagné 500 FCFA via parrainage",
+      delay: 13000
+    }
+  ];
+
+  // ========== LANCER LES NOTIFICATIONS UNE PAR UNE ==========
+  function startNotifications() {
+    notifications.forEach((notif, index) => {
+      setTimeout(() => {
+        showToast(notif.title, notif.message, 4000);
+      }, notif.delay);
+    });
+  }
+
+  // ========== RÉCUPÉRATION DU NOM UTILISATEUR ==========
+  async function getUserNameFromFirebase(uid) {
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        if (data.prenom && data.nom) {
+          return `${data.prenom} ${data.nom}`;
+        } else if (data.prenom) {
+          return data.prenom;
+        } else if (data.nom) {
+          return data.nom;
+        } else if (data.fullName) {
+          return data.fullName;
+        } else {
+          return "Membre";
+        }
+      }
+    } catch (error) {
+      console.error("Erreur chargement utilisateur:", error);
+    }
+    return "Membre";
+  }
+
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  async function displayWelcomeMessage() {
+    try {
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      
+      if (savedUid) {
+        const userName = await getUserNameFromFirebase(savedUid);
+        document.getElementById('welcomeTitle').innerHTML = `Bienvenue, ${userName}`;
+      } else {
+        const urlName = getQueryParam('name');
+        if (urlName) {
+          document.getElementById('welcomeTitle').innerHTML = `Bienvenue, ${urlName}`;
+        } else {
+          document.getElementById('welcomeTitle').innerHTML = `Bienvenue, Membre`;
+        }
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      document.getElementById('welcomeTitle').innerHTML = `Bienvenue, Membre`;
+    }
+  }
+
+  // ========== WHATSAPP ==========
+  document.getElementById('whatsappBtn').addEventListener('click', () => {
+    const message = `Bonjour EarnZone, je viens de m'inscrire et j'aimerais avoir plus d'informations.`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  });
+
+    // ========== CHECKBOX & REDIRECTION ==========
+  const checkbox = document.getElementById('acceptConditions');
+  const continueBtn = document.getElementById('continueBtn');
+
+  checkbox.addEventListener('change', () => {
+    continueBtn.disabled = !checkbox.checked;
+  });
+
+  continueBtn.addEventListener('click', () => {
+    if (checkbox.checked) {
+      window.location.href = 'index.html';
+    }
+  });
+
+  // ========== AUTHENTIFICATION ==========
+  let authChecked = false;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      localStorage.setItem('earnzone_current_user', user.uid);
+      await displayWelcomeMessage();
+      
+      // Lancer les notifications après 2 secondes (le temps que l'utilisateur lise le message)
+      setTimeout(() => {
+        startNotifications();
+      }, 2000);
+      
+    } else {
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid && !authChecked) {
+        setTimeout(async () => {
+          const restoredUser = auth.currentUser;
+          if (!restoredUser) {
+            window.location.href = 'login.html';
+          } else {
+            await displayWelcomeMessage();
+            setTimeout(() => {
+              startNotifications();
+            }, 2000);
+          }
+        }, 1500);
+      } else if (!authChecked) {
+        window.location.href = 'login.html';
+      }
+    }
+    authChecked = true;
+  });
+</script>
+
+</body>
+</html>

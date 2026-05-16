@@ -21,6 +21,7 @@
       --card-border: rgba(183, 110, 255, 0.08);
       --success: #2EE89A;
       --danger: #FF4D6D;
+      --warning: #FFD166;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       --glass-bg: rgba(183, 110, 255, 0.04);
     }
@@ -101,6 +102,10 @@
       background: var(--glass-bg);
       border: 1px solid rgba(183, 110, 255, 0.07);
     }
+    .login-link:active {
+      background: rgba(183, 110, 255, 0.1);
+      transform: scale(0.98);
+    }
 
     .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 60px; }
 
@@ -124,7 +129,7 @@
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
     .form-group label i { color: var(--primary); margin-right: 6px; }
-    .form-group input {
+    .form-group input, .form-group select {
       width: 100%;
       padding: 14px 16px;
       background: rgba(20, 20, 35, 0.8);
@@ -135,7 +140,7 @@
       font-family: 'Inter', sans-serif;
       transition: var(--transition);
     }
-    .form-group input:focus {
+    .form-group input:focus, .form-group select:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(183, 110, 255, 0.2);
@@ -145,78 +150,50 @@
     .row-2cols .form-group { flex: 1; }
 
     .phone-wrapper { display: flex; gap: 12px; align-items: center; }
-    .phone-prefix { width: 80px; flex-shrink: 0; }
+    .phone-prefix { width: 90px; flex-shrink: 0; }
     .phone-number { flex: 1; }
 
-    /* ========================= */
-    /* SELECTEUR PAYS PERSONNALISÉ */
-    /* ========================= */
-
+    /* Sélecteur pays personnalisé */
     .country-selector {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: rgba(20, 20, 35, 0.8);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
+      border-radius: 12px;
       cursor: pointer;
       transition: var(--transition);
     }
-
     .country-selector:active {
       transform: scale(0.98);
       border-color: var(--primary);
     }
-
     .country-selector-display {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
+    .country-selector-display span:first-child { font-size: 22px; }
+    .country-selector-display span:last-child { font-size: 14px; font-weight: 500; color: var(--text-light); }
+    .country-selector i { color: var(--primary-light); font-size: 12px; }
 
-    .country-selector-display span:first-child {
-      font-size: 20px;
-    }
-
-    .country-selector-display span:last-child {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-light);
-    }
-
-    .country-selector i {
-      color: var(--primary-light);
-      font-size: 11px;
-    }
-
-    /* ========================= */
-    /* MODALE PAYS */
-    /* ========================= */
-
+    /* Modale pays */
     .country-modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(3, 3, 5, 0.96);
       backdrop-filter: blur(16px);
       z-index: 2000;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
-
-    .country-modal-overlay.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
+    .country-modal-overlay.show { opacity: 1; visibility: visible; }
     .country-modal {
       background: var(--card-bg);
       backdrop-filter: blur(20px);
@@ -227,13 +204,9 @@
       max-height: 80vh;
       overflow: hidden;
       transform: scale(0.9);
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.3s;
     }
-
-    .country-modal-overlay.show .country-modal {
-      transform: scale(1);
-    }
-
+    .country-modal-overlay.show .country-modal { transform: scale(1); }
     .country-modal-header {
       padding: 18px 20px;
       border-bottom: 1px solid rgba(183, 110, 255, 0.1);
@@ -241,18 +214,9 @@
       justify-content: space-between;
       align-items: center;
     }
-
-    .country-modal-header h3 {
-      font-size: 18px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
+    .country-modal-header h3 { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .country-modal-close {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       background: rgba(183, 110, 255, 0.1);
       border: 1px solid rgba(183, 110, 255, 0.15);
       border-radius: 12px;
@@ -263,17 +227,8 @@
       transition: var(--transition);
       color: var(--text-dim);
     }
-
-    .country-modal-close:active {
-      background: rgba(183, 110, 255, 0.2);
-      transform: scale(0.95);
-    }
-
-    .country-modal-search {
-      padding: 12px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
+    .country-modal-close:active { background: rgba(183, 110, 255, 0.2); transform: scale(0.95); }
+    .country-modal-search { padding: 12px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
     .country-modal-search input {
       width: 100%;
       padding: 12px 16px;
@@ -282,75 +237,24 @@
       border-radius: 14px;
       color: var(--text-light);
       font-size: 13px;
-      font-family: 'Inter', sans-serif;
     }
-
-    .country-modal-search input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .country-modal-list {
-      padding: 12px 8px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
+    .country-modal-search input:focus { outline: none; border-color: var(--primary); }
+    .country-modal-list { padding: 12px 8px; max-height: 400px; overflow-y: auto; }
     .country-option {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-radius: 16px;
       cursor: pointer;
       transition: var(--transition);
       margin-bottom: 4px;
     }
-
-    .country-option:active {
-      background: rgba(183, 110, 255, 0.1);
-      transform: scale(0.98);
-    }
-
-    .country-option.selected {
-      background: rgba(183, 110, 255, 0.15);
-      border: 1px solid rgba(183, 110, 255, 0.25);
-    }
-
-    .country-option-flag {
-      font-size: 24px;
-    }
-
-    .country-option-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-light);
-    }
-
-    .country-option-code {
-      margin-left: auto;
-      font-size: 12px;
-      color: var(--primary-light);
-      font-family: monospace;
-    }
-
-    .country-modal-list::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .country-modal-list::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-
-    .country-modal-list::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 10px;
-    }
-
-    /* ========================= */
-    /* INDICATIF TELEPHONE */
-    /* ========================= */
+    .country-option:active { background: rgba(183, 110, 255, 0.1); transform: scale(0.98); }
+    .country-option.selected { background: rgba(183, 110, 255, 0.15); border: 1px solid rgba(183, 110, 255, 0.25); }
+    .country-option-flag { font-size: 24px; }
+    .country-option-name { font-size: 14px; font-weight: 500; color: var(--text-light); }
+    .country-option-code { margin-left: auto; font-size: 12px; color: var(--primary-light); font-family: monospace; }
 
     .indicatif-select {
       width: 100%;
@@ -360,46 +264,50 @@
       border-radius: 14px;
       font-size: 14px;
       color: var(--text-light);
-      font-family: 'Inter', sans-serif;
-      transition: var(--transition);
       cursor: pointer;
       appearance: none;
-      -webkit-appearance: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B76EFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
       background-repeat: no-repeat;
       background-position: right 12px center;
       background-size: 14px;
     }
 
-    .indicatif-select:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
     .referral-code-group {
       background: rgba(183, 110, 255, 0.05);
       border: 1px solid rgba(183, 110, 255, 0.15);
       border-radius: 16px;
-      padding: 8px 12px;
+      padding: 8px 1px;
       margin-bottom: 20px;
     }
     .referral-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--primary-light);
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
+    .referral-input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: var(--text-light);
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    .referral-input:focus { outline: none; border-color: var(--primary); }
     .referral-info {
-      font-size: 10px;
-      color: var(--success);
-      margin-top: 5px;
+      margin-top: 8px;
+      font-size: 11px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
-    .referral-info i { font-size: 10px; }
+    .referral-info.valid { color: var(--success); }
+    .referral-info.invalid { color: var(--warning); }
+    .referral-info i { font-size: 11px; }
 
     .btn-register {
       width: 100%;
@@ -432,35 +340,24 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error-message {
-      background: rgba(255, 77, 109, 0.15);
-      border: 1px solid rgba(255, 77, 109, 0.3);
+    .message-banner {
       border-radius: 14px;
       padding: 12px 16px;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
-      color: var(--danger);
       font-size: 13px;
+      animation: fadeIn 0.3s ease;
     }
-    .success-message {
-      background: rgba(46, 232, 154, 0.15);
-      border: 1px solid rgba(46, 232, 154, 0.3);
-      border-radius: 14px;
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--success);
-      font-size: 13px;
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .message-banner.error { background: rgba(255, 77, 109, 0.15); border: 1px solid rgba(255, 77, 109, 0.3); color: var(--danger); }
+    .message-banner.success { background: rgba(46, 232, 154, 0.15); border: 1px solid rgba(46, 232, 154, 0.3); color: var(--success); }
+    .message-banner.warning { background: rgba(255, 209, 102, 0.15); border: 1px solid rgba(255, 209, 102, 0.3); color: var(--warning); }
     .hidden { display: none; }
 
     .login-redirect { text-align: center; margin-top: 24px; color: var(--text-dim); font-size: 13px; }
     .login-redirect a { color: var(--primary); text-decoration: none; font-weight: 600; }
-
     .footer { text-align: center; padding: 20px; border-top: 1px solid rgba(183, 110, 255, 0.06); margin-top: 20px; }
     .footer p { color: var(--text-dim); font-size: 11px; }
   </style>
@@ -483,47 +380,43 @@
       <p>Rejoignez EarnZone et commencez à investir</p>
     </div>
 
-    <div id="errorMessage" class="error-message hidden">
-      <i class="fas fa-exclamation-circle"></i>
-      <span id="errorText"></span>
-    </div>
-    <div id="successMessage" class="success-message hidden">
-      <i class="fas fa-check-circle"></i>
-      <span>Compte créé avec succès ! Redirection...</span>
+    <div id="messageBanner" class="message-banner hidden">
+      <i id="messageIcon" class="fas fa-info-circle"></i>
+      <span id="messageText"></span>
     </div>
 
     <form id="registerForm">
       <div class="row-2cols">
         <div class="form-group">
           <label><i class="fas fa-user"></i> Nom</label>
-          <input type="text" id="nom" placeholder="Votre nom" required>
+          <input type="text" id="nom" placeholder="Votre nom" autocomplete="off">
         </div>
         <div class="form-group">
           <label><i class="fas fa-user"></i> Prénom</label>
-          <input type="text" id="prenom" placeholder="Votre prénom" required>
+          <input type="text" id="prenom" placeholder="Votre prénom" autocomplete="off">
         </div>
       </div>
 
-      <!-- SELECTEUR PAYS PERSONNALISE -->
+      <!-- Sélecteur pays -->
       <div class="form-group">
         <label><i class="fas fa-globe-africa"></i> Pays</label>
-        <div class="country-selector" id="countrySelector" onclick="openCountryModal()">
+        <div class="country-selector" id="countrySelector">
           <div class="country-selector-display">
             <span id="selectedCountryFlag">🇳🇪</span>
             <span id="selectedCountryName">Niger</span>
           </div>
           <i class="fas fa-chevron-down"></i>
         </div>
-        <input type="hidden" id="pays" value="Niger" required>
+        <input type="hidden" id="pays" value="Niger">
       </div>
 
       <div class="form-group">
         <label><i class="fas fa-phone-alt"></i> Téléphone</label>
         <div class="phone-wrapper">
           <div class="phone-prefix">
-            <select id="indicatif" class="indicatif-select" required>
-              <option value="+227">+227</option>
-              <option value="+229">+229</option>
+            <select id="indicatif" class="indicatif-select">
+              <option value="+227">+227 (Niger)</option>
+              <option value="+229">+229 </option>
               <option value="+223">+223</option>
               <option value="+226">+226</option>
               <option value="+221">+221</option>
@@ -537,33 +430,35 @@
             </select>
           </div>
           <div class="phone-number">
-            <input type="tel" id="telephone" placeholder="Numéro (ex: 90123456)" required>
+            <input type="tel" id="telephone" placeholder="Numéro (ex: 90123456)" autocomplete="off">
           </div>
         </div>
       </div>
 
       <div class="form-group">
         <label><i class="fas fa-envelope"></i> Email</label>
-        <input type="email" id="email" placeholder="exemple@email.com" required>
+        <input type="email" id="email" placeholder="exemple@email.com" autocomplete="off">
       </div>
 
       <div class="form-group">
         <label><i class="fas fa-lock"></i> Mot de passe</label>
-        <input type="password" id="password" placeholder="Minimum 6 caractères" required>
+        <input type="password" id="password" placeholder="Minimum 6 caractères">
       </div>
 
       <div class="form-group">
         <label><i class="fas fa-lock"></i> Confirmer le mot de passe</label>
-        <input type="password" id="confirmPassword" placeholder="Répétez le mot de passe" required>
+        <input type="password" id="confirmPassword" placeholder="Répétez le mot de passe">
       </div>
 
+      <!-- Code parrainage avec vérification en temps réel -->
       <div class="referral-code-group">
         <div class="referral-label">
           <i class="fas fa-gift"></i> Code de parrainage (optionnel)
         </div>
-        <input type="text" id="referralCode" placeholder="Code de votre parrain" style="background: rgba(20,20,35,0.8); border: none; color: white; width: 100%;">
-        <div class="referral-info" id="referralInfo" style="display: none;">
-          <i class="fas fa-check-circle"></i> <span id="referralMessage"></span>
+        <input type="text" id="referralCode" class="referral-input" placeholder="Code de votre parrain" autocomplete="off">
+        <div id="referralInfo" class="referral-info" style="display: none;">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span id="referralMessage">Vérification...</span>
         </div>
       </div>
 
@@ -587,7 +482,7 @@
   <div class="country-modal">
     <div class="country-modal-header">
       <h3><i class="fas fa-globe-africa"></i> Sélectionnez votre pays</h3>
-      <div class="country-modal-close" onclick="closeCountryModal()">
+      <div class="country-modal-close" id="closeCountryModalBtn">
         <i class="fas fa-times"></i>
       </div>
     </div>
@@ -609,10 +504,11 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "firebase/app";
-  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
-  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+  // ========== CONFIGURATION ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -629,285 +525,309 @@
 
   // ========== LISTE DES PAYS ==========
   const countries = [
-    { name: "Niger", flag: "🇳🇪", code: "+227" },
-    { name: "Bénin", flag: "🇧🇯", code: "+229" },
-    { name: "Mali", flag: "🇲🇱", code: "+223" },
-    { name: "Burkina Faso", flag: "🇧🇫", code: "+226" },
-    { name: "Sénégal", flag: "🇸🇳", code: "+221" },
-    { name: "Côte d'Ivoire", flag: "🇨🇮", code: "+225" },
-    { name: "Togo", flag: "🇹🇬", code: "+228" },
-    { name: "Guinée", flag: "🇬🇳", code: "+224" },
-     { name: "Ghana", flag: "🇬🇭", code: "+233" },
-    { name: "Cameroun", flag: "🇨🇲", code: "+237" },
-    { name: "Nigéria", flag: "🇳🇬", code: "+234" },
-    { name: "Tchad", flag: "🇹🇩", code: "+235" }
+    { name: "Niger", flag: "🇳🇪", code: "+227", phoneDigits: [8] },
+    { name: "Bénin", flag: "🇧🇯", code: "+229", phoneDigits: [8] },
+    { name: "Mali", flag: "🇲🇱", code: "+223", phoneDigits: [8] },
+    { name: "Burkina Faso", flag: "🇧🇫", code: "+226", phoneDigits: [8] },
+    { name: "Sénégal", flag: "🇸🇳", code: "+221", phoneDigits: [9] },
+    { name: "Côte d'Ivoire", flag: "🇨🇮", code: "+225", phoneDigits: [8, 10] },
+    { name: "Togo", flag: "🇹🇬", code: "+228", phoneDigits: [8] },
+    { name: "Guinée", flag: "🇬🇳", code: "+224", phoneDigits: [8, 9] },
+    { name: "Ghana", flag: "🇬🇭", code: "+233", phoneDigits: [9, 10] },
+    { name: "Cameroun", flag: "🇨🇲", code: "+237", phoneDigits: [9] },
+    { name: "Nigéria", flag: "🇳🇬", code: "+234", phoneDigits: [10] },
+    { name: "Tchad", flag: "🇹🇩", code: "+235", phoneDigits: [8] }
   ];
 
-  let selectedCountry = "Niger";
+    let selectedCountry = "Niger";
   let selectedFlag = "🇳🇪";
+  let selectedPhoneDigits = [8];
+  let referralCheckStatus = { valid: false, parrainId: null, checked: false };
+
+  // ========== AFFICHAGE MESSAGE ==========
+  function showMessage(text, type = 'error') {
+    const banner = document.getElementById('messageBanner');
+    const icon = document.getElementById('messageIcon');
+    const msgSpan = document.getElementById('messageText');
+    
+    if (type === 'error') {
+      icon.className = 'fas fa-exclamation-circle';
+      banner.className = 'message-banner error';
+    } else if (type === 'success') {
+      icon.className = 'fas fa-check-circle';
+      banner.className = 'message-banner success';
+    } else {
+      icon.className = 'fas fa-info-circle';
+      banner.className = 'message-banner warning';
+    }
+    
+    msgSpan.innerText = text;
+    banner.classList.remove('hidden');
+    
+    setTimeout(() => {
+      banner.classList.add('hidden');
+    }, 4000);
+  }
+
+  // ========== VALIDATION TÉLÉPHONE PAR PAYS ==========
+  function validatePhone(phone, digitsArray) {
+    const cleanPhone = phone.replace(/\D/g, '');
+    return digitsArray.some(digits => cleanPhone.length === digits);
+  }
+
+  // ========== VÉRIFICATION CODE PARRAINAGE EN TEMPS RÉEL ==========
+  async function checkReferralCode(code) {
+    const referralInfoDiv = document.getElementById('referralInfo');
+    const messageSpan = document.getElementById('referralMessage');
+    
+    if (!code || code.length < 4) {
+      referralInfoDiv.style.display = 'none';
+      referralCheckStatus = { valid: false, parrainId: null, checked: false };
+      return null;
+    }
+    
+    referralInfoDiv.style.display = 'flex';
+    messageSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Vérification...';
+    referralInfoDiv.className = 'referral-info';
+    
+    try {
+      const normalizedCode = code.trim().toUpperCase();
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("referralCode", "==", normalizedCode));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        const parrainId = querySnapshot.docs[0].id;
+        messageSpan.innerHTML = '<i class="fas fa-check-circle"></i> ✅ Code valide ! Vous recevrez 500 FCFA après votre inscription.';
+        referralInfoDiv.className = 'referral-info valid';
+        referralCheckStatus = { valid: true, parrainId: parrainId, checked: true };
+        return parrainId;
+      } else {
+        messageSpan.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ⚠️ Code invalide. Vous pouvez vous inscrire sans parrain.';
+        referralInfoDiv.className = 'referral-info invalid';
+        referralCheckStatus = { valid: false, parrainId: null, checked: true };
+        return null;
+      }
+    } catch (error) {
+      console.error("Erreur vérification:", error);
+      messageSpan.innerHTML = '<i class="fas fa-exclamation-circle"></i> Erreur de vérification';
+      referralInfoDiv.className = 'referral-info invalid';
+      referralCheckStatus = { valid: false, parrainId: null, checked: true };
+      return null;
+    }
+  }
+
+  // ========== GÉNÉRATION CODE PARRAINAGE UNIQUE ==========
+  async function generateUniqueReferralCode(uid, prenom, nom) {
+    const base = (prenom.substring(0, 3) + nom.substring(0, 3) + uid.substring(0, 4)).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    let code = base.length >= 4 ? base.substring(0, 8) : base + uid.substring(0, 4);
+    if (code.length < 4) code = code + Math.random().toString(36).substring(2, 6).toUpperCase();
+    
+    // Vérifier unicité
+    let isUnique = false;
+    let attempts = 0;
+    let finalCode = code;
+    
+    while (!isUnique && attempts < 5) {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("referralCode", "==", finalCode));
+      const snapshot = await getDocs(q);
+      
+      if (snapshot.empty) {
+        isUnique = true;
+      } else {
+        finalCode = code + Math.random().toString(36).substring(2, 5).toUpperCase();
+        attempts++;
+      }
+    }
+    return finalCode;
+  }
+
+  // ========== CRÉDITER LE PARRAIN ==========
+  async function creditReferralReward(parrainUid) {
+    if (!parrainUid) return false;
+    try {
+      const parrainRef = doc(db, "users", parrainUid);
+      const parrainDoc = await getDoc(parrainRef);
+      if (!parrainDoc.exists()) return false;
+      
+      const anciennesDonnees = parrainDoc.data();
+      await updateDoc(parrainRef, {
+        balance: (anciennesDonnees.balance || 0) + 500,
+        referralBalance: (anciennesDonnees.referralBalance || 0) + 500,
+        referralsCount: (anciennesDonnees.referralsCount || 0) + 1,
+        referralEarnings: (anciennesDonnees.referralEarnings || 0) + 500,
+        lastReferral: new Date().toISOString()
+      });
+      return true;
+    } catch (error) {
+      console.error("❌ Erreur crédit parrain:", error);
+      return false;
+    }
+  }
 
   // ========== MODALE PAYS ==========
   function renderCountryList(filter = "") {
     const container = document.getElementById('countryList');
-    const filtered = countries.filter(c => 
-      c.name.toLowerCase().includes(filter.toLowerCase())
-    );
+    const filtered = countries.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
     
     container.innerHTML = filtered.map(c => `
       <div class="country-option ${c.name === selectedCountry ? 'selected' : ''}" 
-           data-name="${c.name}" 
-           data-flag="${c.flag}" 
-           data-code="${c.code}"
-           onclick="selectCountry('${c.name}', '${c.flag}', '${c.code}')">
+           data-name="${c.name}" data-flag="${c.flag}" data-code="${c.code}" data-digits="${c.phoneDigits.join(',')}">
         <span class="country-option-flag">${c.flag}</span>
         <span class="country-option-name">${c.name}</span>
         <span class="country-option-code">${c.code}</span>
       </div>
     `).join('');
+    
+    document.querySelectorAll('.country-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const name = opt.dataset.name;
+        const flag = opt.dataset.flag;
+        const code = opt.dataset.code;
+        const digits = opt.dataset.digits.split(',').map(Number);
+        selectCountry(name, flag, code, digits);
+      });
+    });
   }
 
-  window.openCountryModal = function() {
-    document.getElementById('countryModal').classList.add('show');
-    document.getElementById('countrySearch').value = '';
-    renderCountryList();
-  }
-
-  window.closeCountryModal = function() {
-    document.getElementById('countryModal').classList.remove('show');
-  }
-
-  window.selectCountry = function(name, flag, code) {
+  function selectCountry(name, flag, code, digits) {
     selectedCountry = name;
     selectedFlag = flag;
+    selectedPhoneDigits = digits;
     
     document.getElementById('selectedCountryFlag').innerHTML = flag;
     document.getElementById('selectedCountryName').innerHTML = name;
     document.getElementById('pays').value = name;
     
     const indicatifSelect = document.getElementById('indicatif');
-    if (indicatifSelect && code) {
-      for(let i = 0; i < indicatifSelect.options.length; i++) {
-        if(indicatifSelect.options[i].value === code) {
-          indicatifSelect.selectedIndex = i;
-          break;
-        }
+    for (let i = 0; i < indicatifSelect.options.length; i++) {
+      if (indicatifSelect.options[i].value === code) {
+        indicatifSelect.selectedIndex = i;
+        break;
       }
     }
-    
     closeCountryModal();
   }
 
-  document.getElementById('countrySearch')?.addEventListener('input', (e) => {
-    renderCountryList(e.target.value);
-  });
+  function openCountryModal() {
+    document.getElementById('countryModal').classList.add('show');
+    document.getElementById('countrySearch').value = '';
+    renderCountryList();
+  }
+  
+  function closeCountryModal() {
+    document.getElementById('countryModal').classList.remove('show');
+  }
 
-  document.getElementById('countryModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'countryModal') closeCountryModal();
-  });
-
-  // ========== DOM ELEMENTS ==========
-  const registerForm = document.getElementById('registerForm');
-  const errorMessageDiv = document.getElementById('errorMessage');
-  const errorTextSpan = document.getElementById('errorText');
-  const successMessageDiv = document.getElementById('successMessage');
-  const registerBtn = document.getElementById('registerBtn');
-  const referralCodeInput = document.getElementById('referralCode');
-  const referralMessageDiv = document.getElementById('referralMessage');
-  const referralInfoDiv = document.getElementById('referralInfo');
-  const paysSelect = document.getElementById('pays');
+  // ========== INITIALISATION UI ==========
+  const countrySelector = document.getElementById('countrySelector');
+  const closeModalBtn = document.getElementById('closeCountryModalBtn');
+  const countrySearch = document.getElementById('countrySearch');
+  const modalOverlay = document.getElementById('countryModal');
+  
+  countrySelector.addEventListener('click', openCountryModal);
+  closeModalBtn.addEventListener('click', closeCountryModal);
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeCountryModal(); });
+  if (countrySearch) {
+    countrySearch.addEventListener('input', (e) => renderCountryList(e.target.value));
+  }
+  
+  // Synchronisation indicatif/pays
   const indicatifSelect = document.getElementById('indicatif');
+  indicatifSelect.addEventListener('change', (e) => {
+    const selectedCode = e.target.value;
+    const country = countries.find(c => c.code === selectedCode);
+    if (country) {
+      selectCountry(country.name, country.flag, country.code, country.phoneDigits);
+    }
+  });
 
-  // ========== URL PARAM (CODE PARRAINAGE) ==========
+  // Vérification code parrainage en temps réel
+  const referralCodeInput = document.getElementById('referralCode');
+  let debounceTimer;
+  referralCodeInput.addEventListener('input', (e) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      checkReferralCode(e.target.value);
+    }, 500);
+  });
+
+  // Récupération code depuis URL
   const urlParams = new URLSearchParams(window.location.search);
   const refCode = urlParams.get('ref');
-  if (refCode && referralCodeInput) {
+  if (refCode) {
     referralCodeInput.value = refCode;
-    checkReferralCode(refCode);
+    setTimeout(() => checkReferralCode(refCode), 300);
   }
 
-  // ========== VÉRIFIER CODE PARRAINAGE ==========
-  async function checkReferralCode(code) {
-    if (!code || code.length < 4) return false;
-    try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("referralCode", "==", code));
-      const querySnapshot = await getDocs(q);
-      
-      if (!querySnapshot.empty) {
-        if (referralMessageDiv && referralInfoDiv) {
-          referralMessageDiv.innerHTML = `✅ Code valide ! Votre parrain recevra 500 FCFA après votre inscription.`;
-          referralInfoDiv.style.display = 'flex';
-        }
-        return querySnapshot.docs[0].id;
-      } else {
-        if (referralMessageDiv && referralInfoDiv) {
-          referralMessageDiv.innerHTML = `⚠️ Code invalide. Vous pouvez vous inscrire sans parrain.`;
-          referralInfoDiv.style.display = 'flex';
-        }
-        return null;
-      }
-    } catch (error) {
-      console.error("Erreur vérification code:", error);
-      return null;
-    }
-  }
+  // ========== FORMULAIRE INSCRIPTION ==========
+  const registerForm = document.getElementById('registerForm');
+  const registerBtn = document.getElementById('registerBtn');
 
-  if (referralCodeInput) {
-    referralCodeInput.addEventListener('input', (e) => {
-      if (e.target.value.length >= 4) {
-        checkReferralCode(e.target.value);
-      } else if (referralInfoDiv) {
-        referralInfoDiv.style.display = 'none';
-      }
-    });
-  }
-
-  // ========== GÉNÉRATION CODE PARRAINAGE ==========
-  function generateReferralCode(prenom, nom) {
-    const prefix = (prenom.substring(0, 3) + nom.substring(0, 3)).toUpperCase();
-    const cleanPrefix = prefix.replace(/[^A-Z0-9]/g, '');
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-    let code = cleanPrefix + random;
-    if (code.length < 4) code = code + Math.random().toString(36).substring(2, 6).toUpperCase();
-    return code.substring(0, 12);
-  }
-
-  // ========== CRÉDITER LE PARRAIN ==========
-  async function creditReferralReward(parrainUid) {
-    console.log("🔍 [CREDIT] Début - parrain UID:", parrainUid);
-    
-    if (!parrainUid) {
-      console.error("❌ [CREDIT] Pas d'UID");
-      return false;
-    }
-    
-    try {
-      const parrainRef = doc(db, "users", parrainUid);
-      const parrainDoc = await getDoc(parrainRef);
-      
-      if (!parrainDoc.exists()) {
-        console.error("❌ [CREDIT] Document parrain inexistant");
-        return false;
-      }
-      
-      const anciennesDonnees = parrainDoc.data();
-      console.log("📊 [CREDIT] Anciennes données:", {
-        balance: anciennesDonnees.balance,
-        referralBalance: anciennesDonnees.referralBalance,
-        referralsCount: anciennesDonnees.referralsCount
-      });
-      
-      const miseAJour = {
-        balance: (anciennesDonnees.balance || 0) + 500,
-        referralBalance: (anciennesDonnees.referralBalance || 0) + 500,
-        referralsCount: (anciennesDonnees.referralsCount || 0) + 1,
-        referralEarnings: (anciennesDonnees.referralEarnings || 0) + 500,
-        lastReferral: new Date().toISOString()
-      };
-      
-      await updateDoc(parrainRef, miseAJour);
-      
-      console.log("✅ [CREDIT] Mise à jour réussie !");
-      console.log("📊 [CREDIT] Nouvelles valeurs:", miseAJour);
-      
-      return true;
-      
-    } catch (error) {
-      console.error("❌ [CREDIT] Erreur complète:", error);
-      return false;
-    }
-  }
-
-  // ========== VALIDATIONS ==========
-  function showError(message) {
-    errorTextSpan.textContent = message;
-    errorMessageDiv.classList.remove('hidden');
-    successMessageDiv.classList.add('hidden');
-    setTimeout(() => errorMessageDiv.classList.add('hidden'), 4000);
-  }
-
-  function showSuccess() {
-    successMessageDiv.classList.remove('hidden');
-    errorMessageDiv.classList.add('hidden');
-  }
-
-  function validateEmail(email) {
-    return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
-  }
-
-  function validatePhone(phone) {
-    return /^[0-9]{6,10}$/.test(phone);
-  }
-
-  // ========== FORMULAIRE ==========
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
+    
     const nom = document.getElementById('nom').value.trim();
     const prenom = document.getElementById('prenom').value.trim();
     const pays = document.getElementById('pays').value;
-    const indicatif = document.getElementById('indicatif').value || '+227';
+    const indicatif = document.getElementById('indicatif').value;
     const telephone = document.getElementById('telephone').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const referralCode = document.getElementById('referralCode')?.value.trim();
-
+    const referralCode = document.getElementById('referralCode').value.trim().toUpperCase();
+    
+    // Validations
     if (!nom || !prenom || !pays || !telephone || !email || !password) {
-      showError('Tous les champs sont obligatoires.');
+      showMessage('Tous les champs sont obligatoires.', 'error');
       return;
     }
     if (nom.length < 2 || prenom.length < 2) {
-      showError('Le nom et prénom doivent contenir au moins 2 caractères.');
+      showMessage('Le nom et prénom doivent contenir au moins 2 caractères.', 'error');
       return;
     }
-    if (!validatePhone(telephone)) {
-      showError('Numéro de téléphone invalide (6 à 10 chiffres).');
+    if (!validatePhone(telephone, selectedPhoneDigits)) {
+      const digitsText = selectedPhoneDigits.join(' ou ');
+      showMessage(`Numéro invalide pour ${selectedCountry}. Il doit contenir ${digitsText} chiffres.`, 'error');
       return;
     }
-    if (!validateEmail(email)) {
-      showError('Email invalide.');
+    if (!email.includes('@') || !email.includes('.')) {
+      showMessage('Email invalide.', 'error');
       return;
     }
     if (password.length < 6) {
-      showError('Le mot de passe doit contenir au moins 6 caractères.');
+      showMessage('Le mot de passe doit contenir au moins 6 caractères.', 'error');
       return;
     }
     if (password !== confirmPassword) {
-      showError('Les mots de passe ne correspondent pas.');
+      showMessage('Les mots de passe ne correspondent pas.', 'error');
       return;
     }
-
+    
+    // Vérification code parrainage (non bloquante)
+    let parrainId = null;
+    if (referralCode && referralCode.length >= 4) {
+      parrainId = await checkReferralCode(referralCode);
+      if (!parrainId) {
+        showMessage(`⚠️ Le code "${referralCode}" est invalide. Vous pouvez continuer sans parrain.`, 'warning');
+      }
+    }
+    
+    // Désactiver bouton
     registerBtn.disabled = true;
     registerBtn.innerHTML = '<span class="loader"></span> Inscription en cours...';
-
+    
     try {
-      let parrainUid = null;
-      
-      if (referralCode && referralCode.length >= 4) {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("referralCode", "==", referralCode));
-        const querySnapshot = await getDocs(q);
-        
-        if (!querySnapshot.empty) {
-          parrainUid = querySnapshot.docs[0].id;
-          console.log("✅ Code parrainage valide, parrain trouvé:", parrainUid);
-        } else {
-          showError('Code de parrainage invalide.');
-          registerBtn.disabled = false;
-          registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> S\'inscrire';
-          return;
-        }
-      }
-
+      // Création compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log("✅ Utilisateur créé:", user.uid);
-
-      const generatedReferralCode = generateReferralCode(prenom, nom);
-      const now = new Date();
+      
+      // Génération code parrainage unique
+      const generatedReferralCode = await generateUniqueReferralCode(user.uid, prenom, nom);
       const fullPhone = `${indicatif} ${telephone}`;
-
+      const now = new Date().toISOString();
+      
       const userData = {
         uid: user.uid,
         email: email,
@@ -926,47 +846,38 @@
         hasDeposited: false,
         hasInvested: false,
         activeInvestmentsCount: 0,
-        registrationDate: now.toISOString(),
-        lastGainDate: now.toISOString(),
+        registrationDate: now,
+        lastGainDate: now,
         lastInvestment: null,
         lastWithdrawal: null,
         subscriptionEnd: null,
         investments: [],
         gainsHistory: [],
-        createdAt: now.toISOString(),
+        createdAt: now,
         referralCode: generatedReferralCode,
         referredBy: referralCode || null,
         referralsCount: 0,
         referralEarnings: 0,
         referralHistory: []
       };
-
+      
       await setDoc(doc(db, "users", user.uid), userData);
-      console.log("✅ Document utilisateur créé");
-      console.log("🔗 Code parrainage généré:", generatedReferralCode);
-
-      if (parrainUid) {
-        console.log("🎯 Parrain trouvé, crédit des 500 FCFA...");
-        const resultat = await creditReferralReward(parrainUid);
-        console.log("📊 Résultat crédit:", resultat ? "RÉUSSI ✅" : "ÉCHEC ❌");
-      } else {
-        console.log("ℹ️ Aucun code parrainage fourni");
-      }
-
       localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
       localStorage.setItem('earnzone_current_user', user.uid);
-
-      showSuccess();
-
-      const prenomValue = document.getElementById('prenom').value.trim();
-      const encodedName = encodeURIComponent(prenomValue);
-
+      
+      // Créditer le parrain si code valide
+      if (parrainId) {
+        await creditReferralReward(parrainId);
+      }
+      
+      showMessage('✅ Inscription réussie ! Redirection...', 'success');
+      
       setTimeout(() => {
-        window.location.href = `g.html?name=${encodedName}`;
+        window.location.href = 'index.html';
       }, 1500);
-
+      
     } catch (error) {
-      console.error("❌ ERREUR:", error);
+      console.error("❌ Erreur inscription:", error);
       
       let errorMsg = 'Erreur lors de l\'inscription.';
       switch (error.code) {
@@ -983,7 +894,7 @@
           errorMsg = error.message || 'Erreur lors de l\'inscription. Réessayez.';
       }
       
-      showError(errorMsg);
+      showMessage(errorMsg, 'error');
       registerBtn.disabled = false;
       registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> S\'inscrire';
     }

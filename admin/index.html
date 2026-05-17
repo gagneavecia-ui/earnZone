@@ -121,11 +121,13 @@
     .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
     .status-active { background: rgba(46,232,154,0.15); color: var(--success); }
     .status-blocked { background: rgba(255,77,109,0.15); color: var(--danger); }
+    .status-pending { background: rgba(255,209,102,0.15); color: var(--warning); }
     .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
     .action-btn { padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 4px; }
     .action-btn.block { background: rgba(255,209,102,0.15); color: var(--warning); }
     .action-btn.unblock { background: rgba(46,232,154,0.15); color: var(--success); }
     .action-btn.delete { background: rgba(255,77,109,0.15); color: var(--danger); }
+    .action-btn.activate { background: rgba(46,232,154,0.15); color: var(--success); }
     .action-btn.generate { background: rgba(183,110,255,0.15); color: var(--primary); padding: 10px; width: 100%; text-align: center; }
     .back-btn { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 30px; padding: 8px 16px; font-size: 12px; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; color: var(--text-light); display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; }
     .back-btn:active { border-color: var(--primary); color: var(--primary); transform: scale(0.97); }
@@ -153,7 +155,7 @@
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s; }
     .modal-overlay.show { opacity: 1; visibility: visible; }
-    .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); border: 1px solid var(--primary); border-radius: 20px; padding: 20px; width: 90%; max-width: 320px; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+    .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); border: 1px solid var(--primary); border-radius: 20px; padding: 20px; width: 90%; max-width: 400px; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s; }
     .modal.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
     .modal-buttons { display: flex; gap: 10px; margin-top: 16px; }
     .modal-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
@@ -162,6 +164,7 @@
     .notification { position: fixed; bottom: 20px; left: 16px; right: 16px; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); border: 1px solid var(--primary); border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; z-index: 1000; transform: translateY(200px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 400px; margin: 0 auto; }
     .notification.show { transform: translateY(0); }
     .footer { text-align: center; padding: 16px 0; margin-top: 16px; border-top: 1px solid rgba(183,110,255,0.06); }
+    .proof-img { max-width: 100%; max-height: 300px; border-radius: 12px; margin-top: 10px; }
     @media (max-width: 480px) {
       .container { padding: 16px 12px 70px; }
       .stat-value { font-size: 20px; }
@@ -218,6 +221,7 @@
 
   <div class="nav-bar">
     <button class="nav-btn active" id="btnUsers"><i class="fas fa-users"></i> Utilisateurs</button>
+    <button class="nav-btn" id="btnActivation"><i class="fas fa-user-check"></i> Activation</button>
     <button class="nav-btn" id="btnGenerate"><i class="fas fa-plus-circle"></i> Code</button>
     <button class="nav-btn" id="btnList"><i class="fas fa-list"></i> Dépôts</button>
     <button class="nav-btn" id="btnCodesList"><i class="fas fa-tags"></i> Codes</button>
@@ -228,7 +232,16 @@
       <div class="card-header"><i class="fas fa-users"></i><h2>Utilisateurs</h2></div>
       <div class="search-box"><input type="text" id="userSearch" class="search-input" placeholder="🔍 Rechercher par nom..."></div>
       <div class="table-container">
-        <table class="admin-table"><thead><tr><th>Nom</th><th>Téléphone</th><th>Solde</th></tr></thead><tbody id="usersTableBody"><tr><td colspan="3" class="empty-state">Chargement...</td></tr></tbody></table>
+        <table class="admin-table"><thead><th>Nom</th><th>Téléphone</th><th>Solde</th> </tr></thead><tbody id="usersTableBody"><td colspan="3" class="empty-state">Chargement...</td> </tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div id="activationSection" class="section">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-user-check"></i><h2>Demandes d'activation</h2></div>
+      <div class="table-container">
+        <table class="admin-table"><thead> <tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Méthode</th><th>Preuve</th><th>Actions</th></tr></thead><tbody id="activationTableBody"><tr><td colspan="6" class="empty-state">Chargement...</td></tr></tbody> </table>
       </div>
     </div>
   </div>
@@ -237,7 +250,7 @@
     <div class="card"><button class="back-btn" id="backToUsers"><i class="fas fa-arrow-left"></i> Retour</button><div id="userDetailContent"></div><div class="action-btns" style="margin-top: 16px; justify-content: center;" id="userDetailActions"></div></div>
   </div>
 
-  <div id="generateSection" class="section">
+    <div id="generateSection" class="section">
     <div class="card">
       <div class="card-header"><i class="fas fa-plus-circle"></i><h2>Générer un code</h2></div>
       <div class="form-group"><label class="form-label">Montant (FCFA)</label><select id="codeAmount" class="form-control"><option value="3000">3 000 FCFA</option><option value="5000">5 000 FCFA</option><option value="10000">10 000 FCFA</option><option value="15000">15 000 FCFA</option><option value="25000">25 000 FCFA</option></select></div>
@@ -249,7 +262,7 @@
   <div id="listSection" class="section">
     <div class="card">
       <div class="card-header"><i class="fas fa-history"></i><h2>Historique des dépôts</h2></div>
-      <div class="table-container"><table class="admin-table"><thead><tr><th>Utilisateur</th><th>Montant</th><th>Code</th><th>Date</th><th></th></tr></thead><tbody id="depositsTableBody"><tr><td colspan="5" class="empty-state">Chargement...</td></tr></tbody></table></div>
+      <div class="table-container"><table class="admin-table"><thead><tr><th>Utilisateur</th><th>Montant</th><th>Code</th><th>Date</th><th></th></tr></thead><tbody id="depositsTableBody"><tr><td colspan="5" class="empty-state">Chargement...</td></tr></tbody> </table></div>
     </div>
   </div>
 
@@ -263,6 +276,14 @@
 <div class="notification" id="notification"><div class="notification-icon"><i class="fas fa-bell"></i></div><div class="notification-content"><h4 id="notifTitle">Notification</h4><p id="notifMessage"></p></div></div>
 <div class="modal-overlay" id="modalOverlay"></div>
 <div class="modal" id="confirmModal"><div class="modal-header"><div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="modal-title">Confirmer</div></div><div class="modal-content" id="modalMessage"></div><div class="modal-buttons"><button class="modal-btn cancel" id="modalCancel">Annuler</button><button class="modal-btn confirm" id="modalConfirm">Confirmer</button></div></div>
+
+<!-- MODALE POUR VOIR LA PREUVE -->
+<div class="modal-overlay" id="proofModalOverlay"></div>
+<div class="modal" id="proofModal">
+  <div class="modal-header"><div class="modal-icon"><i class="fas fa-image"></i></div><div class="modal-title">Preuve de paiement</div></div>
+  <div class="modal-content" style="text-align:center;"><img id="proofImageModal" src="" alt="Preuve" style="max-width:100%; border-radius:12px;"></div>
+  <div class="modal-buttons"><button class="modal-btn confirm" id="closeProofModalBtn">Fermer</button></div>
+</div>
 
 <script type="importmap">
   {
@@ -292,15 +313,13 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Persistance locale
   setPersistence(auth, browserLocalPersistence);
 
-  // EMAIL ADMIN AUTORISÉ
   const ADMIN_EMAIL = "gagneavecia@gmail.com";
 
   let currentAdmin = null;
-  let unsubscribeUsers = null, unsubscribeDeposits = null, unsubscribeCodes = null;
-  let allUsers = [], allDeposits = [], allCodes = [];
+  let unsubscribeUsers = null, unsubscribeDeposits = null, unsubscribeCodes = null, unsubscribeActivations = null;
+  let allUsers = [], allDeposits = [], allCodes = [], allActivations = [];
   let currentDetailUserId = null;
 
   function formatCurrency(amount) { return (amount || 0).toLocaleString('fr-FR') + ' FCFA'; }
@@ -328,6 +347,24 @@
   document.getElementById('modalConfirm').onclick = () => { if (pendingConfirm) pendingConfirm(); closeModal(); };
   document.getElementById('modalCancel').onclick = closeModal;
   document.getElementById('modalOverlay').onclick = closeModal;
+
+  // Modale pour voir la preuve
+  function showProofModal(imageUrl) {
+    const modal = document.getElementById('proofModal');
+    const overlay = document.getElementById('proofModalOverlay');
+    const img = document.getElementById('proofImageModal');
+    img.src = imageUrl;
+    overlay.classList.add('show');
+    modal.classList.add('show');
+    document.getElementById('closeProofModalBtn').onclick = () => {
+      overlay.classList.remove('show');
+      modal.classList.remove('show');
+    };
+    overlay.onclick = () => {
+      overlay.classList.remove('show');
+      modal.classList.remove('show');
+    };
+  }
 
   async function logout() {
     await signOut(auth);
@@ -376,6 +413,105 @@
     if (fillEl) fillEl.setAttribute('d', linePath + ' L400,48 L0,48 Z');
   }
 
+  // ========== ACTIVATION DES COMPTES ==========
+  async function activateUser(userId, requestId, userEmail, userPhone, userName) {
+    const now = new Date();
+    const endDate = new Date(now.getTime() + 50 * 24 * 60 * 60 * 1000);
+    const expiryDate = endDate.toISOString().split('T')[0];
+    
+    // Créer l'investissement
+    const investment = {
+      id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+      userId: userId,
+      pack: "start",
+      packName: "Start",
+      amount: 3000,
+      dailyReturn: 200,
+      totalDays: 50,
+      currentDay: 1,
+      totalEarned: 0,
+      startDate: now.toISOString(),
+      endDate: endDate.toISOString(),
+      status: "active",
+      lastPayout: now.toISOString()
+    };
+    
+    await addDoc(collection(db, "investments"), investment);
+    
+    // Mettre à jour l'utilisateur
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    const existingInvestments = userDoc.exists() ? (userDoc.data().investments || []) : [];
+    
+    await updateDoc(userRef, {
+      status: "active",
+      hasDeposited: true,
+      hasInvested: true,
+      activeInvestmentsCount: 1,
+      subscriptionEnd: expiryDate,
+      investments: [...existingInvestments, investment],
+      activatedAt: now.toISOString()
+    });
+    
+    // Supprimer ou archiver la demande d'activation
+    if (requestId) {
+      await updateDoc(doc(db, "activation_requests", requestId), { status: "approved", approvedAt: now.toISOString(), approvedBy: currentAdmin?.uid });
+    }
+    
+    showNotification('Succès', `Compte de ${userName} activé avec Pack Start`);
+  }
+
+  function listenActivationRequests() {
+    if (unsubscribeActivations) unsubscribeActivations();
+    const q = query(collection(db, "activation_requests"), orderBy("submittedAt", "desc"));
+    unsubscribeActivations = onSnapshot(q, (snapshot) => {
+      allActivations = [];
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.status !== "approved") {
+          allActivations.push({ id: docSnap.id, ...data });
+        }
+      });
+      renderActivationTable();
+    });
+  }
+
+  function renderActivationTable() {
+    const tbody = document.getElementById('activationTableBody');
+    if (allActivations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune demande d\'activation</td></tr>';
+      return;
+    }
+    let html = '';
+    allActivations.forEach(req => {
+      html += `<tr>
+        <td>${req.fullName || '-'}</td>
+        <td>${req.email || '-'}</td>
+        <td>${req.phone || '-'}</td>
+        <td>${req.paymentMethod || '-'}</td>
+        <td><button class="action-btn activate" onclick="window.showProofModal('${req.proofImage || ''}')"><i class="fas fa-eye"></i>preuve</button></td>
+        <td><button class="action-btn activate" data-reqid="${req.id}" data-userid="${req.userId}" data-email="${req.email}" data-phone="${req.phone}" data-name="${req.fullName}"><i class="fas fa-check-circle"></i> ACTIVER</button></td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+    
+    // Attacher les événements d'activation
+    document.querySelectorAll('[data-reqid]').forEach(btn => {
+      btn.onclick = () => {
+        const reqId = btn.getAttribute('data-reqid');
+        const userId = btn.getAttribute('data-userid');
+        const email = btn.getAttribute('data-email');
+        const phone = btn.getAttribute('data-phone');
+        const name = btn.getAttribute('data-name');
+        openModal(`Activer le compte de ${name} ? Il recevra le Pack Start (3 000 FCFA → 10 000 FCFA).`, async () => {
+          await activateUser(userId, reqId, email, phone, name);
+        });
+      };
+    });
+  }
+
+  window.showProofModal = showProofModal;
+
   function listenUsers() {
     if (unsubscribeUsers) unsubscribeUsers();
     const q = query(collection(db, "users"), orderBy("registrationDate", "desc"));
@@ -388,10 +524,11 @@
   }
 
   function updateUserStats() {
-    const active = allUsers.filter(u => u.status !== 'blocked').length;
+    const active = allUsers.filter(u => u.status === 'active').length;
     const blocked = allUsers.filter(u => u.status === 'blocked').length;
+    const pending = allUsers.filter(u => u.status === 'pending_activation').length;
     const expiring = allUsers.filter(u => {
-      if (u.status === 'blocked') return false;
+      if (u.status !== 'active') return false;
       if (!u.subscriptionEnd) return false;
       const days = Math.ceil((new Date(u.subscriptionEnd) - new Date()) / (1000*60*60*24));
       return days <= 7 && days >= 0;
@@ -464,8 +601,8 @@
     });
     
     const expiryDate = user.subscriptionEnd ? `${user.subscriptionEnd.split('-')[2]}/${user.subscriptionEnd.split('-')[1]}/${user.subscriptionEnd.split('-')[0]}` : 'Non défini';
-    const statusText = user.status === 'blocked' ? 'Bloqué' : 'Actif';
-    const statusClass = user.status === 'blocked' ? 'status-blocked' : 'status-active';
+    const statusText = user.status === 'blocked' ? 'Bloqué' : (user.status === 'pending_activation' ? 'En attente' : 'Actif');
+    const statusClass = user.status === 'blocked' ? 'status-blocked' : (user.status === 'pending_activation' ? 'status-pending' : 'status-active');
     
     const detailHtml = `
       <div class="card-header"><i class="fas fa-user-circle"></i><h2>Informations personnelles</h2></div>
@@ -583,20 +720,25 @@
   }
 
   function showSection(section) {
-    const sections = ['users', 'userDetail', 'generate', 'list', 'codes'];
-    sections.forEach(s => document.getElementById(s + 'Section').classList.remove('active'));
+    const sections = ['users', 'activation', 'userDetail', 'generate', 'list', 'codes'];
+    sections.forEach(s => {
+      const el = document.getElementById(s + 'Section');
+      if (el) el.classList.remove('active');
+    });
     if (section !== 'userDetail') document.getElementById(section + 'Section').classList.add('active');
     else document.getElementById('userDetailSection').classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     if (section === 'generate') document.getElementById('btnGenerate').classList.add('active');
     else if (section === 'list') document.getElementById('btnList').classList.add('active');
     else if (section === 'codes') document.getElementById('btnCodesList').classList.add('active');
+    else if (section === 'activation') document.getElementById('btnActivation').classList.add('active');
     else if (section !== 'userDetail') document.getElementById('btnUsers').classList.add('active');
   }
 
   function showUsersList() { showSection('users'); renderUsersTable(); }
   document.getElementById('backToUsers').onclick = showUsersList;
   document.getElementById('btnUsers').onclick = showUsersList;
+  document.getElementById('btnActivation').onclick = () => showSection('activation');
   document.getElementById('btnGenerate').onclick = () => showSection('generate');
   document.getElementById('btnList').onclick = () => showSection('list');
   document.getElementById('btnCodesList').onclick = () => showSection('codes');
@@ -609,28 +751,22 @@
   setInterval(updateTime, 1000);
   updateTime();
 
-  // AUTHENTIFICATION ADMIN - VÉRIFICATION STRICTE
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      // Non connecté → redirection vers page publique
       window.location.href = '/';
       return;
     }
     
-    // Vérifier si l'email est l'admin autorisé
     if (user.email !== ADMIN_EMAIL) {
-      // Connecté mais pas admin → redirection vers page publique
       alert('Accès non autorisé. Vous allez être redirigé.');
       await signOut(auth);
       window.location.href = '/';
       return;
     }
     
-    // Admin autorisé
     currentAdmin = user;
     document.getElementById('adminEmail').innerHTML = `<i class="fas fa-shield-alt"></i> <span>${user.email.split('@')[0]}</span>`;
     
-    // Vérifier/créer le document admin dans Firestore
     const adminDoc = await getDoc(doc(db, "users", user.uid));
     if (!adminDoc.exists()) {
       await addDoc(collection(db, "users"), {
@@ -647,6 +783,7 @@
     listenUsers();
     listenDeposits();
     listenCodes();
+    listenActivationRequests();
   });
 </script>
 </body>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EarnZone - Activez votre compte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B76EFF;
+      --primary-dark: #8B3FE8;
+      --primary-light: #D4A1FF;
+      --bg-dark: #030305;
+      --text-light: #FFFFFF;
+      --text-dim: #8B90A8;
+      --card-bg: rgba(15, 15, 26, 0.88);
+      --card-border: rgba(183, 110, 255, 0.08);
+      --success: #2EE89A;
+      --danger: #FF4D6D;
+      --warning: #FFD166;
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .gradient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: radial-gradient(circle at 20% 20%, rgba(183,110,255,.18), transparent 35%),
+                  radial-gradient(circle at 80% 70%, rgba(139,63,232,.15), transparent 35%),
+                  linear-gradient(180deg, #030305 0%, #050510 45%, #030305 100%);
+    }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    .logo {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .logo span {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .balance-display {
+      background: rgba(183,110,255,.1);
+      border: 1px solid rgba(183,110,255,.2);
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary-light);
+    }
+    .balance-display i { margin-right: 6px; }
+
+    .welcome-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .welcome-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .welcome-header p { color: var(--text-dim); font-size: 13px; }
+
+    .price-card {
+      background: linear-gradient(135deg, rgba(183,110,255,.15), rgba(139,63,232,.08));
+      border: 1px solid rgba(183,110,255,.2);
+      border-radius: 28px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .price-value {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--primary-light);
+    }
+    .price-badge {
+      display: inline-block;
+      background: rgba(46,232,154,.15);
+      color: var(--success);
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .referral-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .referral-code {
+      font-family: monospace;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px;
+      border-radius: 12px;
+      margin: 10px 0;
+      color: var(--primary-light);
+    }
+    .referral-link {
+      font-size: 11px;
+      color: var(--text-dim);
+      word-break: break-all;
+      background: rgba(255,255,255,0.03);
+      padding: 8px;
+      border-radius: 10px;
+    }
+    .copy-btn {
+      background: rgba(183,110,255,.15);
+      border: 1px solid rgba(183,110,255,.2);
+      color: var(--primary-light);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .testimonial-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .testimonial-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .testimonial-info h4 { font-size: 15px; font-weight: 700; }
+    .testimonial-info .country { font-size: 11px; color: var(--primary-light); }
+    .testimonial-text { font-size: 13px; color: var(--text-dim); font-style: italic; margin-bottom: 12px; }
+    .testimonial-proof {
+      background: rgba(0,0,0,0.3);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+    }
+    .testimonial-proof img {
+      max-width: 100%;
+      border-radius: 10px;
+      max-height: 200px;
+    }
+    .testimonial-proof .caption {
+      font-size: 11px;
+      color: var(--success);
+      margin-top: 6px;
+    }
+
+    .proofs {
+      margin-bottom: 24px;
+    }
+    .proof-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--primary-light);
+    }
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .proof-item {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 10px;
+      text-align: center;
+    }
+    .proof-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 6px;
+    }
+    .proof-item .amount {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .why-pay {
+      background: rgba(255,209,102,.08);
+      border-left: 3px solid var(--warning);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .why-pay p { font-size: 13px; margin-bottom: 8px; }
+    .why-pay strong { color: var(--warning); }
+
+    .form-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .form-group label i { color: var(--primary); margin-right: 6px; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 14px;
+      background: rgba(20,20,35,0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .file-upload {
+      border: 2px dashed var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .file-upload:hover { border-color: var(--primary); }
+    .file-upload i { font-size: 28px; color: var(--primary); margin-bottom: 6px; }
+    #filePreview { margin-top: 12px; display: none; }
+    #filePreview img { max-width: 100%; border-radius: 12px; max-height: 150px; }
+
+    .payment-methods {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .method-badge {
+      flex: 1;
+      background: rgba(183,110,255,.1);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary-light);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .status-message {
+      background: rgba(255,209,102,.15);
+      border: 1px solid rgba(255,209,102,.3);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .status-message.show { display: block; }
+    .status-message i { font-size: 24px; margin-bottom: 8px; display: block; }
+
+    /* Message d'alerte si déjà activé */
+    .already-active-message {
+      background: rgba(46,232,154,.15);
+      border: 1px solid rgba(46,232,154,.3);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .already-active-message i { font-size: 48px; color: var(--success); margin-bottom: 12px; display: block; }
+    .already-active-message .btn-redirect {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 600;
+    }
+
+    .footer { text-align: center; padding: 20px; color: var(--text-dim); font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+
+<div class="container">
+  <div class="logo">EARN<span>ZONE</span></div>
+
+  <div class="header">
+    <div></div>
+    <div class="balance-display"><i class="fas fa-coins"></i> <span id="userBalance">0 FCFA</span></div>
+  </div>
+
+  <div class="welcome-header">
+    <h1 id="welcomeTitle">🔓 Dernière étape</h1>
+    <p>Activez votre compte et commencez à gagner</p>
+  </div>
+
+  <!-- Message si déjà activé -->
+  <div id="alreadyActiveMessage" class="already-active-message" style="display: none;">
+    <i class="fas fa-check-circle"></i>
+    <h3>✅ Compte déjà activé</h3>
+    <p>Votre compte est déjà actif. Vous pouvez accéder à votre espace.</p>
+    <a href="index.html" class="btn-redirect">Accéder à mon espace</a>
+  </div>
+
+  <div id="statusMessage" class="status-message">
+    <i class="fas fa-hourglass-half"></i>
+    <p>Votre demande a été envoyée. Nous vérifions votre paiement.</p>
+    <small>Vous serez notifié dès l'activation.</small>
+  </div>
+
+  <div id="activationFormContainer">
+    <div class="price-card">
+      <div class="price-value">3 000 FCFA</div>
+      <div class="price-badge"><i class="fas fa-unlock-alt"></i> Activation du compte + Pack Start offert</div>
+    </div>
+
+    <div class="referral-card">
+      <div><i class="fas fa-gift"></i> Votre code de parrainage</div>
+      <div class="referral-code" id="userReferralCode">CHARGEMENT...</div>
+      <div class="referral-link" id="userReferralLink">Chargement...</div>
+      <button class="copy-btn" id="copyReferralBtn"><i class="fas fa-copy"></i> Copier mon lien</button>
+      <p style="font-size: 11px; color: var(--text-dim); margin-top: 10px;">💡 Gagnez 500 FCFA par personne invitée</p>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">M</div>
+        <div class="testimonial-info">
+          <h4>Moussa</h4>
+          <div class="country">🇨🇮 Côte d'Ivoire</div>
+        </div>
+      </div>
+      <div class="testimonial-text">"J'ai payé 3 000 FCFA, mon pack a été activé. Aujourd'hui je retire régulièrement."</div>
+      <div class="testimonial-proof">
+        <img id="proofMoussa" src="" alt="Preuve retrait Moussa" onerror="this.style.display='none'">
+        <div class="caption">💰 Retrait : 12 500 FCFA</div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">A</div>
+        <div class="testimonial-info">
+          <h4>Amina</h4>
+          <div class="country">🇳🇪 Niger</div>
+        </div>
+      </div>
+      <div class="testimonial-text">"Je gagne 2000 FCFA par jour sans rien faire. En 2 semaines, j'ai récupéré mon activation."</div>
+      <div class="testimonial-proof">
+        <img id="proofAmina" src="" alt="Preuve gains Amina" onerror="this.style.display='none'">
+        <div class="caption">📈 Gains : +2000 FCFA/jour</div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">I</div>
+        <div class="testimonial-info">
+          <h4>Idriss</h4>
+          <div class="country">🇧🇯 Bénin</div>
+        </div>
+      </div>
+      <div class="testimonial-text">"J'ai parrainé 3 amis, j'ai gagné 1 500 FCFA sans effort."</div>
+      <div class="testimonial-proof">
+        <img id="proofIdriss" src="" alt="Preuve parrainage Idriss" onerror="this.style.display='none'">
+        <div class="caption">👥 Parrainage : +500 FCFA/filleul</div>
+      </div>
+    </div>
+
+    <div class="proofs">
+      <div class="proof-title"><i class="fas fa-image"></i> Preuves réelles</div>
+      <div class="proof-grid">
+        <div class="proof-item"><img id="proofSmall1" src="" alt="Preuve 1" onerror="this.style.display='none'"><div class="amount">Retrait Wave</div></div>
+        <div class="proof-item"><img id="proofSmall2" src="" alt="Preuve 2" onerror="this.style.display='none'"><div class="amount">Gain quotidien</div></div>
+        <div class="proof-item"><img id="proofSmall3" src="" alt="Preuve 3" onerror="this.style.display='none'"><div class="amount">Parrainage</div></div>
+      </div>
+    </div>
+
+    <div class="why-pay">
+      <p><strong>🎯 Pourquoi payer l'activation ?</strong></p>
+      <p>✅ Tu débloques l'accès à ton espace EarnZone</p>
+      <p>✅ Tu reçois le <strong>Pack Start</strong> immédiatement (valeur 3 000 FCFA)</p>
+      <p>✅ Tu gagnes <strong>2000 FCFA par jour</strong> pendant 50 jours → <strong>100 000 FCFA</strong></p>
+      <p>✅ Tu peux retirer dès la fin de ton pack</p>
+      <p>✅ Tu parraines et gagnes <strong>500 FCFA par filleul</strong></p>
+      <p><strong>💡 En 2 jours, tu récupères ton activation. En 50 jours, tu gagnes 97 000 FCFA net.</strong></p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> Nom complet</label>
+        <input type="text" id="fullName" placeholder="Ex: Jean Dupont" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-phone"></i> Téléphone</label>
+        <input type="tel" id="phoneNumber" placeholder="Ex: 90 12 34 56" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-calendar"></i> Date du paiement</label>
+        <input type="date" id="paymentDate" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-credit-card"></i> Moyen de paiement</label>
+        <select id="paymentMethod">
+          <option value="Wave">🌊 Wave</option>
+          <option value="My Nita">💜 My Nita</option>
+          <option value="AmanaTa">🏦 AmanaTa</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-image"></i> Preuve de paiement (capture)</label>
+        <div class="file-upload" onclick="document.getElementById('proofImage').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Cliquez pour télécharger</p>
+        </div>
+        <input type="file" id="proofImage" accept="image/*" style="display: none;">
+        <div id="filePreview"></div>
+      </div>
+    </div>
+
+    <div class="payment-methods">
+      <div class="method-badge">🌊 Wave : +227 80 13 52 99</div>
+      <div class="method-badge">💜 My Nita : +227 80 13 52 99</div>
+      <div class="method-badge">🏦 AmanaTa : +227 80 13 52 99</div>
+    </div>
+
+    <button class="btn-submit" id="submitBtn">
+      <i class="fab fa-whatsapp"></i> Envoyer ma preuve
+    </button>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>© 2026 EarnZone - Activation de compte</p>
+</footer>
+
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
+    authDomain: "earnzone-9e82e.firebaseapp.com",
+    projectId: "earnzone-9e82e",
+    storageBucket: "earnzone-9e82e.firebasestorage.app",
+    messagingSenderId: "1076831479440",
+    appId: "1:1076831479440:web:8da3b161e9683dd98e1a15"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const userName = urlParams.get('name') || 'Membre';
+  document.getElementById('welcomeTitle').innerHTML = `🔓 ${userName}, dernière étape`;
+
+  let currentUserId = null;
+  let userData = null;
+  let uploadedImageBase64 = null;
+  let requestSubmitted = false;
+
+  // Images par défaut (à remplacer par tes fichiers)
+  document.getElementById('proofMoussa').src = "images/retrait-moussa.png";
+  document.getElementById('proofAmina').src = "images/gains-amina.png";
+  document.getElementById('proofIdriss').src = "images/parrainage-idriss.png";
+  document.getElementById('proofSmall1').src = "images/retrait-wave.png";
+  document.getElementById('proofSmall2').src = "images/gain-200f.png";
+  document.getElementById('proofSmall3').src = "images/parrainage-500f.png";
+
+  async function loadUserData(uid) {
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        document.getElementById('userBalance').innerHTML = (userData.balance || 0).toLocaleString('fr-FR') + ' FCFA';
+        
+        let code = userData.referralCode;
+        if (!code) code = 'EARN' + uid.substring(0, 6).toUpperCase();
+        document.getElementById('userReferralCode').innerHTML = code;
+        
+        const baseUrl = window.location.origin + window.location.pathname.replace('activation.html', '');
+        const inviteLink = `${baseUrl}register.html?ref=${code}`;
+        document.getElementById('userReferralLink').innerHTML = inviteLink;
+        window.currentReferralLink = inviteLink;
+        
+        document.getElementById('fullName').value = `${userData.prenom || ''} ${userData.nom || ''}`.trim();
+        document.getElementById('phoneNumber').value = userData.phone || '';
+        
+        // VÉRIFICATION : si déjà activé
+        if (userData.status === 'active') {
+          document.getElementById('alreadyActiveMessage').style.display = 'block';
+          document.getElementById('activationFormContainer').style.display = 'none';
+          return;
+        }
+        
+           // Vérifier si une demande a déjà été soumise
+        const activationRef = doc(db, "activation_requests", uid);
+        const activationDoc = await getDoc(activationRef);
+        if (activationDoc.exists() && activationDoc.data().paymentDate) {
+          requestSubmitted = true;
+          document.getElementById('activationFormContainer').style.display = 'none';
+          document.getElementById('statusMessage').classList.add('show');
+        } else {
+          document.getElementById('activationFormContainer').style.display = 'block';
+          document.getElementById('statusMessage').classList.remove('show');
+        }
+      }
+    } catch (error) {
+      console.error("Erreur chargement user:", error);
+    }
+  }
+
+  document.getElementById('copyReferralBtn').addEventListener('click', () => {
+    if (window.currentReferralLink) {
+      navigator.clipboard.writeText(window.currentReferralLink);
+      alert("✅ Lien copié !");
+    }
+  });
+
+  document.getElementById('proofImage').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image trop lourde (max 5 Mo)");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        uploadedImageBase64 = event.target.result;
+        document.getElementById('filePreview').innerHTML = `<img src="${uploadedImageBase64}" alt="Aperçu">`;
+        document.getElementById('filePreview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    if (requestSubmitted) {
+      alert("Votre demande a déjà été envoyée. Patientez pour l'activation.");
+      return;
+    }
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const paymentDate = document.getElementById('paymentDate').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
+
+    if (!fullName || !phoneNumber || !paymentDate) {
+      alert("Veuillez remplir tous les champs");
+      return;
+    }
+    if (!uploadedImageBase64) {
+      alert("Veuillez télécharger votre preuve de paiement");
+      return;
+    }
+    if (!currentUserId) {
+      alert("Session utilisateur non trouvée");
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+
+    try {
+      const activationRef = doc(db, "activation_requests", currentUserId);
+      await updateDoc(activationRef, {
+        fullName: fullName,
+        phone: phoneNumber,
+        paymentDate: paymentDate,
+        paymentMethod: paymentMethod,
+        proofImage: uploadedImageBase64,
+        status: "pending",
+        updatedAt: new Date().toISOString()
+      });
+
+      const message = `*NOUVELLE DEMANDE D'ACTIVATION*%0A%0A
+👤 *Nom:* ${encodeURIComponent(fullName)}%0A
+📞 *Téléphone:* ${encodeURIComponent(phoneNumber)}%0A
+📅 *Date:* ${encodeURIComponent(paymentDate)}%0A
+💳 *Méthode:* ${encodeURIComponent(paymentMethod)}%0A
+🆔 *UID:* ${encodeURIComponent(currentUserId)}%0A%0A
+✅ Connectez-vous à l'admin pour activer le compte.`;
+
+      window.open(`https://wa.me/22780135299?text=${message}`, '_blank');
+
+      requestSubmitted = true;
+      document.getElementById('activationFormContainer').style.display = 'none';
+      document.getElementById('statusMessage').classList.add('show');
+      
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fab fa-whatsapp"></i> Envoyer ma preuve';
+      
+    } catch (error) {
+      console.error("Erreur:", error);
+      alert("❌ Erreur lors de l'envoi. Réessayez.");
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fab fa-whatsapp"></i> Envoyer ma preuve';
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUserId = user.uid;
+      await loadUserData(user.uid);
+    } else {
+      const savedUid = localStorage.getItem('earnzone_current_user');
+      if (savedUid) {
+        currentUserId = savedUid;
+        await loadUserData(savedUid);
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+  });
+</script>
+</body>
+</html>

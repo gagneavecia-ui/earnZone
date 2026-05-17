@@ -165,10 +165,6 @@
     .formation-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, rgba(183, 110, 255, 0.12), rgba(139, 63, 232, 0.08)); color: var(--primary-light); border: 1px solid rgba(183, 110, 255, 0.22); border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
     .formation-btn.free { background: linear-gradient(135deg, rgba(46, 232, 154, 0.12), rgba(0, 204, 68, 0.08)); border-color: rgba(46, 232, 154, 0.3); color: var(--success); }
 
-    .depot-banner { background: linear-gradient(135deg, rgba(255, 77, 109, 0.12), rgba(255, 77, 109, 0.05)); border: 1px solid rgba(255, 77, 109, 0.25); border-radius: 16px; padding: 14px 18px; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-    .depot-banner.hidden { display: none; }
-    .depot-banner-btn { padding: 10px 18px; background: linear-gradient(135deg, var(--danger), #ff1a4f); border: none; border-radius: 12px; color: white; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; }
-
     .info-button-container { text-align: center; margin-bottom: 44px; }
     .info-btn { background: transparent; border: 1px solid rgba(183, 110, 255, 0.3); border-radius: 50px; padding: 12px 24px; color: var(--primary-light); font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 
@@ -202,71 +198,7 @@
     .social-link:active { background: rgba(183, 110, 255, 0.15); transform: scale(0.95); }
     .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(183, 110, 255, 0.04); color: var(--text-dim); font-size: 11px; }
 
-    .notif-toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(120%);
-      width: calc(100% - 32px);
-      max-width: 360px;
-      background: linear-gradient(135deg, rgba(10, 10, 20, 0.98), rgba(5, 5, 10, 0.98));
-      backdrop-filter: blur(16px);
-      border-radius: 60px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(183, 110, 255, 0.12);
-      z-index: 10000;
-      transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
-      overflow: hidden;
-    }
-    .notif-toast.show { transform: translateX(-50%) translateY(0); }
-    .notif-toast-content {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-    }
-    .notif-icon-circle {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, #2EE89A, #00cc66);
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      color: #030305;
-      flex-shrink: 0;
-    }
-    .notif-info { flex: 1; }
-    .notif-user-line {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 3px;
-    }
-    .notif-name { font-size: 13px; font-weight: 700; color: white; }
-    .notif-pays { font-size: 10px; color: #8B90A8; }
-    .notif-details-line {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .notif-amount {
-      font-size: 14px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #B76EFF, #D4A1FF);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .notif-method { font-size: 10px; color: #B76EFF; display: inline-flex; align-items: center; gap: 4px; }
-    .notif-time { font-size: 9px; color: #5a6070; display: inline-flex; align-items: center; gap: 3px; }
-    .notif-progress-line { height: 2px; background: rgba(183, 110, 255, 0.15); }
-    .notif-progress-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #B76EFF, #2EE89A); animation: shrink 5s linear forwards; }
-    @keyframes shrink { from { width: 100%; } to { width: 0%; } }
-    .flash { animation: flash 0.2s ease; }
-    @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; transform: scale(0.98); } }
-
+    /* NOTIFICATION GAINS */
     .gain-notification {
       position: fixed;
       bottom: 20px;
@@ -300,6 +232,26 @@
     }
     .gain-notification .notif-content h4 { font-size: 14px; margin-bottom: 4px; }
     .gain-notification .notif-content p { font-size: 11px; color: var(--text-dim); }
+
+    /* Bannière dépôt */
+    .depot-banner {
+      background: linear-gradient(135deg, rgba(255, 77, 109, 0.12), rgba(255, 77, 109, 0.05));
+      border: 1px solid rgba(255, 77, 109, 0.25);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .depot-banner.hidden { display: none; }
+    .depot-banner-content { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .depot-banner-icon { width: 40px; height: 40px; background: rgba(255, 77, 109, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--danger); }
+    .depot-banner-text h4 { font-size: 14px; margin-bottom: 2px; }
+    .depot-banner-text p { font-size: 11px; color: var(--text-dim); }
+    .depot-banner-btn { padding: 10px 18px; background: linear-gradient(135deg, var(--danger), #ff1a4f); border: none; border-radius: 12px; color: white; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -313,26 +265,6 @@
   <div class="notif-content">
     <h4 id="gainNotifTitle">💰 Gains quotidiens</h4>
     <p id="gainNotifMessage">Message</p>
-  </div>
-</div>
-
-<div class="notif-toast" id="notifToast">
-  <div class="notif-toast-content">
-    <div class="notif-icon-circle"><i class="fas fa-arrow-down"></i></div>
-    <div class="notif-info">
-      <div class="notif-user-line">
-        <span class="notif-name" id="notifName">Samuel</span>
-        <span class="notif-pays" id="notifPays">🇨🇮 CI</span>
-      </div>
-      <div class="notif-details-line">
-        <span class="notif-amount" id="notifAmount">-65 000 FCFA</span>
-        <span class="notif-method" id="notifMethod">📱 Orange Money</span>
-        <span class="notif-time" id="notifTime">⚡ à l'instant</span>
-      </div>
-    </div>
-  </div>
-  <div class="notif-progress-line">
-    <div class="notif-progress-fill" id="progressFill"></div>
   </div>
 </div>
 
@@ -354,10 +286,14 @@
     <p class="hero-description">Investis, gagne chaque jour et transforme ton avenir financier avec EarnZone.</p>
   </div>
 
+  <!-- Bannière dépôt -->
   <div class="depot-banner" id="depotBanner">
     <div class="depot-banner-content">
       <div class="depot-banner-icon"><i class="fas fa-coins"></i></div>
-      <div class="depot-banner-text"><h4>Dépôt requis</h4><p>Pour commencer, effectuez un premier dépôt</p></div>
+      <div class="depot-banner-text">
+        <h4>Dépôt requis</h4>
+        <p>Pour commencer, effectuez un premier dépôt</p>
+      </div>
     </div>
     <a href="depot.html" class="depot-banner-btn"><i class="fas fa-money-bill-wave"></i> Déposer</a>
   </div>
@@ -392,7 +328,7 @@
       <div class="formation-image-wrap"><img src="https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Business" class="formation-image" loading="lazy"></div>
       <div class="formation-content"><span class="formation-category">🚀 Business</span><h3 class="formation-title">Business Launch : 0 → 1</h3><p class="formation-description">Lancez votre business rentable sans investissement initial.</p><div class="formation-meta"><span><i class="far fa-clock"></i> 5h15</span><span><i class="fas fa-star"></i> 4.9 (85 avis)</span></div><div class="formation-price free">🎁 GRATUIT</div><span class="formation-btn free"><i class="fas fa-play"></i> Commencer gratuitement</span></div>
     </a>
-    <a href="formations.html" class="formation-card">
+      <a href="formations.html" class="formation-card">
       <div class="formation-image-wrap"><img src="https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Marketing" class="formation-image" loading="lazy"></div>
       <div class="formation-content"><span class="formation-category">📣 Marketing</span><h3 class="formation-title">Marketing Storm</h3><p class="formation-description">Maîtrisez les réseaux sociaux et le marketing digital.</p><div class="formation-meta"><span><i class="far fa-clock"></i> 6h00</span><span><i class="fas fa-star"></i> 4.7 (68 avis)</span></div><div class="formation-price free">🎁 GRATUIT</div><span class="formation-btn free"><i class="fas fa-play"></i> Commencer gratuitement</span></div>
     </a>
@@ -435,7 +371,6 @@
   import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
   import { getFirestore, doc, getDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -450,14 +385,10 @@
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
 
-  // ========== VARIABLES GLOBALES ==========
   let currentUser = null;
   let userData = null;
   let unsubscribeUser = null;
-  let notificationTimer = null;
-  let currentTimeout = null;
 
-  // ========== NOTIFICATION GAINS ==========
   function showGainNotification(title, message) {
     const notif = document.getElementById('gainNotification');
     document.getElementById('gainNotifTitle').innerText = title;
@@ -467,7 +398,6 @@
     if (navigator.vibrate) navigator.vibrate(100);
   }
 
-  // ========== AFFICHAGE DES DONNÉES UTILISATEUR ==========
   function updateUI(data) {
     if (!data) return;
     const prenom = data.prenom || '';
@@ -483,11 +413,18 @@
       const days = Math.floor((new Date() - new Date(data.registrationDate)) / 86400000);
       document.getElementById('statDays').innerText = days;
     }
+    
+    // Gestion bannière dépôt
     const banner = document.getElementById('depotBanner');
-    if (banner) data.hasDeposited === true ? banner.classList.add('hidden') : banner.classList.remove('hidden');
+    if (banner) {
+      if (data.hasDeposited === true) {
+        banner.classList.add('hidden');
+      } else {
+        banner.classList.remove('hidden');
+      }
+    }
   }
 
-  // ========== CACHE LOCALSTORAGE ==========
   function cacheUserData(uid, data) {
     localStorage.setItem(`earnzone_user_${uid}`, JSON.stringify(data));
   }
@@ -497,7 +434,6 @@
     return cached ? JSON.parse(cached) : null;
   }
 
-  // ========== ÉCOUTE EN TEMPS RÉEL (FIRESTORE) ==========
   function listenToUser(uid) {
     if (unsubscribeUser) unsubscribeUser();
     const userRef = doc(db, "users", uid);
@@ -507,6 +443,14 @@
         userData = freshData;
         cacheUserData(uid, freshData);
         updateUI(freshData);
+        
+        // VÉRIFICATION ACTIVATION : si status n'est pas "active", rediriger
+        if (freshData.status !== 'active') {
+          console.log("⛔ Compte non activé, redirection vers activation.html");
+          window.location.href = `activation.html?name=${encodeURIComponent(freshData.prenom || 'Membre')}`;
+          return;
+        }
+        
         console.log("✅ Mise à jour temps réel - solde:", freshData.balance);
       } else {
         console.error("❌ Document utilisateur non trouvé pour uid:", uid);
@@ -516,18 +460,24 @@
     });
   }
 
-  // ========== CRÉDIT AUTOMATIQUE DES GAINS ==========
   async function forceCheckAndCreditGains() {
     if (!currentUser) return false;
+    
+    // Optimisation : ne vérifier que si l'utilisateur a des investissements
+    if (!userData || !userData.investments || userData.investments.length === 0) return false;
+    
+    const activeInvests = userData.investments.filter(i => i.status === 'active');
+    if (activeInvests.length === 0) return false;
+    
     try {
       const userRef = doc(db, "users", currentUser.uid);
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) return false;
       
       const data = userDoc.data();
-      const activeInvests = (data.investments || []).filter(i => i.status === 'active');
-      if (activeInvests.length === 0) return false;
-
+      const active = (data.investments || []).filter(i => i.status === 'active');
+      if (active.length === 0) return false;
+      
       let totalGain = 0;
       let gainDetails = [];
       const now = new Date();
@@ -537,18 +487,18 @@
       for (let i = 0; i < updatedInvests.length; i++) {
         const inv = updatedInvests[i];
         if (inv.status === 'active') {
-          const lastPayout = new Date(inv.lastPayout);
-          const hoursSince = (now - lastPayout) / (1000 * 60 * 60);
-          if (hoursSince >= 24) {
-            const daysToPay = Math.floor(hoursSince / 24);
-            const remainingDays = inv.totalDays - inv.currentDay + 1;
-            const actualDays = Math.min(daysToPay, remainingDays);
-            if (actualDays > 0) {
-              const gain = inv.dailyReturn * actualDays;
+          const last = new Date(inv.lastPayout);
+          const hours = (now - last) / (1000 * 3600);
+          if (hours >= 24) {
+            const days = Math.floor(hours / 24);
+            const remaining = inv.totalDays - inv.currentDay + 1;
+            const actual = Math.min(days, remaining);
+            if (actual > 0) {
+              const gain = inv.dailyReturn * actual;
               totalGain += gain;
-              gainDetails.push({ pack: inv.packName, gain: gain, days: actualDays });
+              gainDetails.push({ pack: inv.packName, gain: gain, days: actual });
               inv.totalEarned += gain;
-              inv.currentDay += actualDays;
+              inv.currentDay += actual;
               inv.lastPayout = now.toISOString();
               updatedInvests[i] = inv;
               updated = true;
@@ -556,7 +506,7 @@
           }
         }
       }
-
+      
       if (updated && totalGain > 0) {
         const newBalance = (data.balance || 0) + totalGain;
         await updateDoc(userRef, {
@@ -576,81 +526,6 @@
     }
   }
 
-  // ========== SIMULATION RETRAITS (DÉMO) ==========
-  const users = [
-    { prenom: "Samuel", pays: "🇨🇮 CI" }, { prenom: "Awa", pays: "🇸🇳 Sénégal" },
-    { prenom: "Koffi", pays: "🇨🇮 CI" }, { prenom: "Fatou", pays: "🇸🇳 Sénégal" },
-    { prenom: "Jean", pays: "🇨🇮 CI" }, { prenom: "Mariam", pays: "🇲🇱 Mali" },
-    { prenom: "Sékou", pays: "🇬🇳 Guinée" }, { prenom: "Moussa", pays: "🇳🇪 Niger" },
-    { prenom: "Aminata", pays: "🇨🇮 CI" }, { prenom: "Bakary", pays: "🇲🇱 Mali" }
-  ];
-
-  const methodes = [
-    { nom: "Orange Money", icone: "📱" }, { nom: "Moov Money", icone: "📱" },
-    { nom: "Airtel Money", icone: "📱" }, { nom: "Wave", icone: "🌊" },
-    { nom: "My Nita", icone: "💜" }, { nom: "Amana", icone: "🏦" }
-  ];
-
-  const montants = [5000, 12500, 15000, 23000, 25000, 33100, 45200, 50000, 62000, 65000, 80700, 92500, 100000, 150000];
-
-  function getRandomTime() {
-    const times = ["⚡ à l'instant", "🕐 1min", "🕑 2min", "🕒 3min", "🕔 5min", "🕙 10min"];
-    return times[Math.floor(Math.random() * times.length)];
-  }
-
-  function getRandomWithdrawal() {
-    const user = users[Math.floor(Math.random() * users.length)];
-    const methode = methodes[Math.floor(Math.random() * methodes.length)];
-    const montant = montants[Math.floor(Math.random() * montants.length)];
-    const temps = Math.random() > 0.7 ? "⚡ à l'instant" : getRandomTime();
-    return { nom: user.prenom, pays: user.pays, montant, methode: methode.nom, icone: methode.icone, temps: temps };
-  }
-
-  let dernierRetrait = null;
-  let deuxiemeDernierRetrait = null;
-
-  function getUniqueWithdrawal() {
-    let nouveau;
-    do { nouveau = getRandomWithdrawal(); } 
-    while ((dernierRetrait && nouveau.nom === dernierRetrait.nom && nouveau.montant === dernierRetrait.montant) ||
-           (deuxiemeDernierRetrait && nouveau.nom === deuxiemeDernierRetrait.nom));
-    deuxiemeDernierRetrait = dernierRetrait;
-    dernierRetrait = nouveau;
-    return nouveau;
-  }
-
-  function showWithdrawNotification() {
-    const retrait = getUniqueWithdrawal();
-    const toast = document.getElementById('notifToast');
-    document.getElementById('notifName').innerHTML = retrait.nom;
-    document.getElementById('notifPays').innerHTML = retrait.pays;
-    document.getElementById('notifAmount').innerHTML = `-${retrait.montant.toLocaleString('fr-FR')} FCFA`;
-    document.getElementById('notifMethod').innerHTML = retrait.icone + ' ' + retrait.methode;
-    document.getElementById('notifTime').innerHTML = retrait.temps;
-    
-    const progressFill = document.getElementById('progressFill');
-    progressFill.style.animation = 'none';
-    progressFill.offsetHeight;
-    progressFill.style.animation = 'shrink 5s linear forwards';
-    
-    toast.classList.add('flash');
-    setTimeout(() => toast.classList.remove('flash'), 200);
-    if (navigator.vibrate) navigator.vibrate(50);
-    toast.classList.add('show');
-    
-    if (currentTimeout) clearTimeout(currentTimeout);
-    currentTimeout = setTimeout(() => { toast.classList.remove('show'); currentTimeout = null; }, 5000);
-  }
-
-  function startNotificationTimer() {
-    if (notificationTimer) clearInterval(notificationTimer);
-    setTimeout(() => showWithdrawNotification(), 3000);
-    const hasDeposited = userData?.hasDeposited === true;
-    const intervalTime = hasDeposited ? 120000 : 10000;
-    notificationTimer = setInterval(() => showWithdrawNotification(), intervalTime);
-  }
-
-  // ========== BOUTON ADMIN ==========
   function checkAndShowAdminButton() {
     const adminBtn = document.getElementById('adminLockBtn');
     if (!adminBtn) return;
@@ -663,25 +538,23 @@
     }
   }
 
-  // ========== AUTHENTIFICATION ==========
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       localStorage.setItem('earnzone_current_user', user.uid);
       
-      // Affichage depuis cache pendant chargement
       const cached = getCachedUserData(user.uid);
       if (cached) updateUI(cached);
       
-      // Écoute temps réel
       listenToUser(user.uid);
       
-      // Vérification gains
-      await forceCheckAndCreditGains();
+      // Note: forceCheckAndCreditGains sera appelé après que userData soit chargé via listenToUser
+      setTimeout(async () => {
+        if (userData && userData.status === 'active') {
+          await forceCheckAndCreditGains();
+        }
+      }, 2000);
       
-      // Notifications
-      startNotificationTimer();
-      setTimeout(() => showWithdrawNotification(), 2000);
       checkAndShowAdminButton();
     } else {
       const savedUid = localStorage.getItem('earnzone_current_user');

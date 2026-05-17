@@ -153,7 +153,6 @@
     .phone-prefix { width: 90px; flex-shrink: 0; }
     .phone-number { flex: 1; }
 
-    /* Sélecteur pays personnalisé */
     .country-selector {
       display: flex;
       align-items: center;
@@ -178,7 +177,6 @@
     .country-selector-display span:last-child { font-size: 14px; font-weight: 500; color: var(--text-light); }
     .country-selector i { color: var(--primary-light); font-size: 12px; }
 
-    /* Modale pays */
     .country-modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -397,7 +395,6 @@
         </div>
       </div>
 
-      <!-- Sélecteur pays -->
       <div class="form-group">
         <label><i class="fas fa-globe-africa"></i> Pays</label>
         <div class="country-selector" id="countrySelector">
@@ -416,7 +413,7 @@
           <div class="phone-prefix">
             <select id="indicatif" class="indicatif-select">
               <option value="+227">+227 (Niger)</option>
-              <option value="+229">+229 </option>
+              <option value="+229">+229</option>
               <option value="+223">+223</option>
               <option value="+226">+226</option>
               <option value="+221">+221</option>
@@ -450,7 +447,6 @@
         <input type="password" id="confirmPassword" placeholder="Répétez le mot de passe">
       </div>
 
-      <!-- Code parrainage avec vérification en temps réel -->
       <div class="referral-code-group">
         <div class="referral-label">
           <i class="fas fa-gift"></i> Code de parrainage (optionnel)
@@ -477,7 +473,6 @@
   </footer>
 </main>
 
-<!-- MODALE PAYS -->
 <div class="country-modal-overlay" id="countryModal">
   <div class="country-modal">
     <div class="country-modal-header">
@@ -508,7 +503,6 @@
   import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-  // ========== CONFIGURATION ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -523,7 +517,6 @@
   const db = getFirestore(app);
   setPersistence(auth, browserLocalPersistence);
 
-  // ========== LISTE DES PAYS ==========
   const countries = [
     { name: "Niger", flag: "🇳🇪", code: "+227", phoneDigits: [8] },
     { name: "Bénin", flag: "🇧🇯", code: "+229", phoneDigits: [8] },
@@ -539,12 +532,11 @@
     { name: "Tchad", flag: "🇹🇩", code: "+235", phoneDigits: [8] }
   ];
 
-    let selectedCountry = "Niger";
+  let selectedCountry = "Niger";
   let selectedFlag = "🇳🇪";
   let selectedPhoneDigits = [8];
   let referralCheckStatus = { valid: false, parrainId: null, checked: false };
 
-  // ========== AFFICHAGE MESSAGE ==========
   function showMessage(text, type = 'error') {
     const banner = document.getElementById('messageBanner');
     const icon = document.getElementById('messageIcon');
@@ -569,13 +561,11 @@
     }, 4000);
   }
 
-  // ========== VALIDATION TÉLÉPHONE PAR PAYS ==========
   function validatePhone(phone, digitsArray) {
     const cleanPhone = phone.replace(/\D/g, '');
     return digitsArray.some(digits => cleanPhone.length === digits);
   }
 
-  // ========== VÉRIFICATION CODE PARRAINAGE EN TEMPS RÉEL ==========
   async function checkReferralCode(code) {
     const referralInfoDiv = document.getElementById('referralInfo');
     const messageSpan = document.getElementById('referralMessage');
@@ -598,32 +588,30 @@
       
       if (!querySnapshot.empty) {
         const parrainId = querySnapshot.docs[0].id;
-        messageSpan.innerHTML = '<i class="fas fa-check-circle"></i> ✅ Code valide ! Vous recevrez 500 FCFA après votre inscription.';
+        messageSpan.innerHTML = '<i class="fas fa-check-circle"></i> ✅ Code valide !';
         referralInfoDiv.className = 'referral-info valid';
         referralCheckStatus = { valid: true, parrainId: parrainId, checked: true };
         return parrainId;
       } else {
-        messageSpan.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ⚠️ Code invalide. Vous pouvez vous inscrire sans parrain.';
+        messageSpan.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ⚠️ Code invalide.';
         referralInfoDiv.className = 'referral-info invalid';
         referralCheckStatus = { valid: false, parrainId: null, checked: true };
         return null;
       }
     } catch (error) {
       console.error("Erreur vérification:", error);
-      messageSpan.innerHTML = '<i class="fas fa-exclamation-circle"></i> Erreur de vérification';
+      messageSpan.innerHTML = '<i class="fas fa-exclamation-circle"></i> Erreur';
       referralInfoDiv.className = 'referral-info invalid';
       referralCheckStatus = { valid: false, parrainId: null, checked: true };
       return null;
     }
   }
 
-  // ========== GÉNÉRATION CODE PARRAINAGE UNIQUE ==========
   async function generateUniqueReferralCode(uid, prenom, nom) {
     const base = (prenom.substring(0, 3) + nom.substring(0, 3) + uid.substring(0, 4)).toUpperCase().replace(/[^A-Z0-9]/g, '');
     let code = base.length >= 4 ? base.substring(0, 8) : base + uid.substring(0, 4);
     if (code.length < 4) code = code + Math.random().toString(36).substring(2, 6).toUpperCase();
     
-    // Vérifier unicité
     let isUnique = false;
     let attempts = 0;
     let finalCode = code;
@@ -643,7 +631,6 @@
     return finalCode;
   }
 
-  // ========== CRÉDITER LE PARRAIN ==========
   async function creditReferralReward(parrainUid) {
     if (!parrainUid) return false;
     try {
@@ -666,7 +653,6 @@
     }
   }
 
-  // ========== MODALE PAYS ==========
   function renderCountryList(filter = "") {
     const container = document.getElementById('countryList');
     const filtered = countries.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
@@ -720,7 +706,6 @@
     document.getElementById('countryModal').classList.remove('show');
   }
 
-  // ========== INITIALISATION UI ==========
   const countrySelector = document.getElementById('countrySelector');
   const closeModalBtn = document.getElementById('closeCountryModalBtn');
   const countrySearch = document.getElementById('countrySearch');
@@ -733,7 +718,6 @@
     countrySearch.addEventListener('input', (e) => renderCountryList(e.target.value));
   }
   
-  // Synchronisation indicatif/pays
   const indicatifSelect = document.getElementById('indicatif');
   indicatifSelect.addEventListener('change', (e) => {
     const selectedCode = e.target.value;
@@ -743,7 +727,6 @@
     }
   });
 
-  // Vérification code parrainage en temps réel
   const referralCodeInput = document.getElementById('referralCode');
   let debounceTimer;
   referralCodeInput.addEventListener('input', (e) => {
@@ -753,7 +736,6 @@
     }, 500);
   });
 
-  // Récupération code depuis URL
   const urlParams = new URLSearchParams(window.location.search);
   const refCode = urlParams.get('ref');
   if (refCode) {
@@ -761,7 +743,6 @@
     setTimeout(() => checkReferralCode(refCode), 300);
   }
 
-  // ========== FORMULAIRE INSCRIPTION ==========
   const registerForm = document.getElementById('registerForm');
   const registerBtn = document.getElementById('registerBtn');
 
@@ -778,7 +759,6 @@
     const confirmPassword = document.getElementById('confirmPassword').value;
     const referralCode = document.getElementById('referralCode').value.trim().toUpperCase();
     
-    // Validations
     if (!nom || !prenom || !pays || !telephone || !email || !password) {
       showMessage('Tous les champs sont obligatoires.', 'error');
       return;
@@ -805,25 +785,21 @@
       return;
     }
     
-    // Vérification code parrainage (non bloquante)
     let parrainId = null;
     if (referralCode && referralCode.length >= 4) {
       parrainId = await checkReferralCode(referralCode);
       if (!parrainId) {
-        showMessage(`⚠️ Le code "${referralCode}" est invalide. Vous pouvez continuer sans parrain.`, 'warning');
+        showMessage(`⚠️ Le code "${referralCode}" est invalide.`, 'warning');
       }
     }
     
-    // Désactiver bouton
     registerBtn.disabled = true;
     registerBtn.innerHTML = '<span class="loader"></span> Inscription en cours...';
     
     try {
-      // Création compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      // Génération code parrainage unique
       const generatedReferralCode = await generateUniqueReferralCode(user.uid, prenom, nom);
       const fullPhone = `${indicatif} ${telephone}`;
       const now = new Date().toISOString();
@@ -841,11 +817,12 @@
         gainsTotal: 0,
         totalInvested: 0,
         totalWithdrawn: 0,
-        status: "active",
+        status: "pending_activation",
         role: "user",
         hasDeposited: false,
         hasInvested: false,
         activeInvestmentsCount: 0,
+        activatedAt: null,
         registrationDate: now,
         lastGainDate: now,
         lastInvestment: null,
@@ -862,10 +839,24 @@
       };
       
       await setDoc(doc(db, "users", user.uid), userData);
+      
+      const activationRequest = {
+        userId: user.uid,
+        fullName: `${prenom} ${nom}`,
+        email: email,
+        phone: fullPhone,
+        paymentDate: null,
+        paymentMethod: null,
+        proofImage: null,
+        status: "pending",
+        submittedAt: new Date().toISOString()
+      };
+      await setDoc(doc(db, "activation_requests", user.uid), activationRequest);
+      console.log("✅ Demande d'activation créée pour:", user.uid);
+      
       localStorage.setItem(`earnzone_user_${user.uid}`, JSON.stringify(userData));
       localStorage.setItem('earnzone_current_user', user.uid);
       
-      // Créditer le parrain si code valide
       if (parrainId) {
         await creditReferralReward(parrainId);
       }
@@ -873,7 +864,7 @@
       showMessage('✅ Inscription réussie ! Redirection...', 'success');
       
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = `activation.html?name=${encodeURIComponent(prenom)}`;
       }, 1500);
       
     } catch (error) {

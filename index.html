@@ -561,69 +561,102 @@
     }
   }
 
-  // ========== AUTHENTIFICATION AVEC VÉRIFICATION ==========
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      currentUser = user;
-      localStorage.setItem('earnzone_current_user', user.uid);
+  // ========== AUTHENTIFICATION AVEC VÉRIFICATION ET CACHE SESSION ==========
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    localStorage.setItem('earnzone_current_user', user.uid);
+    
+    // 🔥 VÉRIFIER SI DÉJÀ VALIDÉ PENDANT CETTE SESSION
+    const sessionValidated = sessionStorage.getItem('status_validated');
+    const sessionStatus = sessionStorage.getItem('user_status');
+    const sessionUid = sessionStorage.getItem('session_uid');
+    
+    // Si déjà validé et actif pendant cette session, afficher directement sans refaire la requête
+    if (sessionValidated === 'true' && sessionStatus === 'active' && sessionUid === user.uid) {
+      console.log("✅ Session déjà validée, affichage direct");
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('mainHeader').style.display = 'flex';
+      document.getElementById('mainContent').style.display = 'block';
       
-      try {
-        // Vérification DIRECTE dans Firestore avant d'afficher quoi que ce soit
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-        
-        if (!userDoc.exists()) {
-          console.error("Utilisateur non trouvé");
-          window.location.href = 'login.html';
-          return;
-        }
-        
-        const data = userDoc.data();
-        
-        // Si le compte n'est PAS activé, rediriger immédiatement
-        if (data.status !== 'active') {
-          console.log("⛔ Compte non activé, redirection vers activation.html");
-          window.location.href = `activation.html?name=${encodeURIComponent(data.prenom || 'Membre')}`;
-          return;
-        }
-        
-        // Si activé, afficher la page
-        document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('mainHeader').style.display = 'flex';
-        document.getElementById('mainContent').style.display = 'block';
-        
-        // Charger le cache et les données temps réel
-        const cached = getCachedUserData(user.uid);
-        if (cached) updateUI(cached);
-        
-        listenToUser(user.uid);
-        
-        setTimeout(async () => {
-          if (userData && userData.status === 'active') {
-            await forceCheckAndCreditGains();
-          }
-        }, 2000);
-        
-        checkAndShowAdminButton();
-        
-      } catch (error) {
-        console.error("Erreur lors de la vérification:", error);
-        window.location.href = 'login.html';
-      }
+      // Charger les données depuis le cache
+      const cached = getCachedUserData(user.uid);
+      if (cached) updateUI(cached);
       
-    } else {
-      const savedUid = localStorage.getItem('earnzone_current_user');
-      if (savedUid) {
-        setTimeout(() => { 
-          if (!auth.currentUser) {
-            window.location.href = 'login.html';
-          }
-        }, 2000);
-      } else {
-        window.location.href = 'login.html';
-      }
+      listenToUser(user.uid);
+      
+      setTimeout(async () => {
+        if (userData && userData.status === 'active') {
+          await forceCheckAndCreditGains();
+        }
+      }, 2000);
+      
+      checkAndShowAdminButton();
+      return;
     }
-  });
+    
+    // Sinon, faire la vérification complète
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) {
+        console.error("Utilisateur non trouvé");
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      const data = userDoc.data();
+      
+      // Si le compte n'est PAS activé, rediriger
+      if (data.status !== 'active') {
+        console.log("⛔ Compte non activé, redirection");
+        window.location.href = `activation.html?name=${encodeURIComponent(data.prenom || 'Membre')}`;
+        return;
+      }
+      
+      // 🔥 STOCKER DANS sessionStorage POUR ÉVITER DE REVÉRIFIER
+      sessionStorage.setItem('status_validated', 'true');
+      sessionStorage.setItem('user_status', 'active');
+      sessionStorage.setItem('session_uid', user.uid);
+      
+      // Afficher la page
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('mainHeader').style.display = 'flex';
+      document.getElementById('mainContent').style.display = 'block';
+      
+      // Charger les données
+      const cached = getCachedUserData(user.uid);
+      if (cached) updateUI(cached);
+      
+      listenToUser(user.uid);
+      
+      setTimeout(async () => {
+        if (userData && userData.status === 'active') {
+          await forceCheckAndCreditGains();
+        }
+      }, 2000);
+      
+      checkAndShowAdminButton();
+      
+    } catch (error) {
+      console.error("Erreur lors de la vérification:", error);
+      window.location.href = 'login.html';
+    }
+    
+  } else {
+    const savedUid = localStorage.getItem('earnzone_current_user');
+    if (savedUid) {
+      setTimeout(() => { 
+        if (!auth.currentUser) {
+          window.location.href = 'login.html';
+        }
+      }, 2000);
+    } else {
+      window.location.href = 'login.html';
+    }
+  }
+});
 </script>
 </body>
 </html>

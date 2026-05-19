@@ -6,12 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="manifest" href="/admin/manifest.json">
-  <meta name="theme-color" content="#000000">
-  
   <style>
-    /* ===== TOUT VOTRE CSS EXISTANT ===== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --primary: #B76EFF;
       --primary-dark: #8B3FE8;
@@ -30,6 +25,9 @@
       --glass-bg: rgba(183, 110, 255, 0.04);
       --glass-border: rgba(183, 110, 255, 0.07);
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg-dark);
@@ -38,6 +36,7 @@
       line-height: 1.5;
       min-height: 100vh;
     }
+
     .gradient-bg {
       position: fixed;
       top: 0; left: 0;
@@ -47,10 +46,12 @@
                   radial-gradient(ellipse 50% 40% at 85% 75%, rgba(183, 110, 255, 0.12) 0%, transparent 55%),
                   linear-gradient(180deg, #030305 0%, #05051A 50%, #030305 100%);
     }
+
     .orb { position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; pointer-events: none; animation: orbFloat 8s ease-in-out infinite; }
     .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 63, 232, 0.15), transparent 70%); top: -100px; left: -100px; }
     .orb-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(183, 110, 255, 0.1), transparent 70%); bottom: 20%; right: -80px; animation-delay: -4s; }
     @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(20px, -20px) scale(1.05); } 66% { transform: translate(-15px, 15px) scale(0.95); } }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -63,17 +64,21 @@
       z-index: 100;
       border-bottom: 1px solid rgba(183, 110, 255, 0.07);
     }
+
     .logo { text-decoration: none; }
     .logo-text { font-size: 18px; font-weight: 600; font-family: 'Playfair Display', serif; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase; }
     .logo-text span { font-weight: 800; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
     .admin-badge { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 6px 12px; border-radius: 30px; font-size: 11px; font-weight: 600; color: white; display: flex; align-items: center; gap: 6px; }
     .logout-btn { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 6px 12px; border-radius: 30px; font-size: 11px; font-weight: 600; color: var(--danger); cursor: pointer; transition: var(--transition); }
     .logout-btn:active { background: var(--danger); color: white; transform: scale(0.97); }
     .header-actions { display: flex; align-items: center; gap: 10px; }
+
     .container { max-width: 500px; margin: 0 auto; padding: 20px 16px 80px; }
     .greeting { margin-bottom: 20px; }
     .greeting h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .greeting p { color: var(--text-dim); font-size: 13px; }
+
     .revenue-card {
       background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(183,110,255,0.03));
       border-radius: 24px;
@@ -88,6 +93,7 @@
     .revenue-stats { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
     .revenue-sparkline { margin-top: 10px; }
     .revenue-sparkline svg { width: 100%; height: 48px; }
+
     .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
     .stat-card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 18px; padding: 14px; transition: var(--transition); cursor: pointer; }
     .stat-card:active { transform: scale(0.98); border-color: rgba(183, 110, 255, 0.25); }
@@ -100,28 +106,34 @@
     .stat-card-label span { font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
     .stat-value { font-size: 24px; font-weight: 800; color: var(--text-light); letter-spacing: -1px; margin-bottom: 2px; }
     .stat-detail { font-size: 10px; color: var(--text-dim); }
+
     .nav-bar { display: flex; gap: 8px; margin: 16px 0 20px; flex-wrap: wrap; }
     .nav-btn { flex: 1; padding: 10px 12px; background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 12px; color: var(--text-dim); font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 6px; font-family: 'Inter', sans-serif; }
     .nav-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-color: transparent; }
     .nav-btn:active { transform: scale(0.97); }
+
     .card { background: var(--card-bg); backdrop-filter: blur(14px); border: 1px solid var(--card-border); border-radius: 20px; padding: 16px; margin-bottom: 16px; animation: slideIn 0.3s ease-out; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
     .card-header i { color: var(--primary); font-size: 16px; }
     .card-header h2 { font-size: 15px; font-weight: 700; color: var(--text-light); }
+
     .search-box { margin-bottom: 14px; }
     .search-input { width: 100%; padding: 10px 14px; background: rgba(20, 20, 35, 0.8); border: 1px solid var(--card-border); border-radius: 12px; color: var(--text-light); font-family: 'Inter', sans-serif; font-size: 13px; }
     .search-input:focus { outline: none; border-color: var(--primary); }
+
     .table-container { overflow-x: auto; }
     .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .admin-table th { text-align: left; padding: 10px 6px; color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--card-border); }
     .admin-table td { padding: 10px 6px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
     .clickable-name { color: var(--primary-light); font-weight: 600; cursor: pointer; transition: var(--transition); }
     .clickable-name:active { opacity: 0.7; }
+
     .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
     .status-active { background: rgba(46,232,154,0.15); color: var(--success); }
     .status-blocked { background: rgba(255,77,109,0.15); color: var(--danger); }
     .status-pending { background: rgba(255,209,102,0.15); color: var(--warning); }
+
     .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
     .action-btn { padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 4px; }
     .action-btn.block { background: rgba(255,209,102,0.15); color: var(--warning); }
@@ -129,30 +141,39 @@
     .action-btn.delete { background: rgba(255,77,109,0.15); color: var(--danger); }
     .action-btn.activate { background: rgba(46,232,154,0.15); color: var(--success); }
     .action-btn.generate { background: rgba(183,110,255,0.15); color: var(--primary); padding: 10px; width: 100%; text-align: center; }
+
     .back-btn { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 30px; padding: 8px 16px; font-size: 12px; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; color: var(--text-light); display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; }
     .back-btn:active { border-color: var(--primary); color: var(--primary); transform: scale(0.97); }
+
     .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .detail-label { color: var(--text-dim); font-size: 12px; }
     .detail-value { font-weight: 600; color: var(--text-light); font-size: 13px; }
+
     .pack-item { background: rgba(255,255,255,0.02); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
     .pack-name { font-weight: 700; color: var(--primary-light); }
     .pack-status { font-size: 10px; padding: 2px 8px; border-radius: 20px; }
     .pack-status.active { background: rgba(46,232,154,0.15); color: var(--success); }
     .pack-status.completed { background: rgba(255,209,102,0.15); color: var(--warning); }
+
     .deposit-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 12px; }
+
     .form-group { margin-bottom: 14px; }
     .form-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-dim); }
     .form-control { width: 100%; padding: 12px; background: rgba(20, 20, 35, 0.8); border: 1px solid var(--card-border); border-radius: 12px; color: var(--text-light); font-family: 'Inter', sans-serif; font-size: 13px; }
     .form-control:focus { outline: none; border-color: var(--primary); }
+
     .code-card { background: rgba(183,110,255,0.05); border: 1px solid rgba(183,110,255,0.15); border-radius: 14px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .code-value { font-family: monospace; font-size: 14px; font-weight: 700; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 8px; letter-spacing: 1px; color: var(--primary-light); }
     .code-amount { font-weight: 700; color: var(--success); font-size: 12px; }
     .code-status { font-size: 10px; padding: 2px 8px; border-radius: 20px; }
     .code-status.used { background: rgba(46,232,154,0.15); color: var(--success); }
     .code-status.unused { background: rgba(255,209,102,0.15); color: var(--warning); }
+
     .section { display: none; }
     .section.active { display: block; }
+
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
+
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s; }
     .modal-overlay.show { opacity: 1; visibility: visible; }
     .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); border: 1px solid var(--primary); border-radius: 20px; padding: 20px; width: 90%; max-width: 400px; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s; }
@@ -161,10 +182,14 @@
     .modal-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: var(--transition); }
     .modal-btn.cancel { background: rgba(255,255,255,0.05); color: var(--text-light); border: 1px solid var(--card-border); }
     .modal-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+
     .notification { position: fixed; bottom: 20px; left: 16px; right: 16px; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); border: 1px solid var(--primary); border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; z-index: 1000; transform: translateY(200px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 400px; margin: 0 auto; }
     .notification.show { transform: translateY(0); }
+
     .footer { text-align: center; padding: 16px 0; margin-top: 16px; border-top: 1px solid rgba(183,110,255,0.06); }
+
     .proof-img { max-width: 100%; max-height: 300px; border-radius: 12px; margin-top: 10px; }
+
     @media (max-width: 480px) {
       .container { padding: 16px 12px 70px; }
       .stat-value { font-size: 20px; }
@@ -232,7 +257,7 @@
       <div class="card-header"><i class="fas fa-users"></i><h2>Utilisateurs</h2></div>
       <div class="search-box"><input type="text" id="userSearch" class="search-input" placeholder="🔍 Rechercher par nom..."></div>
       <div class="table-container">
-        <table class="admin-table"><thead><th>Nom</th><th>Téléphone</th><th>Solde</th> </tr></thead><tbody id="usersTableBody"><td colspan="3" class="empty-state">Chargement...</td> </tr></tbody></table>
+        <table class="admin-table"><thead><th>Nom</th><th>Téléphone</th><th>Solde</th></td></thead><tbody id="usersTableBody"><td colspan="3" class="empty-state">Chargement...</td></tbody> </table>
       </div>
     </div>
   </div>
@@ -241,7 +266,7 @@
     <div class="card">
       <div class="card-header"><i class="fas fa-user-check"></i><h2>Demandes d'activation</h2></div>
       <div class="table-container">
-        <table class="admin-table"><thead> <tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Méthode</th><th>Preuve</th><th>Actions</th></tr></thead><tbody id="activationTableBody"><tr><td colspan="6" class="empty-state">Chargement...</td></tr></tbody> </table>
+        <table class="admin-table"><thead> <th>Nom</th><th>Email</th><th>Téléphone</th><th>Méthode</th><th>Preuve</th><th>Actions</th> </thead><tbody id="activationTableBody"><td colspan="6" class="empty-state">Chargement...</tbody> </table>
       </div>
     </div>
   </div>
@@ -250,7 +275,7 @@
     <div class="card"><button class="back-btn" id="backToUsers"><i class="fas fa-arrow-left"></i> Retour</button><div id="userDetailContent"></div><div class="action-btns" style="margin-top: 16px; justify-content: center;" id="userDetailActions"></div></div>
   </div>
 
-    <div id="generateSection" class="section">
+  <div id="generateSection" class="section">
     <div class="card">
       <div class="card-header"><i class="fas fa-plus-circle"></i><h2>Générer un code</h2></div>
       <div class="form-group"><label class="form-label">Montant (FCFA)</label><select id="codeAmount" class="form-control"><option value="3000">3 000 FCFA</option><option value="5000">5 000 FCFA</option><option value="10000">10 000 FCFA</option><option value="15000">15 000 FCFA</option><option value="25000">25 000 FCFA</option></select></div>
@@ -259,10 +284,10 @@
     </div>
   </div>
 
-  <div id="listSection" class="section">
+    <div id="listSection" class="section">
     <div class="card">
       <div class="card-header"><i class="fas fa-history"></i><h2>Historique des dépôts</h2></div>
-      <div class="table-container"><table class="admin-table"><thead><tr><th>Utilisateur</th><th>Montant</th><th>Code</th><th>Date</th><th></th></tr></thead><tbody id="depositsTableBody"><tr><td colspan="5" class="empty-state">Chargement...</td></tr></tbody> </table></div>
+      <div class="table-container"><table class="admin-table"><thead><th>Utilisateur</th><th>Montant</th><th>Code</th><th>Date</th><th></th> </thead><tbody id="depositsTableBody"><td colspan="5" class="empty-state">Chargement...</tbody> </table></div>
     </div>
   </div>
 
@@ -277,7 +302,6 @@
 <div class="modal-overlay" id="modalOverlay"></div>
 <div class="modal" id="confirmModal"><div class="modal-header"><div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="modal-title">Confirmer</div></div><div class="modal-content" id="modalMessage"></div><div class="modal-buttons"><button class="modal-btn cancel" id="modalCancel">Annuler</button><button class="modal-btn confirm" id="modalConfirm">Confirmer</button></div></div>
 
-<!-- MODALE POUR VOIR LA PREUVE -->
 <div class="modal-overlay" id="proofModalOverlay"></div>
 <div class="modal" id="proofModal">
   <div class="modal-header"><div class="modal-icon"><i class="fas fa-image"></i></div><div class="modal-title">Preuve de paiement</div></div>
@@ -348,7 +372,6 @@
   document.getElementById('modalCancel').onclick = closeModal;
   document.getElementById('modalOverlay').onclick = closeModal;
 
-  // Modale pour voir la preuve
   function showProofModal(imageUrl) {
     const modal = document.getElementById('proofModal');
     const overlay = document.getElementById('proofModalOverlay');
@@ -371,21 +394,6 @@
     window.location.href = '/';
   }
   document.getElementById('logoutBtn').onclick = logout;
-
-  async function autoBlockExpiredUsers() {
-    const today = new Date().toISOString().split('T')[0];
-    const snapshot = await getDocs(collection(db, "users"));
-    for (const docSnap of snapshot.docs) {
-      const user = docSnap.data();
-      if (user.role === 'admin') continue;
-      if (user.status === 'blocked') continue;
-      if (user.subscriptionEnd && user.subscriptionEnd < today) {
-        await updateDoc(doc(db, "users", docSnap.id), { status: 'blocked', blockedReason: 'auto_expired', blockedAt: new Date().toISOString() });
-      }
-    }
-  }
-  autoBlockExpiredUsers();
-  setInterval(autoBlockExpiredUsers, 60 * 60 * 1000);
 
   function renderSparkline() {
     const last30Days = [];
@@ -419,14 +427,23 @@
     const endDate = new Date(now.getTime() + 50 * 24 * 60 * 60 * 1000);
     const expiryDate = endDate.toISOString().split('T')[0];
     
-    // Créer l'investissement
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    const currentInvestments = userDoc.exists() ? (userDoc.data().investments || []) : [];
+    
+    const hasActivePack = currentInvestments.some(inv => inv.status === 'active');
+    if (hasActivePack) {
+      showNotification('Erreur', 'Cet utilisateur a déjà un pack actif');
+      return;
+    }
+    
     const investment = {
       id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
       userId: userId,
       pack: "start",
       packName: "Start",
       amount: 3000,
-      dailyReturn: 200,
+      dailyReturn: 2000,
       totalDays: 50,
       currentDay: 1,
       totalEarned: 0,
@@ -438,27 +455,46 @@
     
     await addDoc(collection(db, "investments"), investment);
     
-    // Mettre à jour l'utilisateur
-    const userRef = doc(db, "users", userId);
-    const userDoc = await getDoc(userRef);
-    const existingInvestments = userDoc.exists() ? (userDoc.data().investments || []) : [];
-    
     await updateDoc(userRef, {
       status: "active",
       hasDeposited: true,
       hasInvested: true,
       activeInvestmentsCount: 1,
       subscriptionEnd: expiryDate,
-      investments: [...existingInvestments, investment],
+      investments: [...currentInvestments, investment],
       activatedAt: now.toISOString()
     });
     
-    // Supprimer ou archiver la demande d'activation
+    // ✅ Ajouter l'activation dans les dépôts pour le chiffre d'affaires
+    await addDoc(collection(db, "deposits"), {
+      userId: userId,
+      userName: userName,
+      amount: 3000,
+      method: "activation",
+      code: "ACTIVATION",
+      date: now.toISOString().split('T')[0],
+      timestamp: now.toISOString(),
+      type: "activation"
+    });
+    
     if (requestId) {
-      await updateDoc(doc(db, "activation_requests", requestId), { status: "approved", approvedAt: now.toISOString(), approvedBy: currentAdmin?.uid });
+      await updateDoc(doc(db, "activation_requests", requestId), { 
+        status: "approved", 
+        approvedAt: now.toISOString(), 
+        approvedBy: currentAdmin?.uid 
+      });
     }
     
-    showNotification('Succès', `Compte de ${userName} activé avec Pack Start`);
+    await addDoc(collection(db, "notifications"), {
+      userId: userId,
+      title: "🎉 Compte activé !",
+      message: "Votre compte a été activé avec succès. Le Pack Start est actif (2000 FCFA/jour pendant 50 jours).",
+      type: "success",
+      read: false,
+      createdAt: now.toISOString()
+    });
+    
+    showNotification('Succès', `Compte de ${userName} activé + 3 000 FCFA ajoutés au chiffre d'affaires`);
   }
 
   function listenActivationRequests() {
@@ -489,28 +525,25 @@
         <td>${req.email || '-'}</td>
         <td>${req.phone || '-'}</td>
         <td>${req.paymentMethod || '-'}</td>
-        <td><button class="action-btn activate" onclick="window.showProofModal('${req.proofImage || ''}')"><i class="fas fa-eye"></i>preuve</button></td>
+        <td><button class="action-btn activate" onclick="window.showProofModal('${req.proofImage || ''}')"><i class="fas fa-eye"></i> preuve</button></td>
         <td><button class="action-btn activate" data-reqid="${req.id}" data-userid="${req.userId}" data-email="${req.email}" data-phone="${req.phone}" data-name="${req.fullName}"><i class="fas fa-check-circle"></i> ACTIVER</button></td>
       </tr>`;
     });
     tbody.innerHTML = html;
     
-    // Attacher les événements d'activation
     document.querySelectorAll('[data-reqid]').forEach(btn => {
       btn.onclick = () => {
         const reqId = btn.getAttribute('data-reqid');
         const userId = btn.getAttribute('data-userid');
-        const email = btn.getAttribute('data-email');
-        const phone = btn.getAttribute('data-phone');
         const name = btn.getAttribute('data-name');
-        openModal(`Activer le compte de ${name} ? Il recevra le Pack Start (3 000 FCFA → 10 000 FCFA).`, async () => {
-          await activateUser(userId, reqId, email, phone, name);
+        openModal(`Activer le compte de ${name} ? Il recevra le Pack Start (2000 FCFA/jour).`, async () => {
+          await activateUser(userId, reqId, null, null, name);
         });
       };
     });
   }
-
-  window.showProofModal = showProofModal;
+    
+    window.showProofModal = showProofModal;
 
   function listenUsers() {
     if (unsubscribeUsers) unsubscribeUsers();

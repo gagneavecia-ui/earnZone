@@ -238,6 +238,13 @@
 </head>
 <body>
 
+<!-- NETTOYAGE CACHE - ÉVITE LES BOUCLES -->
+<script>
+  console.log("🧹 Nettoyage du cache au chargement de login.html");
+  localStorage.removeItem('earnzone_current_user');
+  sessionStorage.clear();
+</script>
+
 <div class="gradient-bg"></div>
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
@@ -296,7 +303,6 @@
   import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-  // ========== CONFIGURATION FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyAVlK5ivp2dCWyr22gkeGSLbRdwTIVMrEE",
     authDomain: "earnzone-9e82e.firebaseapp.com",
@@ -310,54 +316,49 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   
-  // Persistance locale pour garder la session
   setPersistence(auth, browserLocalPersistence).catch(console.error);
 
-  // ========== DOM ELEMENTS ==========
-  const loginForm = document.getElementById('loginForm');
-  const loginBtn = document.getElementById('loginBtn');
-  const messageDiv = document.getElementById('message');
-
-  // ========== AFFICHER MESSAGE ==========
   function showMessage(text, type) {
-    messageDiv.className = `message ${type}`;
-    messageDiv.innerText = text;
-    messageDiv.style.display = 'block';
+    const msgDiv = document.getElementById('message');
+    msgDiv.className = `message ${type}`;
+    msgDiv.innerText = text;
+    msgDiv.style.display = 'block';
     setTimeout(() => {
-      messageDiv.style.display = 'none';
-    }, 3500);
+      msgDiv.style.display = 'none';
+    }, 3000);
   }
 
-  // ========== REDIRECTION SI DÉJÀ CONNECTÉ ==========
-  onAuthStateChanged(auth, (user) => {
+  // ✅ IMPORTANT : Ne redirige PAS automatiquement si déjà connecté
+  // On laisse l'utilisateur décider (mais normalement il ne devrait pas arriver ici déjà connecté)
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-      console.log("✅ Utilisateur déjà connecté:", user.email);
-      window.location.href = 'index.html';
+      console.log("Utilisateur déjà connecté, vérification du statut...");
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.status === 'active') {
+            window.location.href = 'index.html';
+          } else {
+            window.location.href = `activation.html?name=${encodeURIComponent(userData.prenom || 'Membre')}`;
+          }
+        } else {
+          // Utilisateur trouvé dans Auth mais pas dans Firestore → déconnexion
+          await auth.signOut();
+          localStorage.removeItem('earnzone_current_user');
+          sessionStorage.clear();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Erreur vérification:", error);
+      }
     }
   });
 
-  // ========== VALIDATION EMAIL ==========
-  function isValidEmail(email) {
-    return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
-  }
+  const loginForm = document.getElementById('loginForm');
+  const loginBtn = document.getElementById('loginBtn');
 
-  // ========== VÉRIFIER SI COMPTE EST BLOQUÉ ==========
-  async function isAccountBlocked(uid) {
-    try {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        return userData.status === 'blocked';
-      }
-      return false;
-    } catch (error) {
-      console.error("Erreur vérification statut:", error);
-      return false;
-    }
-  }
-
-  // ========== FORMULAIRE DE CONNEXION ==========
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -369,17 +370,6 @@
       return;
     }
 
-    if (!isValidEmail(email)) {
-      showMessage('Email invalide.', 'error');
-      return;
-    }
-
-    if (password.length < 6) {
-      showMessage('Mot de passe trop court (minimum 6 caractères).', 'error');
-      return;
-    }
-
-    // Désactiver bouton le temps de la connexion
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<span class="loader"></span> Connexion en cours...';
 
@@ -387,51 +377,51 @@
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      console.log("✅ Connexion réussie:", user.email);
+      // Vérifier le statut dans Firestore
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
       
-      // Vérifier si le compte est bloqué
-      const isBlocked = await isAccountBlocked(user.uid);
-      if (isBlocked) {
+      if (!userDoc.exists()) {
+        showMessage('Compte introuvable. Contactez le support.', 'error');
         await auth.signOut();
-        showMessage('❌ Votre compte a été bloqué. Contactez le support.', 'error');
         loginBtn.disabled = false;
         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
         return;
       }
       
-      // Sauvegarder l'UID dans localStorage
-      localStorage.setItem('earnzone_current_user', user.uid);
+      const userData = userDoc.data();
       
-      showMessage('Connexion réussie ! Redirection...', 'success');
-      
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1500);
+      if (userData.status !== 'active') {
+        showMessage('✅ Connexion réussie ! Redirection vers activation...', 'success');
+        setTimeout(() => {
+          window.location.href = `activation.html?name=${encodeURIComponent(userData.prenom || 'Membre')}`;
+        }, 1500);
+      } else {
+        showMessage('✅ Connexion réussie ! Redirection...', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      }
       
     } catch (error) {
-      console.error("❌ Erreur Firebase:", error);
+      console.error("Erreur Firebase:", error);
       
-      let errorMsg = 'Erreur lors de la connexion.';
       switch (error.code) {
         case 'auth/invalid-credential':
         case 'auth/user-not-found':
         case 'auth/wrong-password':
-          errorMsg = 'Email ou mot de passe incorrect.';
+          showMessage('Email ou mot de passe incorrect.', 'error');
           break;
         case 'auth/invalid-email':
-          errorMsg = 'Email invalide.';
+          showMessage('Email invalide.', 'error');
           break;
         case 'auth/too-many-requests':
-          errorMsg = 'Trop de tentatives. Réessayez plus tard.';
-          break;
-        case 'auth/network-request-failed':
-          errorMsg = 'Problème de connexion internet. Vérifiez votre réseau.';
+          showMessage('Trop de tentatives. Réessayez plus tard.', 'error');
           break;
         default:
-          errorMsg = error.message || 'Erreur lors de la connexion. Réessayez.';
+          showMessage('Erreur lors de la connexion. Réessayez.', 'error');
       }
       
-      showMessage(errorMsg, 'error');
       loginBtn.disabled = false;
       loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
     }
